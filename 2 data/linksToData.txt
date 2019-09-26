@@ -1,0 +1,5 @@
+kaggle.com
+
+
+mnist handwritten digits (csv):
+https://www.kaggle.com/oddrationale/mnist-in-csv

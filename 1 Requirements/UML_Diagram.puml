@@ -1,0 +1,102 @@
+@startuml
+
+skinparam nodesep 100
+skinparam ranksep 40
+
+title Class diagram: hyperOptimize
+
+/' Define the class details'/
+
+package view {
+    class MainView
+    class ModelView
+    abstract class LoadDataView
+        class LoadTrainingDataView
+        class LoadNewDataView
+    class OptimizeParamsView
+    class EstimatedTimeView
+    class CategorizeDataView
+}
+
+package presenter {
+    class MainPresenter{
+    + modelPresenter()
+    + loadDataPresenter()
+    + optimizeParamsPresenter()
+    + estimateTimePresenter()
+    + categorizeDataView()
+    }
+    class ModelPresenter
+   abstract class LoadDataPresenter
+        class LoadTrainingDataPresenter
+        class LoadNewDataPresenter
+    class OptimizeParamsPresenter
+    class EstimatedTimePresenter
+    class CategorizeDataPresenter
+}
+
+package logic {
+    class MainModel
+    class Model
+    abstract class LoadDataModel
+        class LoadTrainingDataModel
+        class LoadNewDataModel
+    class OptimizeParamsModel
+    class EstimateTimeModel
+    class CategorizeDataModel
+}
+
+package persistence {
+    class SaverLoader {
+        + saveModel(Model)
+        + loadModel()
+        + saveEstimatedTime()
+        + loadEstimatedTime()
+    }
+
+}
+
+
+/' Define relations'/
+
+/' View'/
+LoadDataView <|-- LoadTrainingDataView
+LoadDataView <|-- LoadNewDataView
+
+/' Presenter'/
+LoadDataPresenter <|-- LoadTrainingDataPresenter
+LoadDataPresenter <|-- LoadNewDataPresenter
+
+MainView "1" -- "1" MainPresenter
+ModelView "1" -- "1" ModelPresenter
+LoadDataView "1" -- "1" LoadDataPresenter
+LoadTrainingDataView "1" -- "1" LoadTrainingDataPresenter
+LoadNewDataView "1" -- "1" LoadNewDataPresenter
+OptimizeParamsView "1" -- "1" OptimizeParamsPresenter
+EstimatedTimeView "1" -- "1" EstimatedTimePresenter
+CategorizeDataView "1" -- "1" CategorizeDataPresenter
+
+/' Presenter - Model'/
+MainPresenter "1" -- "1" MainModel
+ModelPresenter "1" -- "1" Model
+LoadDataPresenter "1" -- "1" LoadDataModel
+LoadTrainingDataPresenter "1" -- "1" LoadTrainingDataModel
+LoadNewDataPresenter "1" -- "1" LoadNewDataModel
+OptimizeParamsPresenter "1" -- "1" OptimizeParamsModel
+EstimatedTimePresenter "1" -- "1" EstimateTimeModel
+CategorizeDataPresenter "1" -- "1" CategorizeDataModel
+
+/' Model'/
+MainModel "1" -- "n" Model
+MainModel "1" -- "1" CategorizeDataModel
+Model "1" -- "1" LoadTrainingDataModel
+Model "1" -- "1" CategorizeDataModel
+Model "1" -- "1" OptimizeParamsModel
+OptimizeParamsModel "1" -- "1" EstimateTimeModel
+CategorizeDataModel "1" -- "1" LoadNewDataModel
+
+
+/' Model - Presenter'/
+Model "1" -- "1" SaverLoader
+
+@enduml
