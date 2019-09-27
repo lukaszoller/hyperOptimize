@@ -5,15 +5,13 @@ class SaverLoader:
         pass
 
     def getEstTimeData(self):
-        fileName = 'estTimeData.csv'
+
+        fileName = 'persistence/estTimeData.csv'
         try:
             data = np.genfromtxt(fileName, delimiter=',', skip_header=True)
+            print("SaverLoader: data loaded successfully.")
             y = data[:,-1]
             x = data[:,0:len(data[1,:])-1]
             return x, y
         except IOError:
-            print ("Error. Could not read file:", fileName)
-
-sl = SaverLoader()
-data = sl.getEstTimeData()
-print(data)
+            print("Error. Could not read file:", fileName)
