@@ -1,7 +1,7 @@
 @startuml
 
-skinparam nodesep 100
-skinparam ranksep 40
+skinparam nodesep 40
+skinparam ranksep 100
 
 title Class diagram: hyperOptimize
 
@@ -27,7 +27,7 @@ package presenter {
     + categorizeDataView()
     }
     class ModelPresenter
-   abstract class LoadDataPresenter
+    abstract class LoadDataPresenter
         class LoadTrainingDataPresenter
         class LoadNewDataPresenter
     class OptimizeParamsPresenter
