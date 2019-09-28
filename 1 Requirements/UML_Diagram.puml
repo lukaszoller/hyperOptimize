@@ -1,7 +1,5 @@
 @startuml
 
-skinparam nodesep 40
-skinparam ranksep 100
 
 title Class diagram: hyperOptimize
 
@@ -19,6 +17,13 @@ package view {
 }
 
 package presenter {
+    class ModelPresenter
+    abstract class LoadDataPresenter
+    class LoadTrainingDataPresenter
+    class LoadNewDataPresenter
+    class OptimizeParamsPresenter
+    class EstimatedTimePresenter
+    class CategorizeDataPresenter
     class MainPresenter{
     + modelPresenter()
     + loadDataPresenter()
@@ -26,14 +31,8 @@ package presenter {
     + estimateTimePresenter()
     + categorizeDataView()
     }
-    class ModelPresenter
-    abstract class LoadDataPresenter
-        class LoadTrainingDataPresenter
-        class LoadNewDataPresenter
-    class OptimizeParamsPresenter
-    class EstimatedTimePresenter
-    class CategorizeDataPresenter
 }
+
 
 package logic {
     class MainModel
