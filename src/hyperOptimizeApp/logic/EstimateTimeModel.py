@@ -17,7 +17,9 @@ class EstimateTimeModel:
         # Add polynomial features to training data
         transformer = PolynomialFeatures(degree=3, include_bias=True)
         xPoly = transformer.fit_transform(self.x)
+
         estTimeModel = LinearRegression(normalize=True).fit(xPoly, self.y)
+
         # Add polinomial featurs to hyperParameters
         hyperParamsPoly = transformer.fit_transform(np.array(hyperParams).reshape(1, -1))
         # predict Time

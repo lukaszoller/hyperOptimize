@@ -6,7 +6,7 @@ class SaverLoader:
 
     def getEstTimeData(self):
 
-        fileName = 'persistence/estTimeData.csv'
+        fileName = 'resources/estTimeData.csv'
         try:
             data = np.genfromtxt(fileName, delimiter=',', skip_header=True)
             print("SaverLoader: data loaded successfully.")
