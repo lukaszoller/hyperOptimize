@@ -36,7 +36,7 @@ package presenter {
 
 package logic {
     class MainModel
-    class Model
+    class MachineLearningModel
     abstract class LoadDataModel
         class LoadTrainingDataModel
         class LoadNewDataModel
@@ -77,7 +77,7 @@ CategorizeDataView "1" -- "1" CategorizeDataPresenter
 
 /' Presenter - Model'/
 MainPresenter "1" -- "1" MainModel
-ModelPresenter "1" -- "1" Model
+ModelPresenter "1" -- "1" MachineLearningModel
 LoadDataPresenter "1" -- "1" LoadDataModel
 LoadTrainingDataPresenter "1" -- "1" LoadTrainingDataModel
 LoadNewDataPresenter "1" -- "1" LoadNewDataModel
