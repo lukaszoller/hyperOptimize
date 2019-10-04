@@ -1,3 +1,4 @@
+from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 import numpy as np
 
 class SaverLoader:
@@ -15,3 +16,12 @@ class SaverLoader:
             return x, y
         except IOError:
             print("Error. Could not read file:", fileName)
+
+    def getProjectList(self):
+        p1 = ProjectModel("FakeProject 1")
+        p2 = ProjectModel("FakeProject 2")
+        p3 = ProjectModel("FakeProject 3")
+        return list(p1, p2, p3)
+
+    def saveProjectList(self):
+        print("Empty method: SaverLoader.saveProjectList")

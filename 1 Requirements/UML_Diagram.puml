@@ -1,22 +1,22 @@
 @startuml
 
-
 title Class diagram: hyperOptimize
 
 /' Define the class details'/
 
 package view {
-    class MainView
+    class ProjectView
+    class HomeView
     class ModelView
     abstract class LoadDataView
         class LoadTrainingDataView
         class LoadNewDataView
     class OptimizeParamsView
     class EstimatedTimeView
-    class CategorizeDataView
 }
 
 package presenter {
+    class ProjectPresenter
     class ModelPresenter
     abstract class LoadDataPresenter
     class LoadTrainingDataPresenter
@@ -24,25 +24,24 @@ package presenter {
     class OptimizeParamsPresenter
     class EstimatedTimePresenter
     class CategorizeDataPresenter
-    class MainPresenter{
+    class HomePresenter{
     + modelPresenter()
     + loadDataPresenter()
     + optimizeParamsPresenter()
     + estimateTimePresenter()
-    + categorizeDataView()
     }
 }
 
 
 package logic {
-    class MainModel
+    class ProjectModel
+    class HomeModel
     class MachineLearningModel
     abstract class LoadDataModel
         class LoadTrainingDataModel
         class LoadNewDataModel
     class OptimizeParamsModel
     class EstimateTimeModel
-    class CategorizeDataModel
 }
 
 package persistence {
@@ -66,36 +65,40 @@ LoadDataView <|-- LoadNewDataView
 LoadDataPresenter <|-- LoadTrainingDataPresenter
 LoadDataPresenter <|-- LoadNewDataPresenter
 
-MainView "1" -- "1" MainPresenter
+HomeView "1" -- "1" HomePresenter
+ProjectView "1" -- "1" ProjectPresenter
 ModelView "1" -- "1" ModelPresenter
 LoadDataView "1" -- "1" LoadDataPresenter
 LoadTrainingDataView "1" -- "1" LoadTrainingDataPresenter
 LoadNewDataView "1" -- "1" LoadNewDataPresenter
 OptimizeParamsView "1" -- "1" OptimizeParamsPresenter
 EstimatedTimeView "1" -- "1" EstimatedTimePresenter
-CategorizeDataView "1" -- "1" CategorizeDataPresenter
 
 /' Presenter - Model'/
-MainPresenter "1" -- "1" MainModel
+HomePresenter "1" -- "1" HomeModel
+ProjectPresenter "1" -- "1" ProjectModel
 ModelPresenter "1" -- "1" MachineLearningModel
 LoadDataPresenter "1" -- "1" LoadDataModel
 LoadTrainingDataPresenter "1" -- "1" LoadTrainingDataModel
 LoadNewDataPresenter "1" -- "1" LoadNewDataModel
 OptimizeParamsPresenter "1" -- "1" OptimizeParamsModel
 EstimatedTimePresenter "1" -- "1" EstimateTimeModel
-CategorizeDataPresenter "1" -- "1" CategorizeDataModel
 
 /' Model'/
-MainModel "1" -- "n" Model
-MainModel "1" -- "1" CategorizeDataModel
-Model "1" -- "1" LoadTrainingDataModel
-Model "1" -- "1" CategorizeDataModel
-Model "1" -- "1" OptimizeParamsModel
+LoadDataModel <|-- LoadTrainingDataModel
+LoadDataModel <|-- LoadNewDataModel
+
+HomeModel "1" -- "n" ProjectModel
+ProjectModel "1" -- "n" MachineLearningModel
+MachineLearningModel "1" -- "1" LoadTrainingDataModel
+MachineLearningModel "1" -- "1" OptimizeParamsModel
 OptimizeParamsModel "1" -- "1" EstimateTimeModel
-CategorizeDataModel "1" -- "1" LoadNewDataModel
+
 
 
 /' Model - Presenter'/
-Model "1" -- "1" SaverLoader
+MachineLearningModel "1" -- "1" SaverLoader
+EstimateTimeModel "1" -- "1" SaverLoader
 
 @enduml
+
