@@ -45,9 +45,10 @@ lossFunction = 'binary_crossentropy'
 modelOptimizer = 'Adam'
 learningRate = 0.001
 decay = 1e-6
+nbrCategories = 10
 
 # create model
-model.createNetwork(nbrOfFeatures, unitsArray, activationArray, dropOutArray, lossFunction, modelOptimizer, learningRate, decay)
+model.createNetwork(nbrOfFeatures, unitsArray, activationArray, dropOutArray, lossFunction, modelOptimizer, learningRate, decay, nbrCategories)
 
 #####################################################################################
 # Train and evaluate model

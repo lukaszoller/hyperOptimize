@@ -6,7 +6,7 @@ class SaverLoader:
         pass
 
     def getEstTimeData(self):
-
+        """ Returns to arrays. A 2D array x and a 1D array y."""
         fileName = 'resources/estTimeData.csv'
         try:
             data = np.genfromtxt(fileName, delimiter=',', skip_header=True)
@@ -16,6 +16,9 @@ class SaverLoader:
             return x, y
         except IOError:
             print("Error. Could not read file:", fileName)
+
+    def saveTimeMeasurementData(self, x, y):
+        np.savetxt('estTimeData.csv', [x,y], delimiter=',')
 
     def getProjectList(self):
         p1 = ProjectModel("FakeProject 1")
