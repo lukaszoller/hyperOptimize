@@ -18,13 +18,13 @@ class MachineLearningModel:
 
         # range(1, ...) "1" is needed to skip the first layer we built above
         for i in range(0, len(unitsArrayForHiddenLayers)):
-            print("Layer " + str(i) + " built.")
             self.model.add(tf.keras.layers.Dense(units=unitsArrayForHiddenLayers[i])) #, activation=activationArray[i]))      # activation per layer not specified, performance is much worse if it is specified
             # add dropout to all layers, except the last
             self.model.add(tf.keras.layers.Dropout(dropOutArray[i]))
+            print("Layer", i+1, "of", len(unitsArrayForHiddenLayers), "built.")
 
-            # Add last layer
-            self.model.add(tf.keras.layers.Dense(input_dim=nbrCategories, units=unitsArrayForHiddenLayers[-1]))
+        # Add last layer
+        self.model.add(tf.keras.layers.Dense(input_dim=nbrCategories, units=unitsArrayForHiddenLayers[-1]))
 
         # Specify activation function
         self.model.add(tf.keras.layers.Activation('sigmoid'))
@@ -40,6 +40,8 @@ class MachineLearningModel:
         self.model.fit(x, y, epochs)
 
     def trainNetwork(self, x, y):
+        print("MachineLearningModel.trainNetwork: Shape of x:", np.shape(x))
+        print("MachineLearningModel.trainNetwork: Shape of y:", np.shape(y))
         self.model.fit(x, y)
 
     def evaluateModel(self, x, y):

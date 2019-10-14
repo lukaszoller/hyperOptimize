@@ -1,15 +1,15 @@
 import numpy as np
 
-class HyperParamsDict(dict):
-
+class HyperParamsObj():
 
     def __init__(self):
         self.nbrOfFeatures = 0
-        self.hiddenUnitsArray = np.array()
-        self.activationArray = np.array()
-        self.dropOutArray = np.array()
+        self.hiddenUnitsArray = 0
+        self.activationArray = 0
+        self.dropOutArray = 0
         self.lossFunction = ''
         self.modelOptimizer = ''
         self.learningRate = 0
         self.learningRateDecay = 0
+        self.nbrOfCategories = 0
 
