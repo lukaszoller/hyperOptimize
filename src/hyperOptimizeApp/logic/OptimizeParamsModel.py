@@ -6,6 +6,7 @@ import numpy as np
 import time
 
 class OptimizeParamsModel:
+
     def __init__(self, xTrain, yTrain, xTest, yTest):
         self.modelList = list()
         self.errorArray = 0
