@@ -42,5 +42,37 @@ class TestOptimizeParamsModel():
             print(h.activationArray)
             i = i + 1
 
+        return hyperParamsObjList
+
+    def test_evaluateModels(self, hyperParamsObjList):
+        #####################################################################
+        # Get data
+        #####################################################################
+        nbrOfCategories = 10
+        mnist = tf.keras.datasets.mnist
+        (x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+        # Reshape data (cases, features)
+        shapeXtrain = np.shape(x_train)
+        shapeXtest = np.shape(x_test)
+        x_train = np.reshape(x_train, (shapeXtrain[0], shapeXtrain[1] * shapeXtrain[2]))
+        x_test = np.reshape(x_test, (shapeXtest[0], shapeXtest[1] * shapeXtest[2]))
+
+        # Preprocess class labels (Code from: https://elitedatascience.com/keras-tutorial-deep-learning-in-python)
+        y_train = np_utils.to_categorical(y_train, nbrOfCategories)
+        y_test = np_utils.to_categorical(y_test, nbrOfCategories)
+
+        # Rescale data 0 < data < 1
+        x_train, x_test = x_train / 255.0, x_test / 255.0
+
+        optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test)
+        optimizeParamsModel.evaluateModels(hyperParamsObjList)
+
+        for i in range(0, len(hyperParamsObjList)):
+            print("################################## Model", i+1, "##################################")
+            print("Running time: ", optimizeParamsModel.runningTimeArray[i])
+
+
 testOptimizeParamsModel = TestOptimizeParamsModel()
-testOptimizeParamsModel.test_createHyperParamsListRandom()
+hyperParamsObjList = testOptimizeParamsModel.test_createHyperParamsListRandom()
+testOptimizeParamsModel.test_evaluateModels(hyperParamsObjList)

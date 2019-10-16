@@ -81,11 +81,22 @@ class OptimizeParamsModel:
             # Store values in tmpHyperParamsObj
             ###################################################
             # nbrOfFeatures
-            tmpHyperParamsObj.nbrOfFeatures = rangeForHyperparamsDict.nbrOfFeatures
+            nbrOfFeatures = rangeForHyperparamsDict.nbrOfFeatures
             # nbrOfCategories
-            tmpHyperParamsObj.nbrOfCategories = rangeForHyperparamsDict.nbrOfCategories
+            nbrOfCategories = rangeForHyperparamsDict.nbrOfCategories
             # nbr of nodes in hidden layers  Create Array with length nbrOfLayersArray[i] and all values = nbrOfNodesArray[i] <<<--- This results in the same number of nodes per Layer for each model
-            tmpHyperParamsObj.hiddenUnitsArray = np.full(tmpNbrOfLayers, nbrOfNodesArray[i])
+            if tmpNbrOfLayers < 3:
+                tmpHyperParamsObj.nbrOfNodesArray[nbrOfFeatures, nbrOfCategories]
+            else:
+                # Super ugly way to get the array [nbrOfFeatures, hiddenNodesArray, nbrOfCategories] <-- Change if possible !!!!!!!!!!!!!!!!!!
+                hiddenNodesArray = np.full(tmpNbrOfLayers - 2, nbrOfNodesArray[i])
+                tmpArray = np.zeros(len(hiddenNodesArray)+2)
+                tmpArray[0] = nbrOfFeatures
+                tmpArray[len(tmpArray)-1] = nbrOfCategories
+                tmpArray[1:(len(tmpArray)-1)] = hiddenNodesArray
+                tmpHyperParamsObj.nbrOfNodesArray = np.concatenate([nbrOfFeatures], hiddenNodesArray, [nbrOfCategories])
+
+            tmpHyperParamsObj.nbrOfNodesArray = [nbrOfFeatures, hiddenNodesArray, nbrOfCategories]
             # nbr of Features
             tmpHyperParamsObj.nbrOfFeatures = rangeForHyperparamsDict.nbrOfFeatures
             # learning rate
@@ -128,9 +139,8 @@ class OptimizeParamsModel:
             # create model
             #####################################################################################
             model = MachineLearningModel()
-            model.createNetwork(hyperParamsObj.nbrOfFeatures, hyperParamsObj.hiddenUnitsArray, hyperParamsObj.activationArray,
-                                hyperParamsObj.dropOutArray, hyperParamsObj.lossFunction, hyperParamsObj.modelOptimizer,
-                                hyperParamsObj.learningRate, hyperParamsObj.learningRateDecay, hyperParamsObj.nbrOfCategories)
+            model.createNetwork(hyperParamsObj)
+
             #####################################################################################
             # Train and evaluate model
             #####################################################################################
@@ -170,3 +180,12 @@ class OptimizeParamsModel:
         # store running time here
         self.runningTimeArray.__add__(runningTime)
 
+
+
+
+hiddenNodesArray = np.full(14 - 2, 1)
+tmpArray = np.zeros(len(hiddenNodesArray)+2)
+tmpArray[0] = 33
+tmpArray[len(tmpArray)-1] = 33
+tmpArray[1:(len(tmpArray)-1)] = hiddenNodesArray
+print(tmpArray)

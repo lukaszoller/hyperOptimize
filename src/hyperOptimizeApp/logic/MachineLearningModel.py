@@ -9,7 +9,15 @@ class MachineLearningModel:
 
     ## for available activation functions check https://keras.io/activations/
     ## for available loss functions check https://keras.io/losses/
-    def createNetwork(self, nbrOfNodesArray, activationArray, dropOutArray, lossFunction, modelOptimizer, learningRate, decay):
+    def createNetwork(self, hyperParamsObj):
+        nbrOfNodesArray = hyperParamsObj.nbrOfNodesArray
+        activationArray = hyperParamsObj.activationArray
+        dropOutArray = hyperParamsObj.dropOutArray
+        lossFunction = hyperParamsObj.lossFunction
+        modelOptimizer = hyperParamsObj.modelOptimizer
+        learningRate = hyperParamsObj.learningRate
+        decay = hyperParamsObj.learningRateDecay
+
         """Takes hyperParameters as input and creates a model. Network has to have at least one hidden layer."""
         if len(nbrOfNodesArray) < 1:
                 print("Error: Model has to have at least one hidden layer.")
