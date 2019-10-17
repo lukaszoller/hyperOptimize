@@ -8,4 +8,4 @@ import random
 # http://faroit.com/keras-docs/1.2.0/getting-started/sequential-model-guide/
 
 
-print("Hoi", 1, "Hallo")
+

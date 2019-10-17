@@ -3,7 +3,7 @@ import numpy as np
 class HyperParamsObj():
 
     def __init__(self):
-        self.nbrOfNodesArray
+        self.nbrOfNodesArray = None
         self.activationArray = 0
         self.dropOutArray = 0
         self.lossFunction = ''

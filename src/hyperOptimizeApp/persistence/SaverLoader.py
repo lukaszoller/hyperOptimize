@@ -6,8 +6,8 @@ class SaverLoader:
         pass
 
     def getEstTimeData(self):
-        """ Returns to arrays. A 2D array x and a 1D array y."""
-        fileName = 'resources/estTimeData.csv'
+        """ Returns two arrays. A 2D array x and a 1D array y."""
+        fileName = 'estTimeData.csv'
         try:
             data = np.genfromtxt(fileName, delimiter=',', skip_header=True)
             print("SaverLoader: data loaded successfully.")
@@ -18,6 +18,9 @@ class SaverLoader:
             print("Error. Could not read file:", fileName)
 
     def saveTimeMeasurementData(self, x, y):
+        """Appends a new time measurement to the training dataset for the time estimation. x has to be a 1D array with
+        values: nbrOfLayers, nbrOfNodesPerLayer, learningRate. y has to be a single float which contains the running time
+        measurement for one model in seconds."""
         np.savetxt('estTimeData.csv', [x,y], delimiter=',')
 
     def getProjectList(self):

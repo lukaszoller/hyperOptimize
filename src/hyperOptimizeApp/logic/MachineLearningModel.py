@@ -19,9 +19,13 @@ class MachineLearningModel:
         decay = hyperParamsObj.learningRateDecay
 
         """Takes hyperParameters as input and creates a model. Network has to have at least one hidden layer."""
-        if len(nbrOfNodesArray) < 1:
-                print("Error: Model has to have at least one hidden layer.")
-                return
+        try:
+            if len(nbrOfNodesArray) < 3:
+                    print("Error: Model has to have at least one hidden layer.")
+                    return
+        except TypeError:
+            print("Error: nbrOfNocesArray has no elements")
+
         nbrCategories = nbrOfNodesArray[len(nbrOfNodesArray)-1]
         nbrFeatures = nbrOfNodesArray[0]
         # Create unitsArray (Units are the connections to the next layer, i.e. nbrOfUnits for Layer X are nbr of nodes

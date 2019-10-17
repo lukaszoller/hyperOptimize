@@ -9,8 +9,8 @@ class OptimizeParamsModel:
 
     def __init__(self, xTrain, yTrain, xTest, yTest):
         self.modelList = list()
-        self.errorArray = 0
-        self.runningTimeArray = 0
+        self.errorList = list()
+        self.runningTimeList = list()
         self.xTrain = xTrain
         self.yTrain = yTrain
         self.xTest = xTest
@@ -63,7 +63,6 @@ class OptimizeParamsModel:
         maxLrd = rangeForHyperparamsDict.learningRateDecayDict.get('max')
         learningRateDecayArray = (maxLrd - minLrd) * np.random.random_sample(nbrOfModels) + minLrd   # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
 
-
         #############################################################
         # Construct a dict for each model with the above arrays
         #############################################################
@@ -86,17 +85,13 @@ class OptimizeParamsModel:
             nbrOfCategories = rangeForHyperparamsDict.nbrOfCategories
             # nbr of nodes in hidden layers  Create Array with length nbrOfLayersArray[i] and all values = nbrOfNodesArray[i] <<<--- This results in the same number of nodes per Layer for each model
             if tmpNbrOfLayers < 3:
-                tmpHyperParamsObj.nbrOfNodesArray[nbrOfFeatures, nbrOfCategories]
+                tmpHyperParamsObj.nbrOfNodesArray = [nbrOfFeatures, nbrOfCategories]
             else:
-                # Super ugly way to get the array [nbrOfFeatures, hiddenNodesArray, nbrOfCategories] <-- Change if possible !!!!!!!!!!!!!!!!!!
                 hiddenNodesArray = np.full(tmpNbrOfLayers - 2, nbrOfNodesArray[i])
-                tmpArray = np.zeros(len(hiddenNodesArray)+2)
-                tmpArray[0] = nbrOfFeatures
-                tmpArray[len(tmpArray)-1] = nbrOfCategories
-                tmpArray[1:(len(tmpArray)-1)] = hiddenNodesArray
-                tmpHyperParamsObj.nbrOfNodesArray = np.concatenate([nbrOfFeatures], hiddenNodesArray, [nbrOfCategories])
+                nbrOfFeaturesAsArray = [nbrOfFeatures]
+                nbrOfCategoriesAsArray = [nbrOfCategories]
+                tmpHyperParamsObj.nbrOfNodesArray = np.concatenate([nbrOfFeaturesAsArray, hiddenNodesArray, nbrOfCategoriesAsArray])
 
-            tmpHyperParamsObj.nbrOfNodesArray = [nbrOfFeatures, hiddenNodesArray, nbrOfCategories]
             # nbr of Features
             tmpHyperParamsObj.nbrOfFeatures = rangeForHyperparamsDict.nbrOfFeatures
             # learning rate
@@ -165,27 +160,19 @@ class OptimizeParamsModel:
             # Store data from this loop
             #####################################################################################
             # store model
-            self.modelList.add(model)
+            self.modelList.append(model)
             # store error data
-            self.errorList.__add__(errorSum)
+            self.errorList.append(errorSum)
             # print progress of loop
-            print("Model", i, "from", l, "built.")
+            print("************ Model", i, "from", l, "built. *************")
             i = i + 1
 
 
-        # Give running time measurements to EstimateTimeModel
-        runningTime = time.clock() - startTime
-        etm = EstimateTimeModel()
-        etm.storeTimeMeasurements(hyperParamsObj, runningTime)
-        # store running time here
-        self.runningTimeArray.__add__(runningTime)
+        # # Give running time measurements to EstimateTimeModel
+        # runningTime = time.clock() - startTime
+        # etm = EstimateTimeModel()
+        # etm.storeTimeMeasurements(hyperParamsObj, runningTime)
+        # # store running time here
+        # self.runningTimeList.append(runningTime)
 
 
-
-
-hiddenNodesArray = np.full(14 - 2, 1)
-tmpArray = np.zeros(len(hiddenNodesArray)+2)
-tmpArray[0] = 33
-tmpArray[len(tmpArray)-1] = 33
-tmpArray[1:(len(tmpArray)-1)] = hiddenNodesArray
-print(tmpArray)

@@ -38,16 +38,17 @@ model = MachineLearningModel()
 
 # define hyperparameters
 nbrOfFeatures = np.shape(x_train)[1]
-nbrOfNodesArray = np.array([nbrOfFeatures, 10, nbrOfCategories])
+unitsArray = np.array([10, 10, 10])
 activationArray = np.array(['sigmoid', 'sigmoid', 'sigmoid'])
 dropOutArray = np.array([0, 0, 0])
 lossFunction = 'binary_crossentropy'
 modelOptimizer = 'Adam'
 learningRate = 0.001
 decay = 1e-6
+nbrCategories = 10
 
 # create model
-model.createNetwork(nbrOfNodesArray, activationArray, dropOutArray, lossFunction, modelOptimizer, learningRate, decay)
+model.createNetwork(nbrOfFeatures, unitsArray, activationArray, dropOutArray, lossFunction, modelOptimizer, learningRate, decay, nbrCategories)
 
 #####################################################################################
 # Train and evaluate model

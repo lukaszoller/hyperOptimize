@@ -1,5 +1,6 @@
 from unittest import TestCase
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
+from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 
 ################################################################
 # Test createNetwork()
@@ -7,7 +8,7 @@ from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
 
 class TestMachineLearningModel():
 
-    def test_createNetworkDropOutOne(self):
+    def test_createNetwork(self):
         # DropOutRate = 1 --> all Nodes will be dropped
         nbrOfNodesArray = [2 ,100, 100, 2]
         activationArray = ['sigmoid', 'sigmoid', 'sigmoid', 'sigmoid']
@@ -16,15 +17,21 @@ class TestMachineLearningModel():
         modelOptimizer = 'Adam'
         learningRate = 0.001
         decay = 1e-6
-        nbrCategories = 1
         machineLearningModel = MachineLearningModel()
 
-        machineLearningModel.createNetwork(nbrOfNodesArray, activationArray, dropOutArray, lossFunction, modelOptimizer,
-                                           learningRate, decay)
+        hyperParamsObj = HyperParamsObj()
+        hyperParamsObj.nbrOfNodesArray = nbrOfNodesArray
+        hyperParamsObj.activationArray = activationArray
+        hyperParamsObj.dropOutArray = dropOutArray
+        hyperParamsObj.lossFunction = lossFunction
+        hyperParamsObj.modelOptimizer = modelOptimizer
+        hyperParamsObj.learningRate = learningRate
+        hyperParamsObj.learningRateDecay = decay
+
+        machineLearningModel.createNetwork(hyperParamsObj)
 
 t = TestMachineLearningModel()
-t.test_createNetworkDropOutOne()
-
+t.test_createNetwork()
 
 
 # class TestMachineLearningModel(TestCase):
