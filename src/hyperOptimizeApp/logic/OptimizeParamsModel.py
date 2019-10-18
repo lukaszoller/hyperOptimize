@@ -5,6 +5,9 @@ from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParam
 import numpy as np
 import time
 
+from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
+
+
 class OptimizeParamsModel:
 
     def __init__(self, xTrain, yTrain, xTest, yTest):
@@ -116,20 +119,17 @@ class OptimizeParamsModel:
         # Return the list of dicts, each with hyperparams for each model
         return hyperParamsList
 
-    def evaluateModels(self, hyperParamsList):
+    def evaluateModels(self, hyperParamsObjList):
         """This method takes as input a list of HyperParamsObj (a HyperParamsObj for every model to create). It creates,
         trains and evaluates models basing on this list of HyperParamsObj and stores the time measurements for later
         time predictions. """
-        # Initialize model list
 
-        # Initialize results table (len(hyperparams(1)*len(hyperparamy(2)*...)
-
-        # Loop through list with dictionaries with hyperparams for each model
-        startTime = time.clock()
-        i = 1
-        l = len(hyperParamsList)
-        for hyperParamsObj in hyperParamsList:
-            print("################################ Building of model", i, "of", l, "started. ################################")
+        # Loop through list with hyperParamsObj for each model
+        l = len(hyperParamsObjList)
+        for i in range(0, l):
+            hyperParamsObj = hyperParamsObjList[i]
+            startTime = time.clock()
+            print("################################ Building of model", i+1, "of", l, "started. ################################")
             #####################################################################################
             # create model
             #####################################################################################
@@ -163,16 +163,29 @@ class OptimizeParamsModel:
             self.modelList.append(model)
             # store error data
             self.errorList.append(errorSum)
+
+            runningTime = time.clock() - startTime
+            self.runningTimeList.append(runningTime)
             # print progress of loop
-            print("************ Model", i, "from", l, "built. *************")
-            i = i + 1
+            print("************ Model", i+1, "from", l, "built. *************")
+
+        # Save running time measurements
+        sl = SaverLoader()
+        sl.saveTimeMeasurementData(hyperParamsObjList, self.runningTimeList)
 
 
-        # # Give running time measurements to EstimateTimeModel
-        # runningTime = time.clock() - startTime
-        # etm = EstimateTimeModel()
-        # etm.storeTimeMeasurements(hyperParamsObj, runningTime)
-        # # store running time here
-        # self.runningTimeList.append(runningTime)
+        # Print stuff for debugging
+        print("######################### Stats from OptimizeModel.evaluateModels ############################")
+        print("HyperParams: nbrOfLayers")
+        for h in hyperParamsObjList:
+            print(len(h.nbrOfNodesArray))
+
+        for h in hyperParamsObjList:
+            print(h.nbrOfNodesArray)
+
+        for h in hyperParamsObjList:
+            print(h.learningRate)
+
+
 
 

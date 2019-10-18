@@ -4,20 +4,21 @@ import numpy as np
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 
-class EstimateTimeModelTester(TestCase):
+class EstimateTimeModelTester():
 
-    def test_hyperParamsListToData(self):
-        # Create List with hyperParamsObj
-        l = list()
-        for i in range(0,10):
+    def test_estimateTime(self):  # Code mostly from https://realpython.com/linear-regression-in-python/
+        # create hyperParamsObjList
+        hyperParamsObjList = list()
+        for i in range(0, 10):
             h = HyperParamsObj()
-            h.nbrOfNodesArray = np.full(i+1, (i+1*2))
-            h.learningRate = (i+1)*3
-            l.append(h)
+            h.nbrOfNodesArray = np.full(4, 3)
+            h.learningRate = 5
+            hyperParamsObjList.append(h)
 
-        e = EstimateTimeModel()
-        x = e.hyperParamsListToData(l)
-        print(x)
-        xCompare = np.tile([1,2,3], [10,1])
-        print(xCompare)
-        self.assertTrue(x, xCompare)
+        estimateTimeModel = EstimateTimeModel()
+        timeEstimation = estimateTimeModel.estimateTime(hyperParamsObjList)
+        print("Time estimation:", timeEstimation)
+
+
+estimateTimeModelTester = EstimateTimeModelTester()
+estimateTimeModelTester.test_estimateTime()

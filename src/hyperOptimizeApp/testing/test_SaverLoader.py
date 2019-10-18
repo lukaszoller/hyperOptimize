@@ -1,30 +1,57 @@
-import tensorflow as tf
 import numpy as np
-from tensorflow.python.keras.utils import np_utils
-from matplotlib import pyplot as plt
-from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
-from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
-from keras.utils.np_utils import to_categorical
-import collections
-from keras.utils import plot_model
-import pydot
 
-#####################################################################################
-# 0. Prepare data
-#####################################################################################
+from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
+from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 
 
 class SaverLoaderTester():
 
-    def test_getEstTimeData(self):
-        """Returns to arrays. A 2D array x and a 1D array y."""
-        sl = SaverLoader()
-        return sl.getEstTimeData()
+    def test_hyperParamsListToData(self):
+        # Create List with hyperParamsObj
+        l = list()
+        for i in range(0, 10):
+            h = HyperParamsObj()
+            h.nbrOfNodesArray = np.full(1, 3)
+            h.learningRate = 5
+            l.append(h)
 
-    def saveTimeMeasurementData(self, x, y):
-        np.savetxt('estTimeData.csv', [x, y], delimiter=',')
+        # Convert hyperParamsObjList to data
+        sl = SaverLoader()
+        x = sl.hyperParamsListToData(l)
+        print("################################# Test 1: test_hyperParamsListToData() #################################")
+        print(x)
+        # Create comparision array which should be identical to x
+        xCompare = np.tile([1, 3, 5], [10, 1])
+        print(xCompare)
+        print("Sum of hyperParamsData MINUS comparisionData (should be 0): ", sum(sum(x - xCompare)))
+
+    def test_getEstTimeData(self):
+        print("################################# Test 2: test_saveTimeMeasurementData() #################################")
+        sl = SaverLoader()
+        (x,y) = sl.getEstTimeData()
+        print("X:", x)
+        print("Y:", y)
+
+    def test_saveTimeMeasurementData(self):
+        # Create List with hyperParamsObj
+        hyperParamsObjList = list()
+        for i in range(0, 10):
+            h = HyperParamsObj()
+            h.nbrOfNodesArray = np.full(1, 3)
+            h.learningRate = 5
+            hyperParamsObjList.append(h)
+
+        # Create some time measurement data
+        timeMeasurement = np.full(len(hyperParamsObjList), 999)
+
+        # Write data to csv
+        sl = SaverLoader()
+        sl.saveTimeMeasurementData(hyperParamsObjList, timeMeasurement)
+        print("################################# Test 3: test_saveTimeMeasurementData() #################################")
+        print("Check manually if estTimeData.csv, has 10 new rows [1, 3, 5], [999]")
 
 
 slt = SaverLoaderTester()
-print(slt.test_getEstTimeData())
-
+slt.test_hyperParamsListToData()
+slt.test_getEstTimeData()
+slt.test_saveTimeMeasurementData()
