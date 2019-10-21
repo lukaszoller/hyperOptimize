@@ -11,7 +11,7 @@ class SaverLoaderTester():
         l = list()
         for i in range(0, 10):
             h = HyperParamsObj()
-            h.nbrOfNodesArray = np.full(1, 3)
+            h.nbrOfNodesArray = [3,3,3]
             h.learningRate = 5
             l.append(h)
 
@@ -21,23 +21,25 @@ class SaverLoaderTester():
         print("################################# Test 1: test_hyperParamsListToData() #################################")
         print(x)
         # Create comparision array which should be identical to x
-        xCompare = np.tile([1, 3, 5], [10, 1])
+        xCompare = np.tile([3, 3, 5], [10, 1])
         print(xCompare)
         print("Sum of hyperParamsData MINUS comparisionData (should be 0): ", sum(sum(x - xCompare)))
 
     def test_getEstTimeData(self):
-        print("################################# Test 2: test_saveTimeMeasurementData() #################################")
+        print("################################# Test 2: test_getEstTimeData() #################################")
         sl = SaverLoader()
         (x,y) = sl.getEstTimeData()
         print("X:", x)
         print("Y:", y)
 
     def test_saveTimeMeasurementData(self):
+        print("################################# Test 3: test_saveTimeMeasurementData() #################################")
+
         # Create List with hyperParamsObj
         hyperParamsObjList = list()
         for i in range(0, 10):
             h = HyperParamsObj()
-            h.nbrOfNodesArray = np.full(1, 3)
+            h.nbrOfNodesArray = [3,3,3]
             h.learningRate = 5
             hyperParamsObjList.append(h)
 
@@ -52,6 +54,6 @@ class SaverLoaderTester():
 
 
 slt = SaverLoaderTester()
-slt.test_hyperParamsListToData()
-slt.test_getEstTimeData()
+# slt.test_hyperParamsListToData()
+# slt.test_getEstTimeData()
 slt.test_saveTimeMeasurementData()

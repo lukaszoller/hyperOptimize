@@ -13,7 +13,9 @@ class EstimateTimeModel:
 
     def estimateTime(self, hyperParamsObjList):         # Code mostly from https://realpython.com/linear-regression-in-python/
         """This method trains a linear model (with polynomial features) to predict the running time of the optimization.
-        The model is trained with data from earlier optimizations."""
+        The model is trained with data from earlier optimizations.
+        The return value of this function is the sum of the running times of each model which has to be built basing on
+        the inputted hyperParamsObjList."""
 
         # Add polynomial features to training data
         transformer = PolynomialFeatures(degree=3, include_bias=True)
