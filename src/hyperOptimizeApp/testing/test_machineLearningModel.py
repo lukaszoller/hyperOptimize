@@ -10,7 +10,7 @@ class TestMachineLearningModel():
 
     def test_createNetwork(self):
         # DropOutRate = 1 --> all Nodes will be dropped
-        nbrOfNodesArray = [2 ,100, 100, 2]
+        nbrOfNodesArray = [2, 100, 100, 2]
         activationArray = ['sigmoid', 'sigmoid', 'sigmoid', 'sigmoid']
         dropOutArray = [0.5, 0.5, 0.4, 0.4]
         lossFunction = 'binary_crossentropy'

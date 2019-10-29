@@ -2,21 +2,27 @@ from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 import numpy as np
 import csv
 
+
 class SaverLoader:
+
+    fileName = 'estTimeData.csv'
+
     def __init__(self):
         pass
 
+    def setFileName(self, fileName):
+        self.fileName = fileName
+
     def getEstTimeData(self):
         """ Returns two arrays. A 2D array x and a 1D array y."""
-        fileName = 'estTimeData.csv'
         try:
-            data = np.genfromtxt(fileName, delimiter=',', skip_header=True)
+            data = np.genfromtxt(self.fileName, delimiter=',', skip_header=True)
             print("SaverLoader.getEstTimeData(): data loaded successfully.")
             y = data[:,-1]
             x = data[:,0:len(data[1,:])-1]
             return x, y
         except IOError:
-            print("Error. Could not read file:", fileName)
+            print("Error. Could not read file:", self.fileName)
 
     def saveTimeMeasurementDataOld(self, x, y):
         """Appends a new time measurement to the training dataset for the time estimation. x has to be a 1D array with
