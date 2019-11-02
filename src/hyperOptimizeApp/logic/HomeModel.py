@@ -2,7 +2,6 @@ from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 
 
-
 class HomeModel:
     def __init__(self):
         saverLoader = SaverLoader()
@@ -14,3 +13,5 @@ class HomeModel:
     def loadProject(self, listIndex):
         return self.projectList.__getitem__(listIndex)
 
+    def getProjectList(self):
+        return self.projectList

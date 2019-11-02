@@ -71,6 +71,7 @@ class TestOptimizeParamsModel():
         for i in range(0, len(hyperParamsObjList)):
             print("################################## Model", i+1, "##################################")
             print("Running time: ", optimizeParamsModel.runningTimeList[i])
+            print("Success rate: ", optimizeParamsModel.errorList[i])
 
 
 testOptimizeParamsModel = TestOptimizeParamsModel()

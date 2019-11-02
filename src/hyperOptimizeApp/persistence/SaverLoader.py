@@ -1,11 +1,13 @@
 from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 import numpy as np
+from src.hyperOptimizeApp.persistence.ProjectDatabase import ProjectDatabase
 import csv
 
 
 class SaverLoader:
 
     fileName = 'estTimeData.csv'
+    projectDb = ProjectDatabase()
 
     def __init__(self):
         pass
@@ -80,10 +82,11 @@ class SaverLoader:
         return hyperParamsDataList
 
     def getProjectList(self):
-        p1 = ProjectModel("FakeProject 1")
-        p2 = ProjectModel("FakeProject 2")
-        p3 = ProjectModel("FakeProject 3")
-        return list(p1, p2, p3)
+        projects = self.projectDb.getAllProjects()
+        # p1 = ProjectModel("FakeProject 1")
+        # p2 = ProjectModel("FakeProject 2")
+        # p3 = ProjectModel("FakeProject 3")
+        return projects
 
     def saveProjectList(self):
         print("Empty method: SaverLoader.saveProjectList")

@@ -13,7 +13,9 @@ def openFile():
         print(saverLoader.getEstTimeData())
 
 
-class ModelView(tk.Frame):
+class ProjectView(tk.Frame):
+
+    controlFrame = None
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
@@ -22,3 +24,6 @@ class ModelView(tk.Frame):
         self.place(relx=0, rely=0, height=height, width=width)
         loadFileButton = tk.Button(self, text='Open', command=lambda: openFile())
         loadFileButton.pack(side=tk.TOP, pady=10)
+
+    def addControlFrame(self, frame):
+        self.controlFrame = frame

@@ -1,7 +1,5 @@
 
 
-
-
 class ProjectModel:
 
     # Creation of new project

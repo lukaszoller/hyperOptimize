@@ -4,8 +4,8 @@ class HyperParamsObj():
 
     def __init__(self):
         self.nbrOfNodesArray = None
-        self.activationArray = 0
-        self.dropOutArray = 0
+        self.activationArray = 0 #mal noch lassen
+        self.dropOutArray = 0    #
         self.lossFunction = ''
         self.modelOptimizer = ''
         self.learningRate = 0
