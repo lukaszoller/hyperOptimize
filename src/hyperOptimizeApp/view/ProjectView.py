@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.messagebox
 from tkinter.ttk import *
 from tkinter.filedialog import askopenfile
 
@@ -16,6 +17,7 @@ def openFile():
 class ProjectView(tk.Frame):
 
     controlFrame = None
+    project = None
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
@@ -29,8 +31,17 @@ class ProjectView(tk.Frame):
         loadFileButton = tk.Button(self, text='Open', command=lambda: openFile())
         loadFileButton.pack(side=tk.TOP, pady=10)
 
+        saveButton = tk.Button(self, text="Save Project").pack(side=tk.BOTTOM, padx=5)
+        deleteButton = tk.Button(self, text="Delete Project",
+                                 command=lambda: self.confirmationBox()).pack(side=tk.BOTTOM, padx=5)
+
     def addControlFrame(self, frame):
         self.controlFrame = frame
 
     def setTopText(self, text):
         self.topText.set(text)
+
+    def confirmationBox(self):
+        answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Project?")
+        if answer == 1:
+            print("Project Deleted")

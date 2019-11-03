@@ -16,9 +16,9 @@ class ProjectDatabase:
             sql = "CREATE TABLE project(id INTEGER PRIMARY KEY, name VARCHAR NOT NULL, date DATE NOT NULL)"
             cursor.execute(sql)
             connector.close()
-        self.addProject("Project 1")
-        self.addProject("Project 2")
-        self.addProject("Project 3")
+        # self.addProject("Project 1")
+        # self.addProject("Project 2")
+        # self.addProject("Project 3")
 
     def getAllProjects(self):
         connector = sqlite3.connect(self.DATABASE_NAME)
