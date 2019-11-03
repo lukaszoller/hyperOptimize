@@ -28,17 +28,39 @@ class ProjectDatabase:
         projects = []
         for element in cursor:
             print(element[1])
-            project = ProjectModel(element[1], element[2], [])
+            project = ProjectModel(element[0], element[1], element[2], [])
             projects.append(project)
         connector.close()
         print(projects)
         return projects
 
     def addProject(self, name):
+        date = datetime.date.today().strftime('%Y-%m-%d')
+        # newId = self.getMaxId() + 1
         connector = sqlite3.connect(self.DATABASE_NAME)
         cursor = connector.cursor()
-        date = datetime.date.today().strftime('%Y-%m-%d')
-        sql = "INSERT INTO project(name, date) VALUES('{}', '{}')".format(name, str(date))
+        # sql = "INSERT INTO project VALUES(" + str(newId) + ", '" + name + "', " + date + ")"
+        sql = "INSERT INTO project(name, date) VALUES('" + name + "', " + date + ")"
         print(sql)
         cursor.execute(sql)
+        connector.commit()
         connector.close()
+
+    def getProjectById(self, projectId):
+        connector = sqlite3.connect(self.DATABASE_NAME)
+        cursor = connector.cursor()
+        sql = "SELECT * FROM project WHERE id = {}".format(projectId)
+        cursor.execute(sql)
+        project = ProjectModel(cursor.fetchone()[0], cursor.fetchone()[1], cursor.fetchone()[2], [])
+        connector.close()
+        return project
+
+#Probably not needed (get last project ID)
+    # def getMaxId(self):
+    #     connector = sqlite3.connect(self.DATABASE_NAME)
+    #     cursor = connector.cursor()
+    #     sql = "SELECT MAX(id) from project"
+    #     cursor.execute(sql)
+    #     maxId = int(cursor.fetchone()[0])
+    #     connector.close()
+    #     return maxId

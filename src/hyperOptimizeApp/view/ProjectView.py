@@ -19,6 +19,10 @@ class ProjectView(tk.Frame):
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
+        self.topText = tk.StringVar()
+        self.topText.set("Project")
+
+        topLabel = tk.Label(self, textvariable=self.topText).pack(side=tk.TOP)
 
         self.config(bg="grey")
         self.place(relx=0, rely=0, height=height, width=width)
@@ -27,3 +31,6 @@ class ProjectView(tk.Frame):
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
+
+    def setTopText(self, text):
+        self.topText.set(text)

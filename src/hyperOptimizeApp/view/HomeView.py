@@ -16,18 +16,21 @@ class HomeView(tk.Frame):
         welcomeText = tk.Label(self, text='Welcome to the Neuronal Network optimizing tool! \n'
                                           'You can start with a new Project or load an existing one by clicking on'
                                           'it in the list below.').pack(side=tk.TOP)
-        
+
         # Generate a list of all Projects and show it.
         projectList = self.homeModel.getProjectList()
         projectListbox = tk.Listbox(self)
-        for item in projectList:
-            projectListbox.insert(tk.END, item)
+        for project in projectList:
+            projectListbox.insert(tk.END, project.projectName)
         projectListbox.pack(side=tk.TOP, pady=10)
 
         # Generate the Buttons and show them.
-        loadFileButton = tk.Button(self, text='New Project', command=lambda: self.controlFrame.setProjectFrame())
+        loadFileButton = tk.Button(self, text='New Project',
+                                   command=lambda: self.controlFrame.setProjectFrame(False, None))
         loadFileButton.pack(side=tk.BOTTOM, pady=2)
-        loadFileButton = tk.Button(self, text='Load Project')
+        loadFileButton = tk.Button(self, text='Load Project',
+                                   command=lambda:
+                                   self.controlFrame.setProjectFrame(True, str(projectListbox.get(tk.ACTIVE))))
         loadFileButton.pack(side=tk.BOTTOM, pady=2)
 
     def addControlFrame(self, frame):

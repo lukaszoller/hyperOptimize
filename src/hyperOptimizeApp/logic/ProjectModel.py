@@ -7,7 +7,8 @@ class ProjectModel:
         self.projectName = projectName
 
     # Loading old project
-    def __init__(self, projectName, dataInformation, modelList):
+    def __init__(self, projectId, projectName, dataInformation, modelList):
+        self.projectId = projectId
         self.projectName = projectName
         self.dataInformation = dataInformation
         self.modelList = modelList

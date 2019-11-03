@@ -2,6 +2,7 @@ import tkinter as tk  # python 3
 from tkinter import font as tkfont  # python 3
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
+from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 
 
 class ControlFrame(tk.Frame):
@@ -21,7 +22,8 @@ class ControlFrame(tk.Frame):
 
         # Fenster Zeichen
         tk.Button(self, text="Home", command=lambda: showFrame(self.homeView)).pack(side=tk.LEFT, padx=5)
-        tk.Button(self, text="New Project", command=lambda: showFrame(self.projectView)).pack(side=tk.LEFT, padx=5)
+        tk.Button(self, text="New Project", command=lambda: self.setProjectFrame(False, "New Project")).pack(
+            side=tk.LEFT, padx=5)
         tk.Button(self, text="Quit", command=mainView.close).pack(side=tk.LEFT, padx=5)
 
         #####################################################################################
@@ -36,7 +38,7 @@ class ControlFrame(tk.Frame):
 
         # Menu Objects in "File"
         mFile["tearoff"] = 0
-        mFile.add_command(label="New Project", command=lambda: showFrame(self.projectView))
+        mFile.add_command(label="New Project", command=lambda: self.setProjectFrame(False, "New Project"))
         mFile.add_command(label="Load Project")
         mFile.add_command(label="Save")
         mFile.add_separator()
@@ -56,7 +58,11 @@ class ControlFrame(tk.Frame):
     def changeStyle(self, color):
         self.config(background=color)
 
-    def setProjectFrame(self):
+    def setProjectFrame(self, newProject=bool, project=str):
+        if not newProject:
+            self.projectView.setTopText(project)
+        else:
+            self.projectView.setTopText(project)
         showFrame(self.projectView)
 
 
