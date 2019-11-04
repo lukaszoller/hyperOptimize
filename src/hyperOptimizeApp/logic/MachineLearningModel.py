@@ -6,6 +6,7 @@ class MachineLearningModel:
     # Constructor for new model
     def __init__(self):
         self.model = tf.keras.models.Sequential()
+        print("MachineLearningModel: MachineLearningModel-constructor executed: ", self.model)
 
     ## for available activation functions check https://keras.io/activations/
     ## for available loss functions check https://keras.io/losses/
@@ -18,30 +19,25 @@ class MachineLearningModel:
         learningRate = hyperParamsObj.learningRate
         decay = hyperParamsObj.learningRateDecay
 
-        """Takes hyperParameters as input and creates a model. Network has to have at least one hidden layer."""
-        try:
-            if len(nbrOfNodesArray) < 3:
-                    print("Error: Model has to have at least one hidden layer.")
-                    return
-        except TypeError:
-            print("Error: nbrOfNocesArray has no elements")
 
-        nbrCategories = nbrOfNodesArray[len(nbrOfNodesArray)-1]
+
         nbrFeatures = nbrOfNodesArray[0]
+        nbrCategories = nbrOfNodesArray[len(nbrOfNodesArray)-1]
         # Create unitsArray (Units are the connections to the next layer, i.e. nbrOfUnits for Layer X are nbr of nodes
         # of Layer X+1
         nbrOfUnitsArray = np.append(nbrOfNodesArray[1:len(nbrOfNodesArray)], nbrCategories)
 
         # Add first layer (outside loop because input_dim has to be specified
-        self.model.add(tf.keras.layers.Dense(input_dim=nbrFeatures, units=nbrOfUnitsArray[0], activation=activationArray[1]))
+        self.model.add(tf.keras.layers.Dense(input_dim=nbrFeatures, units=nbrOfUnitsArray[0]))
         # self.model.add(tf.keras.layers.Dropout(dropOutArray[1]))
 
-        # range(1, ...) "1" is needed to skip the first layer we built above
-        for i in range(0, len(nbrOfNodesArray)):
-            self.model.add(tf.keras.layers.Dense(units=nbrOfUnitsArray[i])) #, activation=activationArray[i]))      # activation per layer not specified, performance is much worse if it is specified
-            # add dropout to all layers, except the last
-            self.model.add(tf.keras.layers.Dropout(dropOutArray[i]))
-            print("Layer", i + 1, "of", len(nbrOfNodesArray), "built.")
+        # Check if Model has hidden layers. if not, skip the loop
+        if len(nbrOfNodesArray) >= 3:
+            for i in range(0, len(nbrOfNodesArray)):
+                self.model.add(tf.keras.layers.Dense(units=nbrOfUnitsArray[i])) #, activation=activationArray[i]))      # activation per layer not specified, performance is much worse if it is specified
+                # add dropout to all layers, except the last
+                self.model.add(tf.keras.layers.Dropout(dropOutArray[i]))
+                print("Layer", i + 1, "of", len(nbrOfNodesArray), "built.")
 
         # Add last layer
         self.model.add(tf.keras.layers.Dense(input_dim=nbrCategories, units=nbrOfUnitsArray[-1]))
@@ -51,9 +47,9 @@ class MachineLearningModel:
 
         # define modelOptimizer and learning rate
         modelOptimizerObj = getattr(tf.keras.optimizers, modelOptimizer)(lr=learningRate, decay= decay)
-        modelOptimizerObj
 
         self.model.compile(optimizer=modelOptimizerObj, loss=lossFunction)
+        print("MachineLearningModel.createNetwork: model compiled")
         self.model.summary()
 
     def trainNetwork(self, x, y, epochs):
