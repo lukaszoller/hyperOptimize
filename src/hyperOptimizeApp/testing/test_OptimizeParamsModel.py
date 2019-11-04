@@ -26,11 +26,11 @@ class TestOptimizeParamsModel():
         rangeForHyperParamsObj.learningRateDecayDict = {'min': 1e-7, 'max': 1e-5}
         rangeForHyperParamsObj.learningRateDict = {'min': 1e-5, 'max': 1e-1}
         rangeForHyperParamsObj.learningRateLogBool = True
-        rangeForHyperParamsObj.nbrOfHiddenLayersDict = {'min': 1, 'max': 15}
+        rangeForHyperParamsObj.nbrOfHiddenLayersDict = {'min': 1, 'max': 5}
         rangeForHyperParamsObj.nbrOfHiddenUnitsDict = {'min': 5, 'max': 10}
         rangeForHyperParamsObj.nbrOfCategories = 10
 
-        nbrOfModels = 100
+        nbrOfModels = 10
 
         optimizeParamsModel = OptimizeParamsModel(1,2,3,4)
         hyperParamsObjList = optimizeParamsModel.createHyperParamsListRandom(rangeForHyperParamsObj, nbrOfModels)
