@@ -165,14 +165,30 @@ class OptimizeParamsModel:
             # store error data
             self.errorList.append(errorSum)
 
+            # Store running time measurement
             runningTime = time.clock() - startTime
             self.runningTimeList.append(runningTime)
             # print progress of loop
             print("************ Model", i+1, "from", l, "built. *************")
 
+        #####################################################################################
         # Save running time measurements
+        #####################################################################################
         sl = SaverLoader()
         sl.saveTimeMeasurementData(hyperParamsObjList, self.runningTimeList)
+
+        #####################################################################################
+        # Save running time accuracy
+        #####################################################################################
+        # get running time accuracy
+        etm = EstimateTimeModel()
+        estimate = etm.estimateTime(hyperParamsObjList)
+        actualRunningTime = sum(self.runningTimeList)
+        # Accuracy: Difference between estimate in relation to actual time and 1
+        accuracy = abs(1-etm/actualRunningTime)
+        # store accuracy
+        sl = SaverLoader()
+        sl.storeEstimateTimeAccuracy()
 
 
         # Print stuff for debugging

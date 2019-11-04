@@ -35,3 +35,13 @@ class EstimateTimeModel:
         return predictionTimeForAllModels
         # return estTimeModel.predict(xPoly)        ## Just to check if training y are more or less like prediction
 
+    def getEstimateTimeAccuracy(self, nbrOfValuesForMean):
+        """Returns an accuracy value for self.estimateTime.
+        The computation of the accuracy is just the mean of the accuracy of the last X actual accuracies where X has to
+        be inputted in the function."""
+        sl = SaverLoader()
+        accuracyList = sl.estimateTimeAccuracyList
+        # If nbr of accuracy measurements is smaller than nbrOfValuesForMean, just get the mean of all the measurements
+        if len(accuracyList)<nbrOfValuesForMean:
+            return sum(accuracyList)/len(accuracyList)
+        return sum(accuracyList[-nbrOfValuesForMean:])/nbrOfValuesForMean

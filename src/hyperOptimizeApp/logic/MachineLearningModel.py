@@ -11,6 +11,7 @@ class MachineLearningModel:
     ## for available activation functions check https://keras.io/activations/
     ## for available loss functions check https://keras.io/losses/
     def createNetwork(self, hyperParamsObj):
+        """Adds layers to self.model and compiles the model."""
         nbrOfNodesArray = hyperParamsObj.nbrOfNodesArray
         activationArray = hyperParamsObj.activationArray
         dropOutArray = hyperParamsObj.dropOutArray

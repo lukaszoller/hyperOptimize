@@ -10,7 +10,7 @@ class SaverLoader:
     projectDb = ProjectDatabase()
 
     def __init__(self):
-        pass
+        self.estimateTimeAccuracyList = list()           # delete this after db implementation of running time accuracy
 
     def setFileName(self, fileName):
         self.fileName = fileName
@@ -90,3 +90,7 @@ class SaverLoader:
 
     def saveProjectList(self):
         print("Empty method: SaverLoader.saveProjectList")
+
+
+    def storeEstimateTimeAccuracy(self, accuracyValue):
+        self.estimateTimeAccuracyList.append(accuracyValue)
