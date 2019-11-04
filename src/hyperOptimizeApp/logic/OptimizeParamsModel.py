@@ -1,9 +1,10 @@
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
-from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
+from astropy.table import Table, Column
 import numpy as np
 import time
+import matplotlib.pyplot as plt
 
 from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 
@@ -12,7 +13,8 @@ class OptimizeParamsModel:
 
     def __init__(self, xTrain, yTrain, xTest, yTest):
         self.modelList = list()
-        self.errorList = list()
+        self.successRate = list()
+        self.resultData = None
         self.runningTimeList = list()
         self.xTrain = xTrain
         self.yTrain = yTrain
@@ -36,7 +38,6 @@ class OptimizeParamsModel:
         # Prepare arrays with values for dicts
         #############################################################
 
-        # hiddenUnitsArray
         # 1. Choose number of layers
         nbrOfLayersMin = rangeForHyperparamsDict.nbrOfHiddenLayersDict.get('min')
         nbrOfLayersMMax = rangeForHyperparamsDict.nbrOfHiddenLayersDict.get('max')
@@ -103,10 +104,10 @@ class OptimizeParamsModel:
             tmpHyperParamsObj.modelOptimizer = modelOptimizerArray[i]
             # Activation function: Choose from the range of activation functions with the above randomly created indexes the activation Function for this model
             tmpHyperParamsObj.activationFunction = rangeForHyperparamsDict.activationArray[indexForActivationArray[i]]
-            # Activation function per Layer: Create Array with length nbrOfLayersArray[i] and all values = activationFunction <<<--- This results in the same activation Function per Layer for each model
-            tmpHyperParamsObj.activationArray = np.full(tmpNbrOfLayers, rangeForHyperparamsDict.activationArray[indexForActivationArray[i]])
-            # Drop out rate per Layer: Create Array with length nbrOfLayersArray[i] and all values = dropOutRate[i] <<<--- This results in the same number of nodes per Layer for each model
-            tmpHyperParamsObj.dropOutArray = np.full(tmpNbrOfLayers, dropOutArray[i])
+            # Activation function for all layers of one model
+            tmpHyperParamsObj.activationFunction = rangeForHyperparamsDict.activationArray[indexForActivationArray[i]]
+            # Drop out rate for all layers of one model
+            tmpHyperParamsObj.dropOutRate = dropOutArray[i]
             # Loss function
             tmpHyperParamsObj.lossFunction = lossFunctionArray[i]
             # learning rate decay
@@ -133,8 +134,8 @@ class OptimizeParamsModel:
             #####################################################################################
             # create model
             #####################################################################################
-            model = MachineLearningModel()
-            model.createNetwork(hyperParamsObj)
+            model = MachineLearningModel(hyperParamsObj)
+            model.createNetwork()
             print("OptimizeParamsModel.evaluateModels: Model created.", model)
 
             #####################################################################################
@@ -157,13 +158,14 @@ class OptimizeParamsModel:
             comparisonArray = y_PredictOneCol != y_TestOneCol
             errorSum = np.sum(comparisonArray)
 
+
             #####################################################################################
             # Store data from this loop
             #####################################################################################
             # store model
             self.modelList.append(model)
-            # store error data
-            self.errorList.append(errorSum)
+            # store success Rate (Percentage of correct predictions)
+            self.successRate.append(1-errorSum/len(comparisonArray))
 
             # Store running time measurement
             runningTime = time.clock() - startTime
@@ -185,10 +187,11 @@ class OptimizeParamsModel:
         estimate = etm.estimateTime(hyperParamsObjList)
         actualRunningTime = sum(self.runningTimeList)
         # Accuracy: Difference between estimate in relation to actual time and 1
-        accuracy = abs(1-etm/actualRunningTime)
+
+        accuracy = abs(1-estimate/actualRunningTime)
         # store accuracy
         sl = SaverLoader()
-        sl.storeEstimateTimeAccuracy()
+        sl.storeEstimateTimeAccuracy(accuracy)
 
 
         # Print stuff for debugging
@@ -202,6 +205,54 @@ class OptimizeParamsModel:
 
         for h in hyperParamsObjList:
             print(h.learningRate)
+
+    def getResultData(self):
+        """Creates a table with all results. Columns: hyperparams & error, Rows: values for each model. The table will
+        be stored in self.resultData."""
+
+        # fill result table with data
+        l = len(self.modelList)
+        rows = []                       # code for table construction from https://docs.astropy.org/en/stable/table/#construct-table
+        # Create array with cols = hyperParams & error; rows = values per model
+        for i in range(0, l):
+            # get model
+            model = self.modelList[i]
+            h = model.hyperParamsObj
+
+            # get data for each model
+            nbrOfLayers = len(h.nbrOfNodesArray)
+            if nbrOfLayers < 3:
+                nbrOfNodesPerHiddenLayer = 0
+            else: nbrOfNodesPerHiddenLayer = h.nbrOfNodesArray[1]
+            activationFunction = h.activationFunction
+            dropOutRate = h.dropOutRate
+            lossFunction = h.lossFunction
+            modelOptimizer = h.modelOptimizer
+            learningRate = h.learningRate
+            learningRateDecay = h.learningRateDecay
+            successRate = self.successRate[i]
+
+            # create new row
+            row = (nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction, dropOutRate, lossFunction, modelOptimizer,
+                   learningRate, learningRateDecay, successRate)
+
+            # add row to row object
+            rows.append(row)
+
+        # Create table
+        t = Table(rows=rows, names=['nbrOfLayers', 'nbrOfNodesPerHiddenLayer', 'activationFunction', 'dropOutRate',
+                                    'lossFunction', 'modelOptimizer', 'learningRate', 'learningRateDecay', 'successRate'])
+        # Store table in self
+        self.resultData = t
+
+    def visualizeResultsNbrOfLayers(self):
+        t = self.resultData
+        t.sort('nbrOfLayers')
+
+        plt.scatter(t['nbrOfLayers'], t['successRate'], s=10*t['nbrOfNodesPerHiddenLayer'])
+        plt.xlabel('Number of Layers')
+        plt.ylabel('Success Rate')
+        plt.show()
 
 
 

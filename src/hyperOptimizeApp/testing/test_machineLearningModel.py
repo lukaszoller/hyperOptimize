@@ -21,8 +21,8 @@ class TestMachineLearningModel():
 
         hyperParamsObj = HyperParamsObj()
         hyperParamsObj.nbrOfNodesArray = nbrOfNodesArray
-        hyperParamsObj.activationArray = activationArray
-        hyperParamsObj.dropOutArray = dropOutArray
+        hyperParamsObj.activationFunction = activationArray
+        hyperParamsObj.dropOutRate = dropOutArray
         hyperParamsObj.lossFunction = lossFunction
         hyperParamsObj.modelOptimizer = modelOptimizer
         hyperParamsObj.learningRate = learningRate

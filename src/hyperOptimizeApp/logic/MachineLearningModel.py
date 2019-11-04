@@ -4,21 +4,22 @@ import numpy as np
 
 class MachineLearningModel:
     # Constructor for new model
-    def __init__(self):
+    def __init__(self, hyperParamsObj):
         self.model = tf.keras.models.Sequential()
+        self.hyperParamsObj = hyperParamsObj
         print("MachineLearningModel: MachineLearningModel-constructor executed: ", self.model)
 
     ## for available activation functions check https://keras.io/activations/
     ## for available loss functions check https://keras.io/losses/
-    def createNetwork(self, hyperParamsObj):
+    def createNetwork(self):
         """Adds layers to self.model and compiles the model."""
-        nbrOfNodesArray = hyperParamsObj.nbrOfNodesArray
-        activationArray = hyperParamsObj.activationArray
-        dropOutArray = hyperParamsObj.dropOutArray
-        lossFunction = hyperParamsObj.lossFunction
-        modelOptimizer = hyperParamsObj.modelOptimizer
-        learningRate = hyperParamsObj.learningRate
-        decay = hyperParamsObj.learningRateDecay
+        nbrOfNodesArray = self.hyperParamsObj.nbrOfNodesArray
+        activationFunction = self.hyperParamsObj.activationFunction
+        dropOutRate = self.hyperParamsObj.dropOutRate
+        lossFunction = self.hyperParamsObj.lossFunction
+        modelOptimizer = self.hyperParamsObj.modelOptimizer
+        learningRate = self.hyperParamsObj.learningRate
+        decay = self.hyperParamsObj.learningRateDecay
 
 
 
@@ -37,14 +38,15 @@ class MachineLearningModel:
             for i in range(0, len(nbrOfNodesArray)):
                 self.model.add(tf.keras.layers.Dense(units=nbrOfUnitsArray[i])) #, activation=activationArray[i]))      # activation per layer not specified, performance is much worse if it is specified
                 # add dropout to all layers, except the last
-                self.model.add(tf.keras.layers.Dropout(dropOutArray[i]))
+                self.model.add(tf.keras.layers.Dropout(dropOutRate))
                 print("Layer", i + 1, "of", len(nbrOfNodesArray), "built.")
 
         # Add last layer
         self.model.add(tf.keras.layers.Dense(input_dim=nbrCategories, units=nbrOfUnitsArray[-1]))
 
         # Specify activation function
-        self.model.add(tf.keras.layers.Activation('sigmoid'))
+        print(activationFunction)
+        self.model.add(tf.keras.layers.Activation(activationFunction))
 
         # define modelOptimizer and learning rate
         modelOptimizerObj = getattr(tf.keras.optimizers, modelOptimizer)(lr=learningRate, decay= decay)

@@ -4,32 +4,8 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.python.keras.utils import np_utils
 import random
+import matplotlib.pyplot as plt
 
-# http://faroit.com/keras-docs/1.2.0/getting-started/sequential-model-guide/
-
-# Normalize the data attributes for the Iris dataset.
-from sklearn.datasets import load_iris
-from sklearn import preprocessing
-# load the iris dataset
-iris = load_iris()
-print(iris.data.shape)
-# separate the data from the target attributes
-X = iris.data
-y = iris.target
-# normalize the data attributes
-normalized_X = preprocessing.normalize(X)
-
-# Normalize the data attributes for the Iris dataset.
-from sklearn.datasets import load_iris
-from sklearn import preprocessing
-# load the iris dataset
-iris = load_iris()
-print(iris.data.shape)
-# separate the data from the target attributes
-X = iris.data
-y = iris.target
-# normalize the data attributes
-normalized_X = preprocessing.normalize(X)
-
-print(X)
-print(normalized_X)
+a = np.array([1,2,3,4,5,6,7,8])
+b = np.array([1,2,3,4,5,6,7,8])
+c= np.array([1,2,3,4,5,6,7,8])
