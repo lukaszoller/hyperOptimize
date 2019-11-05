@@ -249,11 +249,54 @@ class OptimizeParamsModel:
         t = self.resultData
         t.sort('nbrOfLayers')
 
-        plt.scatter(t['nbrOfLayers'], t['successRate'], s=10*t['nbrOfNodesPerHiddenLayer'])
+        # nbrOfLayers
+        plt.subplot(241)
+        plt.scatter(t['nbrOfLayers'], t['successRate'])
         plt.xlabel('Number of Layers')
         plt.ylabel('Success Rate')
-        plt.show()
 
+        # nbrOfNodesPerHiddenLayer
+        plt.subplot(242)
+        plt.scatter(t['nbrOfNodesPerHiddenLayer'], t['successRate'])
+        plt.xlabel('Number of nodes per hidden Layer')
+        plt.ylabel('Success Rate')
+
+        # activationFunction
+        plt.subplot(243)
+        plt.scatter(t['activationFunction'], t['successRate'])
+        plt.xlabel('Activation Function')
+        plt.ylabel('Success Rate')
+
+        # dropOutRate
+        plt.subplot(244)
+        plt.scatter(t['dropOutRate'], t['successRate'])
+        plt.xlabel('Drop out rate')
+        plt.ylabel('Success Rate')
+
+        # lossFunction
+        plt.subplot(245)
+        plt.scatter(t['lossFunction'], t['successRate'])
+        plt.xlabel('Loss function')
+        plt.ylabel('Success Rate')
+
+        # modelOptimizer
+        plt.subplot(246)
+        plt.scatter(t['modelOptimizer'], t['successRate'])
+        plt.xlabel('Model optimizer')
+        plt.ylabel('Success Rate')
+
+        # learningRate
+        plt.subplot(247)
+        plt.scatter(t['learningRate'], t['successRate'])
+        plt.xlabel('Learning rate')
+        plt.ylabel('Success Rate')
+
+        # learningRateDecay
+        plt.subplot(248)
+        plt.scatter(t['learningRateDecay'], t['successRate'])
+        plt.xlabel('Learning rate decay')
+        plt.ylabel('Success Rate')
+        plt.show()
 
 
 
