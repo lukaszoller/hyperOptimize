@@ -1,17 +1,11 @@
-from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
+from src.hyperOptimizeApp.logic.ProjectInteractionModel import ProjectInteractionModel
 from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 
 
 class HomeModel:
-    def __init__(self):
-        saverLoader = SaverLoader()
-        self.projectList = saverLoader.getProjectList()
-
-    def createNewProject(self, projectName):
-        self.projectList.append(ProjectModel(projectName))
-
-    def loadProject(self, listIndex):
-        return self.projectList.__getitem__(listIndex)
+    def __init__(self, interactionModel=ProjectInteractionModel):
+        self.projectInteract = ProjectInteractionModel()
+        self.projectList = self.projectInteract.getProjectList()
 
     def getProjectList(self):
         return self.projectList

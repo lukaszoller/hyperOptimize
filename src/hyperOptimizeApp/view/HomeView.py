@@ -18,11 +18,11 @@ class HomeView(tk.Frame):
                                           'it in the list below.').pack(side=tk.TOP)
 
         # Generate a list of all Projects and show it.
-        projectList = self.homeModel.getProjectList()
-        projectListbox = tk.Listbox(self)
-        for project in projectList:
-            projectListbox.insert(tk.END, project.projectName)
-        projectListbox.pack(side=tk.TOP, pady=10)
+        self.projectList = self.homeModel.getProjectList()
+        self.projectListbox = tk.Listbox(self)
+        for project in self.projectList:
+            self.projectListbox.insert(tk.END, project)
+        self.projectListbox.pack(side=tk.TOP, pady=10)
 
         # Generate the Buttons and show them.
         loadFileButton = tk.Button(self, text='New Project',
@@ -30,8 +30,15 @@ class HomeView(tk.Frame):
         loadFileButton.pack(side=tk.BOTTOM, pady=2)
         loadFileButton = tk.Button(self, text='Load Project',
                                    command=lambda:
-                                   self.controlFrame.setProjectFrame(True, str(projectListbox.get(tk.ACTIVE))))
+                                   self.passProject())
         loadFileButton.pack(side=tk.BOTTOM, pady=2)
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
+
+    def passProject(self):
+        projectNumber = self.projectListbox.curselection()[0]
+        project = self.projectList.__getitem__(projectNumber)
+        self.controlFrame.setProjectFrame(True, project)
+
+
