@@ -3,9 +3,11 @@ from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
+import cpuinfo
 
 class EstimateTimeModel:
     def __init__(self):
+        """The constructor loads already the estimate time dataset for the different functions."""
         saverLoader = SaverLoader()
         (x,y) = saverLoader.getEstTimeData()
         self.x = x
@@ -24,10 +26,15 @@ class EstimateTimeModel:
         # With training data: Create the linear model and normalize data
         estTimeModel = LinearRegression(normalize=True).fit(xPoly, self.y)
 
-        # Add polynomial features to hyperParameters
+        # Convert hyperParamsObjList to matrix
         sl = SaverLoader()
-        hyperParams = sl.hyperParamsListToData(hyperParamsObjList)
-        hyperParamsPoly = transformer.fit_transform(np.array(hyperParams))
+        hyperParamsData = sl.hyperParamsListToData(hyperParamsObjList)
+        # Add cpu speed data to hyperParamsData
+        cpuSpeed = cpuinfo.get_cpu_info()['hz_actual_raw'][0]
+        newLineWithCpuSpeed = np.full((len(hyperParamsData[:,0]),1), cpuSpeed)
+        hyperParamsData = np.append(hyperParamsData, newLineWithCpuSpeed, axis=1)
+        # Add polynomial features to hyperParameters
+        hyperParamsPoly = transformer.fit_transform(np.array(hyperParamsData))
         # predict Time for the whole table (for all hyperParamsObj)
         predictionTable = estTimeModel.predict(hyperParamsPoly)
         # sum up prediction time of all models
@@ -45,3 +52,14 @@ class EstimateTimeModel:
         if len(accuracyList)<nbrOfValuesForMean:
             return sum(accuracyList)/len(accuracyList)
         return sum(accuracyList[-nbrOfValuesForMean:])/nbrOfValuesForMean
+
+
+    def getEstimateNbrOfModels(self, availableTime):
+        """Tells how many models can approximately be fittet for a given time. The approximation is just time over mean
+        of models fitted so far."""
+
+        # Get mean of model running time
+        meanModelRunningTime = sum(self.y)/len(self.y)
+
+        # return nbr of models which can be trained in availableTime
+        return np.round(availableTime/meanModelRunningTime)

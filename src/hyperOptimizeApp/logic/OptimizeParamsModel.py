@@ -193,7 +193,6 @@ class OptimizeParamsModel:
         sl = SaverLoader()
         sl.storeEstimateTimeAccuracy(accuracy)
 
-
         # Print stuff for debugging
         print("######################### Stats from OptimizeModel.evaluateModels ############################")
         print("HyperParams: nbrOfLayers")
@@ -205,6 +204,8 @@ class OptimizeParamsModel:
 
         for h in hyperParamsObjList:
             print(h.learningRate)
+
+        print("Estimated time: ", estimate, " actual time: ", actualRunningTime)
 
     def getResultData(self):
         """Creates a table with all results. Columns: hyperparams & error, Rows: values for each model. The table will

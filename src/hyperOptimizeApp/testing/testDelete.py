@@ -5,19 +5,14 @@ import numpy as np
 from tensorflow.python.keras.utils import np_utils
 import random
 import matplotlib.pyplot as plt
+import multiprocessing
+import cpuinfo
+import csv
 
-x = [1,2,3,4,5,6,7]
-y1 = [1,2,3,4,5,6,7]
-y2 = [9,8,7,6,5,4,3]
+d = np.genfromtxt('estTimeData.csv', delimiter=',', skip_header=False)
+y = d[:, -1]
+x = d[:, 0:len(d[1, :]) - 1]
+print("x: ", x)
+print("y: ", y)
 
-plt.subplot(121)  #sublot(Anzahl Zeilen Anzahl Spalten Bild Nummer)
-plt.plot(x, y1)
-plt.title('Sinus')
-plt.xlim([0,2*np.pi])
 
-plt.subplot(122)
-plt.plot(x, y2)
-plt.title('Cosinus')
-plt.xlim([0,2*np.pi])
-
-plt.show()

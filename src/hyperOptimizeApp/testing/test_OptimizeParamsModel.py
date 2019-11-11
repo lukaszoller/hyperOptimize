@@ -26,11 +26,11 @@ class TestOptimizeParamsModel():
         rangeForHyperParamsObj.learningRateDecayDict = {'min': 1e-7, 'max': 1e-5}
         rangeForHyperParamsObj.learningRateDict = {'min': 1e-5, 'max': 1e-1}
         rangeForHyperParamsObj.learningRateLogBool = True
-        rangeForHyperParamsObj.nbrOfHiddenLayersDict = {'min': 1, 'max': 5}
-        rangeForHyperParamsObj.nbrOfHiddenUnitsDict = {'min': 5, 'max': 10}
+        rangeForHyperParamsObj.nbrOfHiddenLayersDict = {'min': 1, 'max': 50}
+        rangeForHyperParamsObj.nbrOfHiddenUnitsDict = {'min': 5, 'max': 100}
         rangeForHyperParamsObj.nbrOfCategories = 10
 
-        nbrOfModels = 10
+        nbrOfModels = 200
 
         optimizeParamsModel = OptimizeParamsModel(1,2,3,4)
         hyperParamsObjList = optimizeParamsModel.createHyperParamsListRandom(rangeForHyperParamsObj, nbrOfModels)
@@ -72,6 +72,7 @@ class TestOptimizeParamsModel():
             print("################################## Model", i+1, "##################################")
             print("Running time: ", optimizeParamsModel.runningTimeList[i])
             print("Success rate: ", optimizeParamsModel.successRate[i])
+            print("Estimated time: ", )
 
         #  Create result data in optimizeParamsModel
         optimizeParamsModel.getResultData()

@@ -59,9 +59,7 @@ class MachineLearningModel:
         self.model.fit(x, y, epochs)
 
     def trainNetwork(self, x, y):
-        print("MachineLearningModel.trainNetwork: Shape of x:", np.shape(x))
-        print("MachineLearningModel.trainNetwork: Shape of y:", np.shape(y))
-        self.model.fit(x, y)
+        self.model.fit(x, y,use_multiprocessing=False) #Multiprocessing = true has no effect on running time
 
     def evaluateModel(self, x, y):
         self.model.evaluate(x, y)
