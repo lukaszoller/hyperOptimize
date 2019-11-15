@@ -107,3 +107,6 @@ class SaverLoader:
 
     def storeEstimateTimeAccuracy(self, accuracyValue):
         self.estimateTimeAccuracyList.append(accuracyValue)
+
+    def saveModelToDatabase(self, model):
+        self.projectDb

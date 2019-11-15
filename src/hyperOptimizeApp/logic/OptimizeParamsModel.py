@@ -1,6 +1,7 @@
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
+from src.hyperOptimizeApp.persistence import ProjectDatabase
 from astropy.table import Table, Column
 import numpy as np
 import time
@@ -164,6 +165,7 @@ class OptimizeParamsModel:
             #####################################################################################
             # store model
             self.modelList.append(model)
+
             # store success Rate (Percentage of correct predictions)
             self.successRate.append(1-errorSum/len(comparisonArray))
 
@@ -193,7 +195,15 @@ class OptimizeParamsModel:
         sl = SaverLoader()
         sl.storeEstimateTimeAccuracy(accuracy)
 
+        #####################################################################################
+        # Save model to filesystem
+        #####################################################################################
+        # pd = ProjectDatabase()
+        # pd.saveModel(projectID, model)                <----------------- Create model table in database first --------------------------------------------------------
+
+        #####################################################################################
         # Print stuff for debugging
+        #####################################################################################
         print("######################### Stats from OptimizeModel.evaluateModels ############################")
         print("HyperParams: nbrOfLayers")
         for h in hyperParamsObjList:

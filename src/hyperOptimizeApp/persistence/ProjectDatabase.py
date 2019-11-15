@@ -1,6 +1,6 @@
-import datetime
 import glob
 import sqlite3
+import datetime
 
 from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 
@@ -16,6 +16,9 @@ class ProjectDatabase:
         # self.addProject("Project 1")
         # self.addProject("Project 2")
         # self.addProject("Project 3")
+
+        # set pathToModels where Models are saved on filesystem
+        self.pathToModels = "/savedModels/"
 
     def getAllProjects(self):
         connector = sqlite3.connect(self.DATABASE_NAME)
@@ -60,6 +63,12 @@ class ProjectDatabase:
         connector.commit()
         connector.close()
 
+    def saveModel(self, projectID, model):
+        pathToModels = self.pathToModels
+        time = datetime.now()
+        sql = "INSERT INTO model(projectID, time, pathToModels) VALUES(" + projectID + ", " + time + ", " + pathToModels + ")"
+        self.writeDB(sql)
+
 #Probably not needed (get last project ID)
     # def getMaxId(self):
     #     connector = sqlite3.connect(self.DATABASE_NAME)
@@ -69,3 +78,4 @@ class ProjectDatabase:
     #     maxId = int(cursor.fetchone()[0])
     #     connector.close()
     #     return maxId
+
