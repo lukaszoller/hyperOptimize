@@ -4,6 +4,7 @@ from tkinter.filedialog import askopenfile
 
 from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
+from src.hyperOptimizeApp.logic.ProjectInteractionModel import ProjectInteractionModel
 
 
 def openFile():
@@ -18,6 +19,7 @@ class ProjectView(tk.Frame):
 
     controlFrame = None
     project = ProjectModel()
+    projectInteractor = ProjectInteractionModel()
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
@@ -38,6 +40,8 @@ class ProjectView(tk.Frame):
         deleteButton = tk.Button(self, text="Delete Project",
                                  command=lambda: self.confirmationBox()).pack(side=tk.BOTTOM, padx=5)
 
+        self.modelListbox = tk.Listbox(self)
+
     def setProject(self, project=ProjectModel):
         self.project = project
 
@@ -50,4 +54,11 @@ class ProjectView(tk.Frame):
     def confirmationBox(self):
         answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Project?")
         if answer == 1:
-            print("Project Deleted")
+            if self.project is not None:
+                self.projectInteractor.deleteProjectById(self.project.projectId)
+                print("Project deleted")
+            else:
+                print("no project selected")
+        else:
+            print("nothing done.")
+

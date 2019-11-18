@@ -11,3 +11,6 @@ class ProjectInteractionModel:
 
     def getProjectById(self, projectId=int):
         return self.projectDB.getProjectById(projectId)
+
+    def deleteProjectById(self, projectId):
+        self.projectDB.deleteProjectById(projectId)
