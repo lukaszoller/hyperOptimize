@@ -198,8 +198,9 @@ class OptimizeParamsModel:
         #####################################################################################
         # Save model to filesystem
         #####################################################################################
-        # pd = ProjectDatabase()
-        # pd.saveModel(projectID, model)                <----------------- Create model table in database first --------------------------------------------------------
+        pd = ProjectDatabase()
+        projectID = 666                                # delete after implementation of projectID   <-----------------------------------------------------------------
+        pd.saveModel(projectID, model)                 # <----------------- Create model table in database first --------------------------------------------------------
 
         #####################################################################################
         # Print stuff for debugging
