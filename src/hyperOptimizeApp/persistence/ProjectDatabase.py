@@ -1,6 +1,7 @@
-import datetime
 import glob
 import sqlite3
+import datetime
+import tensorflow as tf
 
 from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 
@@ -13,9 +14,14 @@ class ProjectDatabase:
         if not glob.glob(self.DATABASE_NAME):
             sql = "CREATE TABLE project(id INTEGER PRIMARY KEY, name VARCHAR NOT NULL, date DATE NOT NULL)"
             self.writeDB(sql)
+            sql = "CREATE TABLE model(id INTEGER PRIMARY KEY, date DATE NOT NULL, serializedModel TEXT)"
+            self.writeDB(sql)
         # self.addProject("Project 1")
         # self.addProject("Project 2")
         # self.addProject("Project 3")
+
+        # set pathToModels where Models are saved on filesystem
+        self.pathToModels = "/savedModels/"
 
     def getAllProjects(self):
         connector = sqlite3.connect(self.DATABASE_NAME)
@@ -60,6 +66,21 @@ class ProjectDatabase:
         connector.commit()
         connector.close()
 
+    def saveModel(self, id, model):
+        model_json = model.to_json()
+        time = datetime.now()
+        sql = "INSERT INTO model(id, time, model_json) VALUES(" + id + ", " + time + ", " + model_json + ")"
+        self.writeDB(sql)
+
+    def getModelByID(self, id):
+        connector = sqlite3.connect(self.DATABASE_NAME)
+        cursor = connector.cursor()
+        sql = "SELECT model_json FROM model WHERE id = {}".format(id)
+        model_json = cursor.execute(sql)
+        model = tf.keras.models.model_from_json(model_json)
+        connector.close()
+        return model
+
 #Probably not needed (get last project ID)
     # def getMaxId(self):
     #     connector = sqlite3.connect(self.DATABASE_NAME)
@@ -69,3 +90,4 @@ class ProjectDatabase:
     #     maxId = int(cursor.fetchone()[0])
     #     connector.close()
     #     return maxId
+
