@@ -26,21 +26,37 @@ class ProjectView(tk.Frame):
         self.topText = tk.StringVar()
         self.topText.set("Project")
 
-        topLabel = tk.Label(self, textvariable=self.topText).pack(side=tk.TOP)
+        rowCount = 0
 
-        self.projectFile = tk.StringVar().set(self.project.projectName)
-        fileLabel = tk.Label(self, textvariable=self.projectFile)
+        # ROW 1
+        topLabel = tk.Label(self, textvariable=self.topText).grid(row=rowCount, column=3)
+        rowCount += 1
+
+        # ROW 2
+        nameLabel = tk.Label(self, text="Project Name").grid(row=rowCount, column=2)
+        nameEntry = tk.Entry(self)
+        nameEntry.insert(tk.END, self.project.projectName)
+        nameEntry.grid(row=rowCount, column=3)
+        rowCount += 1
+
+        # ROW 3
+        fileLabel = tk.Label(self, text="Data CSV").grid(row=rowCount, column=2)
+        loadFileButton = tk.Button(self, text='Open', command=lambda: openFile())
+        loadFileButton.grid(row=rowCount, column=3, pady=10)
+        rowCount += 1
+
+        # ROW 4
+        self.modelListbox = tk.Listbox(self)
+        rowCount += 1
+
+        # ROW 5
+        saveButton = tk.Button(self, text="Save Project").grid(row=rowCount, padx=5)
+        deleteButton = tk.Button(self, text="Delete Project",
+                                 command=lambda: self.confirmationBox()).grid(row=rowCount, column=5, padx=5)
+
 
         self.config(bg="grey")
         self.place(relx=0, rely=0, height=height, width=width)
-        loadFileButton = tk.Button(self, text='Open', command=lambda: openFile())
-        loadFileButton.pack(side=tk.TOP, pady=10)
-
-        saveButton = tk.Button(self, text="Save Project").pack(side=tk.BOTTOM, padx=5)
-        deleteButton = tk.Button(self, text="Delete Project",
-                                 command=lambda: self.confirmationBox()).pack(side=tk.BOTTOM, padx=5)
-
-        self.modelListbox = tk.Listbox(self)
 
     def setProject(self, project=ProjectModel):
         self.project = project
