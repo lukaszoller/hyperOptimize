@@ -1,5 +1,5 @@
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 
 
 class MachineLearningModel:
@@ -75,6 +75,9 @@ class MachineLearningModel:
 
     def predict(self, x):
         return np.array(self.model.predict(x))
+
+    def to_json(self):
+        return self.model.to_json()
 
 a = [1,2,3,3,4]
 b = np.append(a, 10)

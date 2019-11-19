@@ -68,10 +68,12 @@ class ProjectDatabase:
         connector.commit()
         connector.close()
 
-    def saveModel(self, model=MachineLearningModel, projectId=int):
+    def saveModel(self, id, model, projectID):
         model_json = model.to_json()
         date = datetime.date.today().strftime('%Y-%m-%d')
-        sql = "INSERT INTO model(date, serializedModel) VALUES(" + date + ", " + model_json + ")"
+        id = str(id)
+        projectID = str(projectID)
+        sql = "INSERT INTO model(id, date, serializedModel, projectID) VALUES(" + id + ", " + date + ", " + model_json + ", " + projectID + ")"
         self.writeDB(sql)
 
     def getModelByID(self, id):

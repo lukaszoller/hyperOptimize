@@ -11,4 +11,4 @@ import cpuinfo
 import csv
 
 
-print(datetime.now())
+print(str(11))
