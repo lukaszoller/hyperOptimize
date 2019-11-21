@@ -1,7 +1,5 @@
-from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 import numpy as np
 from src.hyperOptimizeApp.persistence.ProjectDatabase import ProjectDatabase
-import pandas as pd
 import cpuinfo
 
 

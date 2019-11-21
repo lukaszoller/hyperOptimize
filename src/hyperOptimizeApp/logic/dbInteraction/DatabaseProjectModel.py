@@ -1,5 +1,3 @@
-from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
-
 class ProjectModel:
 
     # Creation of new project
@@ -7,11 +5,10 @@ class ProjectModel:
     projectName = ""
 
     # Loading old project
-    def __init__(self, projectId=int, projectName="", dataInformation=None, modelList=None, dataPath=None):
+    def __init__(self, projectId=int, projectName="", dataInformation=None, dataPath=None):
         self.projectId = projectId
         self.projectName = projectName
         self.dataInformation = dataInformation
-        self.modelList = modelList
         self.dataPath = dataPath
 
     def __str__(self):
@@ -40,15 +37,6 @@ class ProjectModel:
 
     def getDataInformation(self):
         return self.dataInformation
-
-    def addModel(self, model=MachineLearningModel):
-        self.modelList.add(model)
-
-    def removeModel(self, model=MachineLearningModel):
-        self.modelList.remove(model)
-
-    def getModelList(self):
-        return self.modelList
 
     def setDataPath(self, path):
         self.dataPath = path

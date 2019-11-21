@@ -1,8 +1,7 @@
 import tkinter as tk  # python 3
-from tkinter import font as tkfont  # python 3
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
-from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import ProjectModel
 
 
 class ControlFrame(tk.Frame):

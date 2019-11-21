@@ -3,8 +3,7 @@ import sqlite3
 import datetime
 import tensorflow as tf
 
-from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
-from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import ProjectModel
 
 
 class ProjectDatabase:
@@ -87,7 +86,17 @@ class ProjectDatabase:
 
     # TODO: Fill here
     def getAllModelsByProjectId(self, projectId):
-        return None
+        connector = sqlite3.connect(self.DATABASE_NAME)
+        cursor = connector.cursor()
+        models = []
+        sql = "SELECT * FROM model WHERE projectId = {}".format(projectId)
+        cursor.execute(sql)
+        for element in cursor:
+            print(element[1])
+            model = DatabaseModelModel(element[0], element[1], element[2], [])
+            models.append(model)
+        connector.close()
+        return models
 
 
 
