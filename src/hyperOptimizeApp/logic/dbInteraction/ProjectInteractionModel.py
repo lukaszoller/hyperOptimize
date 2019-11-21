@@ -1,4 +1,4 @@
-from src.hyperOptimizeApp.persistence.ProjectDatabase import ProjectDatabase
+from src.hyperOptimizeApp.persistence.DatabaseConnector import ProjectDatabase
 
 
 class ProjectInteractionModel:

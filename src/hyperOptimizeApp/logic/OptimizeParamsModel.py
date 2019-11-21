@@ -1,7 +1,7 @@
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
-from src.hyperOptimizeApp.persistence import ProjectDatabase
+from src.hyperOptimizeApp.persistence import DatabaseConnector
 from astropy.table import Table, Column
 import numpy as np
 import time
@@ -198,7 +198,7 @@ class OptimizeParamsModel:
         #####################################################################################
         # Save model to filesystem
         #####################################################################################
-        pd = ProjectDatabase()
+        pd = DatabaseConnector()
         projectID = 666                                # delete after implementation of projectID   <-----------------------------------------------------------------
         pd.saveModel(projectID, model)                 # <----------------- Create model table in database first --------------------------------------------------------
 

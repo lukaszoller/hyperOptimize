@@ -1,7 +1,7 @@
 from unittest import TestCase
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
-from src.hyperOptimizeApp.persistence.ProjectDatabase import ProjectDatabase
+from src.hyperOptimizeApp.persistence.DatabaseConnector import ProjectDatabase
 import tensorflow as tf
 import numpy as np
 from tensorflow.python.keras.utils import np_utils
@@ -57,7 +57,7 @@ class TestProjectDatabase(TestCase):
         ########################################################
         pd = ProjectDatabase()
         date = datetime.date.today().strftime('%Y-%m-%d')
-        pd.saveModel(id=666, model=model, projectID=12345)
+        pd.saveModel(model=model, projectID=12345)
 
         ########################################################
         # Get model from db
