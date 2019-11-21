@@ -68,19 +68,21 @@ class ProjectDatabase:
         connector.commit()
         connector.close()
 
-    def saveModel(self, id, model, projectID):
+    def saveModel(self, model, projectID):
         model_json = model.to_json()
+        print("saveModel: print model_json: ", model_json)
         date = datetime.date.today().strftime('%Y-%m-%d')
-        id = str(id)
         projectID = str(projectID)
-        sql = "INSERT INTO model(id, date, serializedModel, projectID) VALUES(" + id + ", " + date + ", " + model_json + ", " + projectID + ")"
+        sql = "INSERT INTO model(date, serializedModel, projectID) VALUES(" + date + ", '" + model_json + "', '" + projectID + "')"
         self.writeDB(sql)
 
     def getModelByID(self, id):
         connector = sqlite3.connect(self.DATABASE_NAME)
         cursor = connector.cursor()
-        sql = "SELECT model_json FROM model WHERE id = {}".format(id)
-        model_json = cursor.execute(sql)
+        sql = "SELECT serializedModel FROM model WHERE id = {}".format(id)
+        cursor.execute(sql)
+        model_json = str(cursor.fetchone())
+        print("getModelByID: print model_json: ", model_json)
         model = tf.keras.models.model_from_json(model_json)
         connector.close()
         return model

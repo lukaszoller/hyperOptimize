@@ -1,8 +1,15 @@
 import tkinter as tk  # python 3
+import numpy as np
+from matplotlib.figure import Figure
 from tkinter import font as tkfont  # python 3
+import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
 from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from pandas import DataFrame
+
+
 
 
 class ControlFrame(tk.Frame):
@@ -88,12 +95,40 @@ class MainView:
 
         ControlFrame(self, self.main, WM_WIDTH, homeView, projectView)
 
+        ########################################### Lukas Code #########################################
+
+        plotButton = tk.Button(self.main, text="open new window with plot", command=self.showWindowWithPlot())
+        plotButton.pack(side='left')
+
+
+        ########################################### Lukas Code #########################################
+
         self.main.mainloop()
 
     # Function for closing
     def close(self):
         self.main.destroy()
 
+    def showWindowWithPlot(self):
+        newWindow = tk.Toplevel(self.main)
+        # get data
+        Data1 = {'Country': ['US', 'CA', 'GER', 'UK', 'FR'],
+                 'GDP_Per_Capita': [45000, 42000, 52000, 49000, 47000]
+                 }
+
+        df1 = DataFrame(Data1, columns=['Country', 'GDP_Per_Capita'])
+        df1 = df1[['Country', 'GDP_Per_Capita']].groupby('Country').sum()
+        print(df1)
+
+        # plot
+        figure1 = plt.Figure(figsize=(6, 5), dpi=100)
+        ax1 = figure1.add_subplot(111)
+        bar1 = FigureCanvasTkAgg(figure1, newWindow)
+        bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+        df1.plot(kind='bar', legend=True, ax=ax1)
+        ax1.set_title('Country Vs. GDP Per Capita')
+
+        newWindow.mainloop()
 
 def showFrame(frame):
     frame.tkraise()
