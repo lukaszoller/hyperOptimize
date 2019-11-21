@@ -3,10 +3,11 @@ import sqlite3
 import datetime
 import tensorflow as tf
 
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import ProjectModel
 
 
-class ProjectDatabase:
+class DatabaseConnector:
     DATABASE_NAME = "project_database.db"
 
     def __init__(self):
@@ -95,7 +96,7 @@ class ProjectDatabase:
         cursor.execute(sql)
         for element in cursor:
             print(element[1])
-            model = DatabaseModelModel(element[0], element[1], element[2], [])
+            model = DatabaseModelModel(element[0], element[1], element[2])
             models.append(model)
         connector.close()
         return models

@@ -1,9 +1,9 @@
-from src.hyperOptimizeApp.persistence.DatabaseConnector import ProjectDatabase
+from src.hyperOptimizeApp.persistence.DatabaseConnector import DatabaseConnector
 
 
 class ProjectInteractionModel:
-    def __init__(self, projectDB=ProjectDatabase):
-        self.projectDB = ProjectDatabase()
+    def __init__(self):
+        self.projectDB = DatabaseConnector()
 
     def getProjectList(self):
         projectList = self.projectDB.getAllProjects()
