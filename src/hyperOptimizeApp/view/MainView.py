@@ -5,6 +5,7 @@ from tkinter import font as tkfont  # python 3
 import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import ProjectModel
 from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandas import DataFrame

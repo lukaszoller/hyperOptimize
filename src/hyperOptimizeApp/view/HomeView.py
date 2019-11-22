@@ -1,5 +1,5 @@
 import tkinter as tk
-from src.hyperOptimizeApp.logic.HomeModel import HomeModel
+from src.hyperOptimizeApp.logic.viewInteraction.HomeModel import HomeModel
 
 
 class HomeView(tk.Frame):

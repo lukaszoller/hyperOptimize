@@ -3,8 +3,8 @@ import tkinter.messagebox
 from tkinter.filedialog import askopenfile
 
 from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
-from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
-from src.hyperOptimizeApp.logic.ProjectInteractionModel import ProjectInteractionModel
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import ProjectModel
+from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 
 
 def openFile():
