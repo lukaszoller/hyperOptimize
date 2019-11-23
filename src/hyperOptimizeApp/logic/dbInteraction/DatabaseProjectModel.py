@@ -1,4 +1,4 @@
-class ProjectModel:
+class DatabaseProjectModel:
 
     # Creation of new project
     projectId = None

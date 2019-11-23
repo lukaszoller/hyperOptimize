@@ -3,7 +3,7 @@ import tkinter.messagebox
 from tkinter.filedialog import askopenfile
 
 from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import ProjectModel
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
 from src.hyperOptimizeApp.logic.viewInteraction.ModelModel import ModelModel
@@ -19,9 +19,9 @@ def openFile():
 
 class ProjectView(tk.Frame):
     controlFrame = None
-    project = ProjectModel()
-    projectInteractor = ProjectInteractionModel()
-    modelInteractor = ModelInteractionModel()
+    project = DatabaseProjectModel()
+    projectInteract = ProjectInteractionModel()
+    modelInteract = ModelInteractionModel()
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
@@ -48,7 +48,7 @@ class ProjectView(tk.Frame):
         rowCount += 1
 
         # ROW 4
-        self.modelList = self.modelInteractor.getModelsByProjectId(self.project.projectId)
+        self.modelList = self.modelInteract.getModelsByProjectId(self.project.projectId)
         self.modelListbox = tk.Listbox(self)
         for model in self.modelList:
             self.modelListbox.insert(tk.END, model)
@@ -71,7 +71,7 @@ class ProjectView(tk.Frame):
         self.config(bg="grey")
         self.place(relx=0, rely=0, height=height, width=width)
 
-    def setProject(self, project=ProjectModel):
+    def setProject(self, project=DatabaseProjectModel()):
         self.project = project
 
     def addControlFrame(self, frame):
@@ -84,7 +84,7 @@ class ProjectView(tk.Frame):
         answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Project?")
         if answer == 1:
             if self.project is not None:
-                self.projectInteractor.deleteProjectById(self.project.projectId)
+                self.projectInteract.deleteProjectById(self.project.projectId)
                 print("Project deleted")
             else:
                 print("no project selected")
@@ -93,5 +93,5 @@ class ProjectView(tk.Frame):
 
     def passModel(self):
         modelNumber = self.modelListbox.curselection()[0]
-        model = self.projectList.__getitem__(modelNumber)
+        model = self.modelList.__getitem__(modelNumber)
         self.controlFrame.setModelFrame(True, model)

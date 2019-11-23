@@ -2,9 +2,8 @@ import glob
 import sqlite3
 import datetime
 import tensorflow as tf
-
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import ProjectModel
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 
 
 class DatabaseConnector:
@@ -33,15 +32,15 @@ class DatabaseConnector:
         projects = []
         for element in cursor:
             print(element[1])
-            project = ProjectModel(element[0], element[1], element[2], [])
+            project = DatabaseProjectModel(element[0], element[1], element[2], [])
             projects.append(project)
         connector.close()
         print(projects)
         return projects
 
-    def addProject(self, name):
+    def addProject(self, projectName):
         date = datetime.date.today().strftime('%Y-%m-%d')
-        sql = "INSERT INTO project(name, date) VALUES('" + name + "', " + date + ")"
+        sql = "INSERT INTO project(name, date) VALUES('" + projectName + "', " + date + ")"
         self.writeDB(sql)
 
     def getProjectById(self, projectId):
@@ -49,7 +48,7 @@ class DatabaseConnector:
         cursor = connector.cursor()
         sql = "SELECT * FROM project WHERE id = {}".format(projectId)
         cursor.execute(sql)
-        project = ProjectModel(cursor.fetchone()[0], cursor.fetchone()[1], cursor.fetchone()[2], [])
+        project = DatabaseProjectModel(cursor.fetchone()[0], cursor.fetchone()[1], cursor.fetchone()[2], [])
         connector.close()
         return project
 
@@ -57,7 +56,7 @@ class DatabaseConnector:
         sql = "DELETE FROM project WHERE id = {}".format(projectId)
         self.writeDB(sql)
 
-    def updateProject(self, project=ProjectModel):
+    def updateProject(self, project=DatabaseProjectModel()):
         sql = "UPDATE project SET name = {} WHERE id = {}".format(project.projectName, project.projectId)
         self.writeDB(sql)
 
@@ -68,18 +67,18 @@ class DatabaseConnector:
         connector.commit()
         connector.close()
 
-    def saveModel(self, model, projectID):
+    def saveModel(self, model, projectId):
         model_json = model.to_json()
         print("saveModel: print model_json: ", model_json)
         date = datetime.date.today().strftime('%Y-%m-%d')
-        projectID = str(projectID)
-        sql = "INSERT INTO model(date, serializedModel, projectID) VALUES(" + date + ", '" + model_json + "', '" + projectID + "')"
+        projectId = str(projectId)
+        sql = "INSERT INTO model(date, serializedModel, projectID) VALUES(" + date + ", '" + model_json + "', '" + projectId + "')"
         self.writeDB(sql)
 
-    def getModelByID(self, id):
+    def getModelByID(self, modelId):
         connector = sqlite3.connect(self.DATABASE_NAME)
         cursor = connector.cursor()
-        sql = "SELECT serializedModel FROM model WHERE id = {}".format(id)
+        sql = "SELECT serializedModel FROM model WHERE id = {}".format(modelId)
         cursor.execute(sql)
         model_json = str(cursor.fetchone())
         print("getModelByID: print model_json: ", model_json)

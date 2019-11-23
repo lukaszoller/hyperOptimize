@@ -5,6 +5,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 import cpuinfo
 
+
 class EstimateTimeModel:
     def __init__(self):
         """The constructor loads already the estimate time dataset for the different functions."""

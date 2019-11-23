@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
 from src.hyperOptimizeApp.view.ModelView import ModelView
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import ProjectModel
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
+from src.hyperOptimizeApp.logic.viewInteraction.ModelModel import ModelModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandas import DataFrame
 
@@ -67,10 +68,10 @@ class ControlFrame(tk.Frame):
     def changeStyle(self, color):
         self.config(background=color)
 
-    def setProjectFrame(self, newProject=bool, project=ProjectModel()):
+    def setProjectFrame(self, newProject=bool, project=DatabaseProjectModel()):
         if not newProject:
             self.projectView.setTopText("New Project")
-            newProjectModel = ProjectModel()
+            newProjectModel = DatabaseProjectModel()
             self.projectView.setProject(newProjectModel)
         else:
             self.projectView.setTopText(project.getProjectName())
@@ -104,8 +105,9 @@ class MainView:
 
         homeView = HomeView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         projectView = ProjectView(self.main, WM_WIDTH, WM_HEIGHT - 50)
+        modelView = ModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
 
-        ControlFrame(self, self.main, WM_WIDTH, homeView, projectView)
+        ControlFrame(self, self.main, WM_WIDTH, homeView, projectView, modelView)
 
         ########################################### Lukas Code #########################################
 
@@ -147,6 +149,7 @@ class MainView:
         window = tk.Toplevel(self.main)
         message = "New window message."
         tk.Label(window, text=message).pack()
+
 
 def showFrame(frame):
     frame.tkraise()

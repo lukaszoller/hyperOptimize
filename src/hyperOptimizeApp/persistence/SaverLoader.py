@@ -1,14 +1,13 @@
-from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 import numpy as np
-from src.hyperOptimizeApp.persistence.DatabaseConnector import ProjectDatabase
 import pandas as pd
 import cpuinfo
+import src.hyperOptimizeApp.persistence.DatabaseConnector as db
 
 
 class SaverLoader:
 
     fileName = 'estTimeData.csv'
-    projectDb = ProjectDatabase()
+    projectDb = db.DatabaseConnector()
 
     def __init__(self):
         self.estimateTimeAccuracyList = list()           # delete this after db implementation of running time accuracy
@@ -108,5 +107,5 @@ class SaverLoader:
     def storeEstimateTimeAccuracy(self, accuracyValue):
         self.estimateTimeAccuracyList.append(accuracyValue)
 
-    def saveModelToDatabase(self, model):
-        self.projectDb
+    def saveModelToDatabase(self, model, projectId):
+        self.projectDb.saveModel(model, projectId)
