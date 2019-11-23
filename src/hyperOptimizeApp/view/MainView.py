@@ -5,25 +5,26 @@ from tkinter import font as tkfont  # python 3
 import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
+from src.hyperOptimizeApp.view.ModelView import ModelView
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import ProjectModel
-from src.hyperOptimizeApp.logic.ProjectModel import ProjectModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandas import DataFrame
-
-
 
 
 class ControlFrame(tk.Frame):
     projectView = None
     homeView = None
+    modelView = None
 
-    def __init__(self, mainView, main, width, homeView, projectView):
+    def __init__(self, mainView, main, width, homeView=HomeView, projectView=ProjectView, modelView=ModelView):
         tk.Frame.__init__(self, main)
         self.projectView = projectView
         self.homeView = homeView
+        self.modelView = modelView
 
         self.projectView.addControlFrame(self)
         self.homeView.addControlFrame(self)
+        self.modelView.addControlFrame(self)
 
         self.changeStyle("black")
         self.place(x=0, y=450, height=50, width=width)
@@ -75,6 +76,16 @@ class ControlFrame(tk.Frame):
             self.projectView.setTopText(project.getProjectName())
             self.projectView.setProject(project)
         showFrame(self.projectView)
+
+    def setModelFrame(self, newModel=bool, model=ModelModel()):
+        if not newModel:
+            self.modelView.setTopText("New Model")
+            newModelModel = ModelModel()
+            self.projectView.setModel(newModelModel)
+        else:
+            self.modelView.setTopText(model.getModelName())
+            self.modelView.setModel(model)
+        showFrame(self.ModelView)
 
 
 class MainView:
