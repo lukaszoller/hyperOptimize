@@ -112,7 +112,8 @@ class MainView:
         plotButton = tk.Button(self.main, text="open new window with plot", command=self.showWindowWithPlot())
         plotButton.pack(side='left')
 
-
+        newWindowButton = tk.Button(self.main, text="Open new window with text", command=self.showNewWindow())
+        newWindowButton.pack(side='right')
         ########################################### Lukas Code #########################################
 
         self.main.mainloop()
@@ -141,6 +142,11 @@ class MainView:
         ax1.set_title('Country Vs. GDP Per Capita')
 
         newWindow.mainloop()
+
+    def showNewWindow(self):
+        window = tk.Toplevel(self.main)
+        message = "New window message."
+        tk.Label(window, text=message).pack()
 
 def showFrame(frame):
     frame.tkraise()
