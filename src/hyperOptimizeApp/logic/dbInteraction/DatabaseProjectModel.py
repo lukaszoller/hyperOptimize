@@ -1,7 +1,7 @@
 class DatabaseProjectModel:
 
     # Creation of new project
-    projectId = None
+    projectId = 0
     projectName = ""
 
     # Loading old project

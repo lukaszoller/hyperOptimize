@@ -1,6 +1,7 @@
 import numpy as np
 
-class HyperParamsObj():
+
+class HyperParamsObj:
 
     def __init__(self):
         self.nbrOfNodesArray = None

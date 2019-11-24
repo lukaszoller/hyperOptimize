@@ -6,8 +6,10 @@ import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
 from src.hyperOptimizeApp.view.ModelView import ModelView
+from src.hyperOptimizeApp.view.TrainModelView import TrainModelView
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.logic.viewInteraction.ModelModel import ModelModel
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandas import DataFrame
 
@@ -16,16 +18,20 @@ class ControlFrame(tk.Frame):
     projectView = None
     homeView = None
     modelView = None
+    trainModelView = None
 
-    def __init__(self, mainView, main, width, homeView=HomeView, projectView=ProjectView, modelView=ModelView):
+    def __init__(self, mainView, main, width, homeView=HomeView, projectView=ProjectView, modelView=ModelView,
+                 trainModelView=TrainModelView):
         tk.Frame.__init__(self, main)
         self.projectView = projectView
         self.homeView = homeView
         self.modelView = modelView
+        self.trainModelView = trainModelView
 
         self.projectView.addControlFrame(self)
         self.homeView.addControlFrame(self)
         self.modelView.addControlFrame(self)
+        self.trainModelView.addControlFrame(self)
 
         self.changeStyle("black")
         self.place(x=0, y=450, height=50, width=width)
@@ -78,16 +84,19 @@ class ControlFrame(tk.Frame):
             self.projectView.setProject(project)
         showFrame(self.projectView)
 
-    def setModelFrame(self, newModel=bool, model=ModelModel()):
+    def setModelFrame(self, newModel=bool, model=DatabaseModelModel()):
         if not newModel:
             self.modelView.setTopText("New Model")
-            newModelModel = ModelModel()
-            self.projectView.setModel(newModelModel)
+            newModel = DatabaseModelModel()
+            self.modelView.setModel(newModel)
         else:
             self.modelView.setTopText(model.getModelName())
             self.modelView.setModel(model)
-        showFrame(self.ModelView)
+        showFrame(self.modelView)
 
+    def setTrainModelFrame(self, model=DatabaseModelModel):
+        self.trainModelView.setModel(model)
+        showFrame(self.trainModelView)
 
 class MainView:
     main = tk.Tk()
@@ -106,8 +115,9 @@ class MainView:
         homeView = HomeView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         projectView = ProjectView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         modelView = ModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
+        trainModelView = TrainModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
 
-        ControlFrame(self, self.main, WM_WIDTH, homeView, projectView, modelView)
+        ControlFrame(self, self.main, WM_WIDTH, homeView, projectView, modelView, trainModelView)
 
         ########################################### Lukas Code #########################################
 

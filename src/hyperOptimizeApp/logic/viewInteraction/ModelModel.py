@@ -1,3 +1,5 @@
+from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
+
 
 class ModelModel:
 

@@ -21,6 +21,8 @@ class ProjectView(tk.Frame):
     project = DatabaseProjectModel()
     projectInteract = ProjectInteractionModel()
     modelInteract = ModelInteractionModel()
+    modelList = []
+    modelRow = 0
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
@@ -47,11 +49,9 @@ class ProjectView(tk.Frame):
         rowCount += 1
 
         # ROW 4
-        self.modelList = self.modelInteract.getModelsByProjectId(self.project.projectId)
         self.modelListbox = tk.Listbox(self)
-        for model in self.modelList:
-            self.modelListbox.insert(tk.END, model)
-        self.modelListbox.grid(row=rowCount, column=1)
+        self.fillListBox(rowCount)
+        self.modelRow = rowCount
         rowCount += 1
 
         # ROW 5
@@ -62,7 +62,7 @@ class ProjectView(tk.Frame):
             .grid(row=rowCount, column=2)
         rowCount += 1
 
-        # ROW 5
+        # ROW 6
         saveButton = tk.Button(self, text="Save Project").grid(row=rowCount, padx=5)
         deleteButton = tk.Button(self, text="Delete Project",
                                  command=lambda: self.confirmationBox()).grid(row=rowCount, column=5, padx=5)
@@ -72,6 +72,8 @@ class ProjectView(tk.Frame):
 
     def setProject(self, project=DatabaseProjectModel()):
         self.project = project
+        self.modelList = self.modelInteract.getModelsByProjectId(self.project.projectId)
+        self.fillListBox(self.modelRow)
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
@@ -94,3 +96,8 @@ class ProjectView(tk.Frame):
         modelNumber = self.modelListbox.curselection()[0]
         model = self.modelList.__getitem__(modelNumber)
         self.controlFrame.setModelFrame(True, model)
+
+    def fillListBox(self, rowCount):
+        for model in self.modelList:
+            self.modelListbox.insert(tk.END, model)
+        self.modelListbox.grid(row=rowCount, column=1)
