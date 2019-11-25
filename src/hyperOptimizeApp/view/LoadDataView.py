@@ -11,8 +11,8 @@ class LoadDataView(tk.Frame):
 
         self.config(bg="white")
         self.place(relx=0, rely=0, height=height, width=width)
-        self.topText = tk.StringVar()
-        self.topText.set("Load data view.")
+        nameLabel = tk.Label(self, text="Project Name").grid(row=1, column=2)
+
 
     def addControlFrame(self, frame):
         self.controlFrame = frame

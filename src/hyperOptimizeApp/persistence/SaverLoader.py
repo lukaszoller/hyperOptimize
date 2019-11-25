@@ -161,7 +161,7 @@ class SaverLoader:
         if firstColIsRownbr:
             data = data[:,1:nbrOfCols]
 
-        x = data[:, 0:nbrOfFeatures-1]
+        x = data[:, 0:nbrOfFeatures]
 
         # return data
         if dataIsForTraining:
