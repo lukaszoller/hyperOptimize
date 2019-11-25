@@ -15,7 +15,6 @@ def openFile():
         saverLoader.setFileName(file.name)
         print(saverLoader.getEstTimeData())
 
-
 class ProjectView(tk.Frame):
     controlFrame = None
     project = DatabaseProjectModel()
@@ -46,6 +45,10 @@ class ProjectView(tk.Frame):
         fileLabel = tk.Label(self, text="Data CSV").grid(row=rowCount, column=2)
         loadFileButton = tk.Button(self, text='Open', command=lambda: openFile())
         loadFileButton.grid(row=rowCount, column=3, pady=10)
+
+        loadDataButton = tk.Button(self, text="Load data", command=lambda: self.controlFrame.setLoadDataFrame()) \
+            .grid(row=rowCount, column=4)
+
         rowCount += 1
 
         # ROW 4

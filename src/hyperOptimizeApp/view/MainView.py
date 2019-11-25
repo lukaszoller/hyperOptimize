@@ -7,6 +7,7 @@ from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
 from src.hyperOptimizeApp.view.ModelView import ModelView
 from src.hyperOptimizeApp.view.OptimizeModelView import TrainModelView
+from src.hyperOptimizeApp.view.LoadDataView import LoadDataView
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.logic.viewInteraction.ModelModel import ModelModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
@@ -19,19 +20,22 @@ class ControlFrame(tk.Frame):
     homeView = None
     modelView = None
     trainModelView = None
+    loadDataView = None
 
     def __init__(self, mainView, main, width, homeView=HomeView, projectView=ProjectView, modelView=ModelView,
-                 trainModelView=TrainModelView):
+                 trainModelView=TrainModelView, loadDataView=LoadDataView):
         tk.Frame.__init__(self, main)
         self.projectView = projectView
         self.homeView = homeView
         self.modelView = modelView
         self.trainModelView = trainModelView
+        self.loadDataView = loadDataView
 
         self.projectView.addControlFrame(self)
         self.homeView.addControlFrame(self)
         self.modelView.addControlFrame(self)
         self.trainModelView.addControlFrame(self)
+        self.loadDataView.addControlFrame(self)
 
         self.changeStyle("black")
         self.place(x=0, y=450, height=50, width=width)
@@ -109,6 +113,9 @@ class ControlFrame(tk.Frame):
         self.trainModelView.setModel(model)
         showFrame(self.trainModelView)
 
+    def setLoadDataFrame(self):
+        showFrame(self.loadDataView)
+
     # ########################################## Lukas Code #########################################
 
     def showWindowWithPlot(self):
@@ -158,6 +165,7 @@ class MainView:
         projectView = ProjectView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         modelView = ModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         trainModelView = TrainModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
+        loadDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50)
 
         ControlFrame(self, self.main, WM_WIDTH, homeView, projectView, modelView, trainModelView)
 
