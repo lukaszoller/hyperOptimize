@@ -10,5 +10,11 @@ import multiprocessing
 import cpuinfo
 import csv
 
+testDataForLoadData = "testDataForLoadData.csv"
+data = np.genfromtxt(testDataForLoadData, delimiter=',', skip_header=False)
 
-print(str(11))
+m = (data,data)
+print(len(m))
+
+r, c = np.shape(data)
+print(r, c)

@@ -109,3 +109,64 @@ class SaverLoader:
 
     def saveModelToDatabase(self, model, projectId):
         self.projectDb.saveModel(model, projectId)
+
+    def loadDataForTrainingOrPrediction(self, pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories=0, dataIsForTraining=False):
+        """Loads data from filesystem. Takes as input pathToData (String representing full path to csv file),
+        nbrOfFeatures (Size of X for training and prediction of model), firstRowIsHeader and firstColIsRownbr (both
+        boolean Values).
+        If nbrOfCategories is not 0 and dataIsForTraining = False, it will print an informational message to the console
+        but will set nbrOfCategories to the value 0.
+        If dataIsForTraining = True: Returns three np-arrays x (features of dataset), y (categories of dataset) and unmanipulatedData (x and y in
+        one array with header and colnbrs (if they existed in the first place)).
+        If dataIsForTraining = False: Returns only two arrays: x and unmanipulatedData."""
+
+        # Debugging stuff delete sometimes
+        print("pathToData: ", pathToData)
+        print("firstRowIsHeader: ", firstRowIsHeader)
+        print("firstColIsRownbr: ", firstColIsRownbr)
+        print("nbrOfCategories: ", nbrOfCategories)
+        print("dataIsForTraining: ", dataIsForTraining)
+
+
+        # check if nbrOfCategories = 0 if dataIsForTraining = false.
+        if not dataIsForTraining and nbrOfCategories != 0:
+            nbrOfCategories = 0
+            print("If data is used for prediction, nbrOfCategories has to be 0. Value of nbrOfCategories has been set to"
+                  "0 automatically.")
+
+        # get data
+        try:
+            data = np.genfromtxt(pathToData, delimiter=',', skip_header=False)
+        except IOError:
+            print("IOError: Could not read file: ", pathToData)
+
+        # get dataset info
+        nbrOfRows, nbrOfCols = np.shape(data)
+        nbrOfFeatures = nbrOfCols - nbrOfCategories
+        # return error if nbrOfFeatures is bigger than nbrOfcols
+        if nbrOfFeatures > nbrOfCols:
+            raise ValueError("nbrOfFeatures is bigger than nbrOfCols in dataset. nbrOfFeatures should be smaller.Probably "
+                             "parameter nbrOfCategories is set wrongly.")
+        # return error if nbrOfFeatures is equal to nbrOfColumns but dataset is for training (y needed)
+        if nbrOfFeatures == nbrOfCols and dataIsForTraining:
+            raise ValueError("nbrOfFeatures has to be smaller than nbrOfCols in dataset. Probably parameter nbrOfCategories"
+                             "is set wrongly.")
+        # Store data before manipulation
+        unmanipulatedData = data
+
+        # Delete first row if it is header
+        if firstRowIsHeader:
+            data = data[1:nbrOfRows, :]
+        # Delete first col if it is colnbr
+        if firstColIsRownbr:
+            data = data[:,1:nbrOfCols]
+
+        x = data[:, 0:nbrOfFeatures-1]
+
+        # return data
+        if dataIsForTraining:
+            y = data[:, nbrOfFeatures:nbrOfCols]
+            return x, y, unmanipulatedData
+        else:
+            return x, unmanipulatedData
+
