@@ -1,6 +1,9 @@
 import numpy as np
 
-class RangeForHyperParamsObj():
+
+class RangeForHyperParamsObj:
+
+    MAX_NUMBER_OF_HIDDEN_LAYERS = 100
 
     def __init__(self):
         self.nbrOfFeatures = 0                                      #abgeleitet von Datensatz

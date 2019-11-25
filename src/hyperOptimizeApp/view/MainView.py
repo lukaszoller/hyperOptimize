@@ -109,7 +109,7 @@ class ControlFrame(tk.Frame):
             self.modelView.setModel(model)
         showFrame(self.modelView)
 
-    def setTrainModelFrame(self, model=DatabaseModelModel):
+    def setOptimizeModelFrame(self, model=DatabaseModelModel):
         self.optimizeModelView.setModel(model)
         showFrame(self.optimizeModelView)
 
