@@ -2,9 +2,13 @@ from abc import ABC, abstractmethod
 
 class LoadDataModel(ABC):
     def __init__(self):
-        pass
+        self.firstRowIsTitle = None
+        self.firstColumnAreColNumbers = None
+        self.nbrOfFeatures = None
+        self.pathToDataset = None
 
     def loadData(self):
+
         print("Empty method: LoadDataModel.loadData")
 
     def saveData(self):

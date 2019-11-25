@@ -1,3 +1,5 @@
+from unittest import TestCase
+
 import numpy as np
 
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
@@ -11,14 +13,15 @@ class SaverLoaderTester():
         l = list()
         for i in range(0, 10):
             h = HyperParamsObj()
-            h.nbrOfNodesArray = [3,3,3]
+            h.nbrOfNodesArray = [3, 3, 3]
             h.learningRate = 5
             l.append(h)
 
         # Convert hyperParamsObjList to data
         sl = SaverLoader()
         x = sl.hyperParamsListToData(l)
-        print("################################# Test 1: test_hyperParamsListToData() #################################")
+        print(
+            "################################# Test 1: test_hyperParamsListToData() #################################")
         print(x)
         # Create comparision array which should be identical to x
         xCompare = np.tile([3, 3, 5], [10, 1])
@@ -28,18 +31,19 @@ class SaverLoaderTester():
     def test_getEstTimeData(self):
         print("################################# Test 2: test_getEstTimeData() #################################")
         sl = SaverLoader()
-        (x,y) = sl.getEstTimeData()
+        (x, y) = sl.getEstTimeData()
         print("X:", x)
         print("Y:", y)
 
     def test_saveTimeMeasurementData(self):
-        print("################################# Test 3: test_saveTimeMeasurementData() #################################")
+        print(
+            "################################# Test 3: test_saveTimeMeasurementData() #################################")
 
         # Create List with hyperParamsObj
         hyperParamsObjList = list()
         for i in range(0, 10):
             h = HyperParamsObj()
-            h.nbrOfNodesArray = [3,3,3]
+            h.nbrOfNodesArray = [3, 3, 3]
             h.learningRate = 5
             hyperParamsObjList.append(h)
 
@@ -49,11 +53,71 @@ class SaverLoaderTester():
         # Write data to csv
         sl = SaverLoader()
         sl.saveTimeMeasurementData(hyperParamsObjList, timeMeasurement)
-        print("################################# Test 3: test_saveTimeMeasurementData() #################################")
+        print(
+            "################################# Test 3: test_saveTimeMeasurementData() #################################")
         print("Check manually if estTimeData.csv, has 10 new rows [1, 3, 5], [999]")
+#
+#
+# slt = SaverLoaderTester()
+# # slt.test_hyperParamsListToData()
+# # slt.test_getEstTimeData()
+# slt.test_saveTimeMeasurementData()
 
 
-slt = SaverLoaderTester()
-# slt.test_hyperParamsListToData()
-# slt.test_getEstTimeData()
-slt.test_saveTimeMeasurementData()
+class TestSaverLoader(TestCase):
+
+    def test_loadDataForTrainingOrPrediction(self):
+        # function interface: pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories=0, dataIsForTraining=False
+
+        # write data to file size(100x20)
+        nbrOfCols = 20
+        nbrOfRows = 100
+
+        a = np.zeros((nbrOfRows,nbrOfCols))
+        print(a)
+        testDataForLoadData = "testDataForLoadData.csv"
+        np.savetxt(testDataForLoadData, a, delimiter=',')
+
+
+        sl = SaverLoader()
+        ##################################################################################
+        # 1. No header, no colNbrs, prediction data
+        ##################################################################################
+        resultData = sl.loadDataForTrainingOrPrediction(testDataForLoadData, False, False)
+        self.assertEqual(len(resultData), 2)    # if data is for prediction, function should return two datasets
+        x, unmanipulatedData = resultData
+
+        # Number of rows and cols should be the same
+        self.assertEqual(x.shape(), (nbrOfRows,nbrOfCols))
+        self.assertEqual(unmanipulatedData.shape(), (nbrOfRows,nbrOfCols))
+
+        ##################################################################################
+        # 2. header, colnbrs, prediction data
+        ##################################################################################
+        x, unmanipulatedData = sl.loadDataForTrainingOrPrediction(testDataForLoadData, True, True)
+
+        # Number of rows and cols should be the same -1
+        self.assertEqual(x.shape(), (nbrOfRows-1,nbrOfCols-1))
+        self.assertEqual(unmanipulatedData.shape(), (nbrOfRows,nbrOfCols))
+
+        ##################################################################################
+        # 3. header, colnbrs, prediction data but nbrOfCategories !=0
+        ##################################################################################
+        x, unmanipulatedData = sl.loadDataForTrainingOrPrediction(testDataForLoadData, False, True, nbrOfCategories=4, dataIsForTraining=False)
+        # Number of rows should be the same, number of cols should be -1
+        self.assertEqual(x.shape(), (nbrOfRows-1, nbrOfCols))
+        self.assertEqual(unmanipulatedData.shape(), (nbrOfRows, nbrOfCols))
+
+        ##################################################################################
+        # 4. header, colnbrs, nbrOfCategories = 4, data is for Training
+        ##################################################################################
+        resultData = sl.loadDataForTrainingOrPrediction(testDataForLoadData, True, False, nbrOfCategories=4,
+                                                                  dataIsForTraining=False)
+        self.assertEqual(len(resultData), 3)  # if data is for prediction, function should return two datasets
+        x, y, unmanipulatedData = resultData
+
+        # Number of rows and cols should be the same
+        self.assertEqual(x.shape(), (nbrOfRows, nbrOfCols-1))
+        self.assertEqual(y.shape(), (nbrOfRows, nbrOfCols-1))
+        self.assertEqual(unmanipulatedData.shape(), (nbrOfRows, nbrOfCols))
+
