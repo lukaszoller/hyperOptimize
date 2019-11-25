@@ -3,7 +3,7 @@ from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import Database
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 
 
-class TrainModelView(tk.Frame):
+class OptimizeModelView(tk.Frame):
     controlFrame = None
     databaseModel = None
     model = None

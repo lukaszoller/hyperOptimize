@@ -14,6 +14,5 @@ class LoadDataView(tk.Frame):
         self.topText = tk.StringVar()
         self.topText.set("Load data view.")
 
-
     def addControlFrame(self, frame):
         self.controlFrame = frame
