@@ -17,4 +17,6 @@ m = (data,data)
 print(len(m))
 
 r, c = np.shape(data)
-print(r, c)
+print((r, c))
+print(sum(np.shape(data)))
+print(sum(r,c))

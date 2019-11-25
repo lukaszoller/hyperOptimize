@@ -83,41 +83,44 @@ class TestSaverLoader(TestCase):
         ##################################################################################
         # 1. No header, no colNbrs, prediction data
         ##################################################################################
-        resultData = sl.loadDataForTrainingOrPrediction(testDataForLoadData, False, False)
+        resultData = sl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=False, firstColIsRownbr=False)
         self.assertEqual(len(resultData), 2)    # if data is for prediction, function should return two datasets
         x, unmanipulatedData = resultData
 
         # Number of rows and cols should be the same
-        self.assertEqual(x.shape(), (nbrOfRows,nbrOfCols))
-        self.assertEqual(unmanipulatedData.shape(), (nbrOfRows,nbrOfCols))
+        self.assertEqual(sum(np.shape(x)), nbrOfRows+nbrOfCols)
+        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows+nbrOfCols)
 
         ##################################################################################
         # 2. header, colnbrs, prediction data
         ##################################################################################
-        x, unmanipulatedData = sl.loadDataForTrainingOrPrediction(testDataForLoadData, True, True)
+        x, unmanipulatedData = sl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
+                                                                  firstColIsRownbr=True)
 
         # Number of rows and cols should be the same -1
-        self.assertEqual(x.shape(), (nbrOfRows-1,nbrOfCols-1))
-        self.assertEqual(unmanipulatedData.shape(), (nbrOfRows,nbrOfCols))
+        self.assertEqual(sum(np.shape(x)), nbrOfRows-1 + nbrOfCols-1)
+        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows+nbrOfCols)
 
         ##################################################################################
         # 3. header, colnbrs, prediction data but nbrOfCategories !=0
         ##################################################################################
-        x, unmanipulatedData = sl.loadDataForTrainingOrPrediction(testDataForLoadData, False, True, nbrOfCategories=4, dataIsForTraining=False)
+        x, unmanipulatedData = sl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=False,
+                                                                  firstColIsRownbr=True, nbrOfCategories=4, dataIsForTraining=False)
         # Number of rows should be the same, number of cols should be -1
-        self.assertEqual(x.shape(), (nbrOfRows-1, nbrOfCols))
-        self.assertEqual(unmanipulatedData.shape(), (nbrOfRows, nbrOfCols))
+        self.assertEqual(sum(np.shape(x)), nbrOfRows-1 + nbrOfCols)
+        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows + nbrOfCols)
 
         ##################################################################################
         # 4. header, colnbrs, nbrOfCategories = 4, data is for Training
         ##################################################################################
-        resultData = sl.loadDataForTrainingOrPrediction(testDataForLoadData, True, False, nbrOfCategories=4,
-                                                                  dataIsForTraining=False)
-        self.assertEqual(len(resultData), 3)  # if data is for prediction, function should return two datasets
+        nbrOfCategories = 4
+        resultData = sl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
+                                                        firstColIsRownbr=False, nbrOfCategories=nbrOfCategories, dataIsForTraining=True)
+        self.assertEqual(len(resultData), 3)  # if data is for training, function should return two datasets
         x, y, unmanipulatedData = resultData
 
         # Number of rows and cols should be the same
-        self.assertEqual(x.shape(), (nbrOfRows, nbrOfCols-1))
-        self.assertEqual(y.shape(), (nbrOfRows, nbrOfCols-1))
-        self.assertEqual(unmanipulatedData.shape(), (nbrOfRows, nbrOfCols))
+        self.assertEqual(sum(np.shape(x)), nbrOfRows - 1 + nbrOfCols-nbrOfCategories) # Minus header (-1), minus categories (- nbrOfCategories)
+        self.assertEqual(sum(np.shape(y)), nbrOfRows -1 + nbrOfCategories)     # Minus header (-1), plus nbrOfCategories (+ nbrOfCategories)
+        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows + nbrOfCols)
 
