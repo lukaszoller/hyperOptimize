@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
 from src.hyperOptimizeApp.view.ModelView import ModelView
-from src.hyperOptimizeApp.view.TrainModelView import TrainModelView
+from src.hyperOptimizeApp.view.OptimizeModelView import TrainModelView
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.logic.viewInteraction.ModelModel import ModelModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
@@ -42,6 +42,15 @@ class ControlFrame(tk.Frame):
             side=tk.LEFT, padx=5)
         tk.Button(self, text="Quit", command=mainView.close).pack(side=tk.LEFT, padx=5)
 
+        ########################################### Lukas Code #########################################
+
+        plotButton = tk.Button(self, text="open new window with plot", command=lambda: self.showWindowWithPlot())
+        plotButton.pack(side=tk.LEFT, padx=5)
+
+        newWindowButton = tk.Button(self, text="Open new window with text", command=lambda: self.showNewWindow())
+        newWindowButton.pack(side=tk.LEFT, padx=5)
+        ########################################### Lukas Code #########################################
+
         #####################################################################################
         # Menu List
         #####################################################################################
@@ -54,6 +63,8 @@ class ControlFrame(tk.Frame):
 
         # Menu Objects in "File"
         mFile["tearoff"] = 0
+        mFile.add_command(label="Home", command=lambda: showFrame(self.homeView))
+        mFile.add_separator()
         mFile.add_command(label="New Project", command=lambda: self.setProjectFrame(False, None))
         mFile.add_command(label="Load Project")
         mFile.add_command(label="Save")
@@ -62,8 +73,8 @@ class ControlFrame(tk.Frame):
 
         # Menu Objects in "View"
         mView["tearoff"] = 0
-        mView.add_radiobutton(label="Dark", underline=0, command=self.changeStyle("black"))
-        mView.add_radiobutton(label="Bright", underline=0, command=self.changeStyle("white"))
+        mView.add_radiobutton(label="Dark", underline=0, command=lambda: self.changeStyle("black"))
+        mView.add_radiobutton(label="Bright", underline=0, command=lambda: self.changeStyle("white"))
 
         mBar.add_cascade(label="File", menu=mFile)
         mBar.add_cascade(label="View", menu=mView)
@@ -98,6 +109,37 @@ class ControlFrame(tk.Frame):
         self.trainModelView.setModel(model)
         showFrame(self.trainModelView)
 
+    # ########################################## Lukas Code #########################################
+
+    def showWindowWithPlot(self):
+        newWindow = tk.Toplevel(self)
+        # get data
+        Data1 = {'Country': ['US', 'CA', 'GER', 'UK', 'FR'],
+                 'GDP_Per_Capita': [45000, 42000, 52000, 49000, 47000]
+                 }
+
+        df1 = DataFrame(Data1, columns=['Country', 'GDP_Per_Capita'])
+        df1 = df1[['Country', 'GDP_Per_Capita']].groupby('Country').sum()
+        print(df1)
+
+        # plot
+        figure1 = plt.Figure(figsize=(6, 5), dpi=100)
+        ax1 = figure1.add_subplot(111)
+        bar1 = FigureCanvasTkAgg(figure1, newWindow)
+        bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+        df1.plot(kind='bar', legend=True, ax=ax1)
+        ax1.set_title('Country Vs. GDP Per Capita')
+
+        newWindow.mainloop()
+
+    def showNewWindow(self):
+        window = tk.Toplevel(self)
+        message = "New window message."
+        tk.Label(window, text=message).pack()
+
+    # ########################################## Lukas Code #########################################
+
+
 class MainView:
     main = tk.Tk()
 
@@ -119,46 +161,11 @@ class MainView:
 
         ControlFrame(self, self.main, WM_WIDTH, homeView, projectView, modelView, trainModelView)
 
-        ########################################### Lukas Code #########################################
-
-        plotButton = tk.Button(self.main, text="open new window with plot", command=self.showWindowWithPlot())
-        plotButton.pack(side='left')
-
-        newWindowButton = tk.Button(self.main, text="Open new window with text", command=self.showNewWindow())
-        newWindowButton.pack(side='right')
-        ########################################### Lukas Code #########################################
-
         self.main.mainloop()
 
     # Function for closing
     def close(self):
         self.main.destroy()
-
-    def showWindowWithPlot(self):
-        newWindow = tk.Toplevel(self.main)
-        # get data
-        Data1 = {'Country': ['US', 'CA', 'GER', 'UK', 'FR'],
-                 'GDP_Per_Capita': [45000, 42000, 52000, 49000, 47000]
-                 }
-
-        df1 = DataFrame(Data1, columns=['Country', 'GDP_Per_Capita'])
-        df1 = df1[['Country', 'GDP_Per_Capita']].groupby('Country').sum()
-        print(df1)
-
-        # plot
-        figure1 = plt.Figure(figsize=(6, 5), dpi=100)
-        ax1 = figure1.add_subplot(111)
-        bar1 = FigureCanvasTkAgg(figure1, newWindow)
-        bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-        df1.plot(kind='bar', legend=True, ax=ax1)
-        ax1.set_title('Country Vs. GDP Per Capita')
-
-        newWindow.mainloop()
-
-    def showNewWindow(self):
-        window = tk.Toplevel(self.main)
-        message = "New window message."
-        tk.Label(window, text=message).pack()
 
 
 def showFrame(frame):
