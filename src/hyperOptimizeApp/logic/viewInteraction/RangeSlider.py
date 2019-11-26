@@ -1,3 +1,10 @@
+# This Class is not natively in tkinter. An Internet tutorial helped us to implement this range slider.
+# Basically this is a Range with a minimum and a maximum selector (used in the selection for the number of Layers
+# and nodes per Layer to test.
+#
+# Internet Source (designed initially for Python2) :
+# https://github.com/halsafar/rangeslider/blob/master/rangeSlider.py
+
 """
 cmpt481
 assignment 1 - RangleSlider in Python/Tk
@@ -414,7 +421,7 @@ class RangeSlider(Canvas):
         self.__barX = self.__canvasCenterX - (self.__barWidth / 2)
         newbarX = self.__barX - (self.__canvasWidth * self.__tickWidthPercent)
         self.__barY = self.__canvasCenterY - (
-                    self.__barHeight + (self.__canvasHeight * self.__majorTickHeightPercent)) / 2.0
+                self.__barHeight + (self.__canvasHeight * self.__majorTickHeightPercent)) / 2.0
         self.__barId = self.create_rectangle(newbarX, self.__barY,
                                              newbarX + newbarWidth,
                                              self.__barY + self.__barHeight,
