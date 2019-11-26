@@ -4,6 +4,7 @@ from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import Database
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.viewInteraction.Tooltip import CreateToolTip as tt
+from src.hyperOptimizeApp.logic.viewInteraction.RangeSlider import *
 
 
 class OptimizeModelView(tk.Frame):
@@ -68,7 +69,7 @@ class OptimizeModelView(tk.Frame):
         dropoutHelp.grid(row=rowCount, column=4)
         rowCount += 1
 
-        #Row with picking of different activation Functions
+        # Row with picking of different activation Functions
         activationText = tk.Label(self, text='Activation functions to choose').grid(row=rowCount, column=1)
         self.sigmoidVar = tk.IntVar(0)
         sigmoidBox = tk.Checkbutton(self, text='Sigmoid Function', variable=self.sigmoidVar)
@@ -85,6 +86,11 @@ class OptimizeModelView(tk.Frame):
         fourthBox.grid(row=rowCount, column=3)
         activationHelp = tk.Label(self, text='?')
         activationHelp.grid(row=rowCount, column=4)
+        rowCount += 1
+
+        # Row with test range slider
+        rangeSlider = RangeSlider(self, text='minmax', from_=2, to=self.MAX_LAYERS, orient=tk.HORIZONTAL)
+        rangeSlider.grid(row=rowCount, column=2, columnspan=3)
         rowCount += 1
 
         # Final Row (Train Model)
