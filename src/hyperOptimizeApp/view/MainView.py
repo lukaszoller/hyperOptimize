@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib.figure import Figure
 from tkinter import font as tkfont  # python 3
 import matplotlib.pyplot as plt
+from src.hyperOptimizeApp.logic.LoadDataModel import LoadDataModel
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
 from src.hyperOptimizeApp.view.ModelView import ModelView
@@ -165,7 +166,7 @@ class MainView:
         projectView = ProjectView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         modelView = ModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         optimizeModelView = OptimizeModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
-        loadDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50)
+        loadDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50, LoadDataModel())       # <-------------------------------------------------- this is initialized here just for mockup. change for correct implementation!!!!
 
         ControlFrame(self, self.main, WM_WIDTH, homeView, projectView, modelView, optimizeModelView, loadDataView)
 
