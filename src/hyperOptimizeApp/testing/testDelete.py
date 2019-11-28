@@ -1,4 +1,5 @@
 from datetime import datetime
+from src.hyperOptimizeApp.persistence.FileSystemRepository import FileSystemRepository
 
 import copy
 import numpy as np
@@ -13,8 +14,11 @@ from tkintertable import TableCanvas, TableModel
 from tkinter import *
 import random
 from collections import OrderedDict
-
-a = np.zeros((10,5))
-s = np.shape(a)
-print(s)
-print(s[0])
+pathToData = "testDataForLoadData.csv"
+firstRowIsHeader = True
+firstColIsRownbr = False
+nbrOfCategories = 1
+dataIsForTraining = True
+fl = FileSystemRepository()
+data = fl.loadDataForTrainingOrPrediction(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
+print(np.shape(data))

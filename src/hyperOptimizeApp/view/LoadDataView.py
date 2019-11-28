@@ -27,22 +27,24 @@ class LoadDataView(tk.Frame):
         # checkboxes
         checkBtnFrame = tk.Frame(self)
         checkBtnFrame.pack(fill=tk.X)
-        firstRowIsTitleCheckBtn = tk.Checkbutton(checkBtnFrame, text="First row is title")
+        self.checkVarRow = tk.IntVar()
+        firstRowIsTitleCheckBtn = tk.Checkbutton(checkBtnFrame, text="First row is title", variable=self.checkVarRow)
         firstRowIsTitleCheckBtn.pack(side=tk.LEFT, padx=padding, pady=padding)
-        firstColIsRowNbrCheckBtn = tk.Checkbutton(checkBtnFrame, text="First column is row number")
+        self.checkVarCol = tk.IntVar()
+        firstColIsRowNbrCheckBtn = tk.Checkbutton(checkBtnFrame, text="First column is row number", variable=self.checkVarCol)
         firstColIsRowNbrCheckBtn.pack(side=tk.LEFT, padx=padding, pady=padding)
 
-        # nbr of features
-        nbrFeaturesFrame = tk.Frame(self)
-        nbrFeaturesFrame.pack(fill=tk.X)
-        nbrFeaturesLabel = tk.Label(nbrFeaturesFrame, text="Input number of features (only positive numbers allowed)",
+        # nbr of categories
+        nbrCategoriesFrame = tk.Frame(self)
+        nbrCategoriesFrame.pack(fill=tk.X)
+        nbrCategoriesLabel = tk.Label(nbrCategoriesFrame, text="Input number of categories (only positive numbers allowed)",
                                     width=50)
-        nbrFeaturesLabel.pack(side=tk.LEFT, padx=padding, pady=padding)
-        nbrFeaturesValidation = self.register(self.isPositiveNumber)
-        entryNbrFeatures = tk.Entry(nbrFeaturesFrame, width=10, validate="key", validatecommand=(nbrFeaturesValidation, '%S'))
-        entryNbrFeatures.pack(fill=tk.X, side=tk.LEFT, padx=padding)
-        self.nbrFeaturesWarning = tk.Label(nbrFeaturesFrame, text="")
-        self.nbrFeaturesWarning.pack(side=tk.LEFT, padx=padding, pady=padding)
+        nbrCategoriesLabel.pack(side=tk.LEFT, padx=padding, pady=padding)
+        nbrCategoriesValidation = self.register(self.isPositiveNumber)
+        self.entryNbrCategories = tk.Entry(nbrCategoriesFrame, width=10, validate="key", validatecommand=(nbrCategoriesValidation, '%S'))
+        self.entryNbrCategories.pack(fill=tk.X, side=tk.LEFT, padx=padding)
+        self.nbrCategoriesWarning = tk.Label(nbrCategoriesFrame, text="")
+        self.nbrCategoriesWarning.pack(side=tk.LEFT, padx=padding, pady=padding)
 
         # Preview data btn
         previewBtnFrame = tk.Frame(self)
@@ -67,8 +69,8 @@ class LoadDataView(tk.Frame):
             return False
 
 
-    def displayNbrFeaturesWarning(self):
-        self.nbrFeaturesWarning.config(text="Warning! Enter number smaller than number of columns.", fg="red")
+    def displayNbrCategoriesWarning(self):
+        self.nbrCategoriesWarning.config(text="Warning! Enter number smaller than number of columns.", fg="red")
 
 
     def getFileLocation(self):
@@ -77,30 +79,43 @@ class LoadDataView(tk.Frame):
         return
 
     def previewData(self):
-        print("LoadDataView.previewData() executed")
+        print("LoadDataView.previewData() executed", self.entryPath.get())
         """Loads data to preview from loadDataModel, reduces the shown area of the data and creates a table with the
         preview data."""
         maxRownbrToShow = 30
         maxColnbrToShow = 100
         # load data
-        data = self.loadDataModel.loadData(path=self.entryPath.get())
-        dataShape = np.shape(data)
-        rows = 0
-        # get shape for smallerData
-        if dataShape[0] < maxRownbrToShow:
-            rows = dataShape[0]
-        else:
-            rows = maxRownbrToShow
+        pathToData = self.entryPath.get()
+        firstRowIsHeader = bool(self.checkVarRow.get())
+        firstColIsRownbr = bool(self.checkVarCol.get())
+        if len(self.entryNbrCategories.get()) == 0:     # Code for this line from: https://stackoverflow.com/questions/15455113/tkinter-check-if-entry-box-is-empty
+            nbrOfCategories = 0
+        else: nbrOfCategories = self.entryNbrCategories.get()
+        dataIsForTraining = True
 
-        if dataShape[1] < maxColnbrToShow:
-            cols = dataShape[1]
-        else:
-            cols = maxColnbrToShow
+        try:
+            data = self.loadDataModel.loadData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
+            dataShape = np.shape(data)
+            rows = 0
+            # get shape for smallerData
+            if dataShape[0] < maxRownbrToShow:
+                rows = dataShape[0]
+            else:
+                rows = maxRownbrToShow
 
-        smallerData = data[0:rows, 0:cols]
+            if dataShape[1] < maxColnbrToShow:
+                cols = dataShape[1]
+            else:
+                cols = maxColnbrToShow
 
-        self.previewTable = TableCanvas(self.previewTableFrame, editable=False, data=smallerData)
-        self.previewTable.show()
+            smallerData = data[0:rows, 0:cols]
+
+            self.previewTable = TableCanvas(self.previewTableFrame, editable=False, data=smallerData)
+            self.previewTable.show()
+        except ValueError:
+            tk.messagebox.showerror("Error", "The number of categories entered is incorrect. Enter number > 0 and smaller"
+                                             " the number of columns in the dataset.")
+
 
     def displayPreviewWarning(self):
         self.previewWarning.config(text="Warning! Data cannot be previewed!", fg="red")
