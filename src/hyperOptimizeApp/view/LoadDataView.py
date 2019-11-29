@@ -88,10 +88,13 @@ class LoadDataView(tk.Frame):
         pathToData = self.entryPath.get()
         firstRowIsHeader = bool(self.checkVarRow.get())
         firstColIsRownbr = bool(self.checkVarCol.get())
+        # if entry field is empty, set to 0
         if len(self.entryNbrCategories.get()) == 0:     # Code for this line from: https://stackoverflow.com/questions/15455113/tkinter-check-if-entry-box-is-empty
             nbrOfCategories = 0
         else: nbrOfCategories = self.entryNbrCategories.get()
         dataIsForTraining = True
+
+        print("LoadDataview: nbrOfCategories", nbrOfCategories)
 
         try:
             data = self.loadDataModel.loadData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
@@ -109,6 +112,7 @@ class LoadDataView(tk.Frame):
                 cols = maxColnbrToShow
 
             smallerData = data[0:rows, 0:cols]
+            print(smallerData)
 
             self.previewTable = TableCanvas(self.previewTableFrame, editable=False, data=smallerData)
             self.previewTable.show()

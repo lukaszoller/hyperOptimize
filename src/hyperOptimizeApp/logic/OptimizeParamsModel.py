@@ -219,8 +219,9 @@ class OptimizeParamsModel:
         print("Estimated time: ", estimate, " actual time: ", actualRunningTime)
 
     def getResultData(self):
-        """Creates a table with all results. Columns: hyperparams & error, Rows: values for each model. The table will
-        be stored in self.resultData."""
+        """Creates a table with all results. Columns: nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction,
+        dropOutRate, lossFunction, modelOptimizer, learningRate, learningRateDecay, successRate, Rows: values for each
+        model. The table will be stored in self.resultData."""
 
         # fill result table with data
         l = len(self.modelList)
@@ -257,7 +258,7 @@ class OptimizeParamsModel:
         # Store table in self
         self.resultData = t
 
-    def visualizeResultsNbrOfLayers(self):
+    def visualizeHyperparamsPerformance(self):
         t = self.resultData
         t.sort('nbrOfLayers')
 
@@ -310,5 +311,11 @@ class OptimizeParamsModel:
         plt.ylabel('Success Rate')
         plt.show()
 
+    def visualizeBestModel(self):
+        t = self.resultData
 
+        plt.subplot(241)
+        plt.scatter(t['nbrOfLayers'], t['successRate'])
+        plt.xlabel('Number of Layers')
+        plt.ylabel('Success Rate')
 
