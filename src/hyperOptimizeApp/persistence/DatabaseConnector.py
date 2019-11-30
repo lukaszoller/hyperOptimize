@@ -4,6 +4,8 @@ import datetime
 import tensorflow as tf
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
+from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
+from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 
 
 class DatabaseConnector:
@@ -20,6 +22,9 @@ class DatabaseConnector:
         # self.addProject("Project 1")
         # self.addProject("Project 2")
         # self.addProject("Project 3")
+        hyperParams = HyperParamsObj()
+        model = MachineLearningModel(hyperParams)
+        self.saveModel(model, 1)
 
         # set pathToModels where Models are saved on filesystem
         self.pathToModels = "/savedModels/"

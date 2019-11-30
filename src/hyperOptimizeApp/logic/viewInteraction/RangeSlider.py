@@ -40,10 +40,10 @@ class RangeSlider(Canvas):
     - meaningful names
     """
     __canvasWidth = 0
-    __canvasHeight = 0
+    __canvasHeight = 20
 
     __canvasCenterX = 0
-    __canvasCenterY = 0
+    __canvasCenterY = 10
 
     __majorTickSpacing = 10
     __minorTickSpacing = 5
@@ -104,7 +104,7 @@ class RangeSlider(Canvas):
     '''
 
     def __init__(self, master, **cnf):
-        Canvas.__init__(self, master, highlightthickness=0)
+        Canvas.__init__(self, master, highlightthickness=0, height=50)
 
         self.__model = RangeSliderModel()
         self.__controller = RangeSliderController(self.__model, self)
@@ -382,6 +382,12 @@ class RangeSlider(Canvas):
         self.__canvasHeight = e.height
         self.__canvasCenterX = e.width / 2.0
         self.__canvasCenterY = e.height / 2.0
+
+        self.redraw()
+
+    def resizeHeight(self, height):
+        self.__canvasHeight = height
+        self.__canvasCenterY = height / 2.0
 
         self.redraw()
 

@@ -30,40 +30,37 @@ class OptimizeModelView(tk.Frame):
         rowCount += 1
 
         # Row with sliders for choosing number of Layers
-        self.minLayerSliderValue = tk.IntVar()
-        self.minLayerSliderValue.set(2)
         self.maxNodeSliderValue = tk.IntVar()
         self.maxNodeSliderValue.set(100)
 
         layerText = tk.Label(self, text='Range of Layers to test').grid(row=rowCount, column=1)
-        self.layerSliderMin = tk.Scale(self, from_=2, to=self.MAX_LAYERS, orient=tk.HORIZONTAL, label='Min:',
-                                       command=lambda x: self.setMinLayerValue(x)).grid(row=rowCount, column=2)
-        self.layerSliderMax = tk.Scale(self, from_=2, to=self.MAX_LAYERS, orient=tk.HORIZONTAL,
-                                       label='Max:', command=lambda x: self.setMaxNodeValue(x))
-        self.layerSliderMax.set(self.MAX_LAYERS)
-        self.layerSliderMax.grid(row=rowCount, column=3, padx=5, pady=3)
+        self.layerSlider = RangeSlider(self, label='minmax', from_=2, to=self.MAX_LAYERS, orient=tk.HORIZONTAL,
+                                       command=lambda x, y: self.setMaxNodeValue(y), sliderColor="yellow",
+                                       sliderHighlightedColor="green", barColor="lightblue", setLowerBound=True,
+                                       setUpperBound=True,
+                                       caretColor="red", caretHighlightedColor="green",
+                                       barWidthPercent=0.85, barHeightPercent=0.2)
+        self.layerSlider.grid(row=rowCount, column=2, columnspan=2)
+
         layerHelp = tk.Label(self, text='?')
         layerHelp.grid(row=rowCount, column=4)
         rowCount += 1
 
         # Row with sliders for choosing number of Nodes per Layer
-        self.minNodeSliderValue = tk.IntVar()
-        self.minNodeSliderValue.set(1)
         nodeText = tk.Label(self, text='Range of Nodes\nper layer to test').grid(row=rowCount, column=1)
-        self.nodeSliderMin = tk.Scale(self, from_=1, to=self.MAX_LAYERS, orient=tk.HORIZONTAL, label='Min: ',
-                                      command=lambda x: self.setMinNodeValue(x))
-        self.nodeSliderMin.grid(row=rowCount, column=2)
-        self.nodeSliderMax = tk.Scale(self, from_=1, to=self.MAX_LAYERS, orient=tk.HORIZONTAL,
-                                      label='Max: ')
-        self.nodeSliderMax.set(self.MAX_LAYERS)
-        self.nodeSliderMax.grid(row=rowCount, column=3, padx=5, pady=3)
+        self.nodeSlider = RangeSlider(self, label='minmax', from_=2, to=self.MAX_LAYERS, orient=tk.HORIZONTAL,
+                                      sliderColor="yellow", setLowerBound=True, setUpperBound=True,
+                                      sliderHighlightedColor="green", barColor="lightblue",
+                                      caretColor="red", caretHighlightedColor="green",
+                                      barWidthPercent=0.85, barHeightPercent=0.2)
+        self.nodeSlider.grid(row=rowCount, column=2, columnspan=2)
         nodeHelp = tk.Label(self, text='?')
         nodeHelp.grid(row=rowCount, column=4)
         rowCount += 1
 
         # Row with slider für Dropout
         dropoutText = tk.Label(self, text='Percentage of nodes weights set to 0').grid(row=rowCount, column=1)
-        self.dropoutSlider = tk.Scale(self, from_=0, to=1, orient=tk.HORIZONTAL, resolution=0.01).\
+        self.dropoutSlider = tk.Scale(self, from_=0, to=1, orient=tk.HORIZONTAL, resolution=0.01). \
             grid(row=rowCount, column=2, padx=5, pady=3)
         dropoutHelp = tk.Label(self, text='?')
         dropoutHelp.grid(row=rowCount, column=4)
@@ -86,11 +83,6 @@ class OptimizeModelView(tk.Frame):
         fourthBox.grid(row=rowCount, column=3)
         activationHelp = tk.Label(self, text='?')
         activationHelp.grid(row=rowCount, column=4)
-        rowCount += 1
-
-        # Row with test range slider
-        rangeSlider = RangeSlider(self, text='minmax', from_=2, to=self.MAX_LAYERS, orient=tk.HORIZONTAL)
-        rangeSlider.grid(row=rowCount, column=2, columnspan=3)
         rowCount += 1
 
         # Final Row (Train Model)
@@ -119,25 +111,12 @@ class OptimizeModelView(tk.Frame):
         else:
             pass
 
-    def setMinLayerValue(self, number):
-        self.minLayerSliderValue.set(number)
-        self.layerSliderMax.configure(from_=self.minLayerSliderValue.get())
-
-    def setMinNodeValue(self, number):
-        self.minNodeSliderValue.set(number)
-        self.nodeSliderMax.configure(from_=self.minNodeSliderValue.get())
-
     def setMaxNodeValue(self, number):
         self.maxNodeSliderValue.set(number)
-        self.nodeSliderMin.configure(to=self.maxNodeSliderValue.get())
-        self.nodeSliderMax.configure(to=self.maxNodeSliderValue.get())
+        self.nodeSlider.configure(to=self.maxNodeSliderValue.get())
 
     def checkActivation(self):
         # Check if an activation function is set
-        print(self.sigmoidVar.get())
-        print(self.gaussianVar.get())
-        print(self.thirdVar.get())
-        print(self.fourthVar.get())
         if (self.sigmoidVar.get() == 0) & (self.gaussianVar.get() == 0) & \
                 (self.thirdVar.get() == 0) & (self.fourthVar.get() == 0):
             return False
