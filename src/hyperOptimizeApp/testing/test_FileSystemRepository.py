@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 import numpy as np
+from src.hyperOptimizeApp.persistence.FileSystemRepository import FileSystemRepository
 
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
@@ -64,11 +65,10 @@ class SaverLoaderTester():
 # slt.test_saveTimeMeasurementData()
 
 
-class TestSaverLoader(TestCase):
+class TestFileSystemRepository(TestCase):
 
     def test_loadDataForTrainingOrPrediction(self):
         # function interface: pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories=0, dataIsForTraining=False
-
         # write data to file size(100x20)
         nbrOfCols = 20
         nbrOfRows = 100
@@ -79,11 +79,11 @@ class TestSaverLoader(TestCase):
         np.savetxt(testDataForLoadData, a, delimiter=',')
 
 
-        sl = SaverLoader()
         ##################################################################################
         # 1. No header, no colNbrs, prediction data
         ##################################################################################
-        resultData = sl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=False, firstColIsRownbr=False)
+        fl = FileSystemRepository()
+        resultData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=False, firstColIsRownbr=False)
         self.assertEqual(len(resultData), 2)    # if data is for prediction, function should return two datasets
         x, unmanipulatedData = resultData
 
@@ -94,27 +94,27 @@ class TestSaverLoader(TestCase):
         ##################################################################################
         # 2. header, colnbrs, prediction data
         ##################################################################################
-        x, unmanipulatedData = sl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
+        x, unmanipulatedData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
                                                                   firstColIsRownbr=True)
 
         # Number of rows and cols should be the same -1
         self.assertEqual(sum(np.shape(x)), nbrOfRows-1 + nbrOfCols-1)
-        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows+nbrOfCols)
+        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows+nbrOfCols-1)
 
         ##################################################################################
         # 3. header, colnbrs, prediction data but nbrOfCategories !=0
         ##################################################################################
-        x, unmanipulatedData = sl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=False,
+        x, unmanipulatedData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=False,
                                                                   firstColIsRownbr=True, nbrOfCategories=4, dataIsForTraining=False)
         # Number of rows should be the same, number of cols should be -1
         self.assertEqual(sum(np.shape(x)), nbrOfRows-1 + nbrOfCols)
-        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows + nbrOfCols)
+        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows-1 + nbrOfCols)
 
         ##################################################################################
         # 4. header, colnbrs, nbrOfCategories = 4, data is for Training
         ##################################################################################
         nbrOfCategories = 4
-        resultData = sl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
+        resultData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
                                                         firstColIsRownbr=False, nbrOfCategories=nbrOfCategories, dataIsForTraining=True)
         self.assertEqual(len(resultData), 3)  # if data is for training, function should return two datasets
         x, y, unmanipulatedData = resultData

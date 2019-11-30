@@ -78,7 +78,7 @@ class TestOptimizeParamsModel():
         optimizeParamsModel.getResultData()
 
         # Visualize nbrOfLayersError
-        optimizeParamsModel.visualizeResultsNbrOfLayers()
+        optimizeParamsModel.visualizeHyperparamsPerformance()
 
 
 
