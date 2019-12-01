@@ -7,4 +7,4 @@ class HomeModel:
         self.projectList = self.projectInteract.getProjectList()
 
     def getProjectList(self):
-        return self.projectList
+        return self.projectInteract.getProjectList()

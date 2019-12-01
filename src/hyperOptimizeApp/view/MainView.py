@@ -68,7 +68,7 @@ class ControlFrame(tk.Frame):
 
         # Menu Objects in "File"
         mFile["tearoff"] = 0
-        mFile.add_command(label="Home", command=lambda: showFrame(self.homeView))
+        mFile.add_command(label="Home", command=lambda: self.setHomeFrame())
         mFile.add_separator()
         mFile.add_command(label="New Project", command=lambda: self.setProjectFrame(False, None))
         mFile.add_command(label="Load Project")
@@ -90,10 +90,15 @@ class ControlFrame(tk.Frame):
     def changeStyle(self, color):
         self.config(background=color)
 
+    def setHomeFrame(self):
+        self.homeView.fillProjectList()
+        showFrame(self.homeView)
+
     def setProjectFrame(self, newProject=bool, project=DatabaseProjectModel()):
-        if not newProject:
+        if newProject:
             self.projectView.setTopText("New Project")
             newProjectModel = DatabaseProjectModel()
+            newProjectModel.projectName = "New Project"
             self.projectView.setProject(newProjectModel)
         else:
             self.projectView.setTopText(project.getProjectName())

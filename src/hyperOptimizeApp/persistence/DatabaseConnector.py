@@ -22,9 +22,9 @@ class DatabaseConnector:
         # self.addProject("Project 1")
         # self.addProject("Project 2")
         # self.addProject("Project 3")
-        hyperParams = HyperParamsObj()
-        model = MachineLearningModel(hyperParams)
-        self.saveModel(model, 1)
+        # hyperParams = HyperParamsObj()
+        # model = MachineLearningModel(hyperParams)
+        # self.saveModel(model, 1)
 
         # set pathToModels where Models are saved on filesystem
         self.pathToModels = "/savedModels/"
@@ -62,7 +62,7 @@ class DatabaseConnector:
         self.writeDB(sql)
 
     def updateProject(self, project=DatabaseProjectModel()):
-        sql = "UPDATE project SET name = {} WHERE id = {}".format(project.projectName, project.projectId)
+        sql = "UPDATE project SET name = '{}' WHERE id = {}".format(project.projectName, project.projectId)
         self.writeDB(sql)
 
     def writeDB(self, sql):

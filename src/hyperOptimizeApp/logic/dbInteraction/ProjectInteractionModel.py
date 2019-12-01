@@ -1,4 +1,5 @@
 from src.hyperOptimizeApp.persistence.DatabaseConnector import DatabaseConnector
+from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 
 
 class ProjectInteractionModel:
@@ -14,3 +15,9 @@ class ProjectInteractionModel:
 
     def deleteProjectById(self, projectId):
         self.projectDB.deleteProjectById(projectId)
+
+    def saveProject(self, project=DatabaseProjectModel):
+        self.projectDB.addProject(project.projectName)
+
+    def saveProjectById(self, project=DatabaseProjectModel):
+        self.projectDB.updateProject(project)

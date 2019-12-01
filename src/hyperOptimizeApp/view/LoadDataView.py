@@ -14,7 +14,7 @@ class LoadDataView(tk.Frame):
         self.place(relx=0, rely=0, height=height, width=width)
         # nameLabel = tk.Label(self, text="Project Name").grid(row=1, column=2)
 
-        # path to data
+        # path to datal
         pathFrame = tk.Frame(self)
         pathFrame.pack(fill=tk.X)
         pathLabel = tk.Label(pathFrame, text="Path to data", width=10)

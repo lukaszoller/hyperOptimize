@@ -15,6 +15,7 @@ def openFile():
         saverLoader.setFileName(file.name)
         print(saverLoader.getEstTimeData())
 
+
 class ProjectView(tk.Frame):
     controlFrame = None
     project = DatabaseProjectModel()
@@ -36,9 +37,9 @@ class ProjectView(tk.Frame):
 
         # ROW 2
         nameLabel = tk.Label(self, text="Project Name").grid(row=rowCount, column=2)
-        nameEntry = tk.Entry(self)
-        nameEntry.insert(tk.END, self.project.projectName)
-        nameEntry.grid(row=rowCount, column=3)
+        self.nameEntry = tk.Entry(self)
+        self.nameEntry.insert(tk.END, self.project.projectName)
+        self.nameEntry.grid(row=rowCount, column=3)
         rowCount += 1
 
         # ROW 3
@@ -66,7 +67,7 @@ class ProjectView(tk.Frame):
         rowCount += 1
 
         # ROW 6
-        saveButton = tk.Button(self, text="Save Project").grid(row=rowCount, padx=5)
+        saveButton = tk.Button(self, text="Save Project", command=lambda: self.saveProject()).grid(row=rowCount, padx=5)
         deleteButton = tk.Button(self, text="Delete Project",
                                  command=lambda: self.confirmationBox()).grid(row=rowCount, column=5, padx=5)
 
@@ -75,7 +76,9 @@ class ProjectView(tk.Frame):
 
     def setProject(self, project=DatabaseProjectModel()):
         self.project = project
-        self.modelList = self.modelInteract.getModelsByProjectId(self.project.projectId)
+        print(self.project.projectId)
+        if self.project.projectId != 0:
+            self.modelList = self.modelInteract.getModelsByProjectId(self.project.projectId)
         self.fillListBox(self.modelRow)
 
     def addControlFrame(self, frame):
@@ -84,12 +87,26 @@ class ProjectView(tk.Frame):
     def setTopText(self, text):
         self.topText.set(text)
 
+    def saveProject(self):
+        projectName = str(self.nameEntry.get())
+        self.project.projectName = projectName
+        if self.project.projectId != 0:
+            self.projectInteract.saveProjectById(self.project)
+            print("Project saved")
+        else:
+            self.projectInteract.saveProject(self.project)
+            print("Project created")
+        self.setTopText(projectName)
+
     def confirmationBox(self):
-        answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Project?")
+        answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Project\n"
+                                                            "AND all associated Models?")
         if answer == 1:
             if self.project is not None:
                 self.projectInteract.deleteProjectById(self.project.projectId)
+                self.modelInteract.deleteModelsByProjectId(self.projectId)
                 print("Project deleted")
+                self.controlFrame.setHomeFrame()
             else:
                 print("no project selected")
         else:
@@ -101,6 +118,7 @@ class ProjectView(tk.Frame):
         self.controlFrame.setModelFrame(True, model)
 
     def fillListBox(self, rowCount):
+        self.modelListbox.delete(0, tk.END)
         for model in self.modelList:
             self.modelListbox.insert(tk.END, model)
         self.modelListbox.grid(row=rowCount, column=1)
