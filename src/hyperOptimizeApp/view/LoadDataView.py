@@ -46,17 +46,19 @@ class LoadDataView(tk.Frame):
         self.nbrCategoriesWarning = tk.Label(nbrCategoriesFrame, text="")
         self.nbrCategoriesWarning.pack(side=tk.LEFT, padx=padding, pady=padding)
 
-        # Preview data btn
-        previewBtnFrame = tk.Frame(self)
-        previewBtnFrame.pack(fill=tk.X)
-        previewBtn = tk.Button(previewBtnFrame, text="Preview data", command=lambda: self.previewData())
-        previewBtn.pack(side=tk.LEFT,  padx=padding, pady=padding)
-        self.previewWarning = tk.Label(previewBtnFrame, text="")
-        self.previewWarning.pack(side=tk.LEFT, padx=padding, pady=padding)
+        # Load data btn
+        loadDataBtnFrame = tk.Frame(self)
+        loadDataBtnFrame.pack(fill=tk.X)
+        loadDataBtn = tk.Button(loadDataBtnFrame, text="Load data", command=lambda: self.loadData())
+        loadDataBtn.pack(side=tk.LEFT,  padx=padding, pady=padding)
+        self.loadDataInformation = tk.Label(loadDataBtnFrame, text="")
+        self.loadDataInformation.pack(side=tk.LEFT, padx=padding, pady=padding)
 
         # Preview data table
-        self.previewTableFrame = tk.Frame(self)
-        self.previewTableFrame.pack(fill=tk.X)
+        previewDataFrame = tk.Frame(self)
+        previewDataFrame.pack(fill=tk.X)
+        self.preViewDataText = tk.Text(previewDataFrame)
+        self.preViewDataText.pack(side=tk.LEFT, expand=True, padx=padding, pady=padding)
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
@@ -78,48 +80,41 @@ class LoadDataView(tk.Frame):
         self.entryPath.insert(0, tk.filedialog.askopenfilename(filetypes=[('csv Files', '*.csv')]))
         return
 
-    def previewData(self):
-        print("LoadDataView.previewData() executed", self.entryPath.get())
-        """Loads data to preview from loadDataModel, reduces the shown area of the data and creates a table with the
-        preview data."""
-        maxRownbrToShow = 30
-        maxColnbrToShow = 100
-        # load data
+    def loadData(self):
+        """Runs loadData from LoadDataModel. Runs also previewData from this class. Shows error warning in GUI if data
+        load does not work."""
+        # parameters for data load from GUI
         pathToData = self.entryPath.get()
         firstRowIsHeader = bool(self.checkVarRow.get())
         firstColIsRownbr = bool(self.checkVarCol.get())
-        # if entry field is empty, set to 0
-        if len(self.entryNbrCategories.get()) == 0:     # Code for this line from: https://stackoverflow.com/questions/15455113/tkinter-check-if-entry-box-is-empty
+        # if entry field is empty, set nbrOfCategories to 0
+        if len(
+                self.entryNbrCategories.get()) == 0:  # Code for this line from: https://stackoverflow.com/questions/15455113/tkinter-check-if-entry-box-is-empty
             nbrOfCategories = 0
-        else: nbrOfCategories = self.entryNbrCategories.get()
+        else:
+            nbrOfCategories = int(self.entryNbrCategories.get())
         dataIsForTraining = True
 
-        print("LoadDataview: nbrOfCategories", nbrOfCategories)
-
+        # Load data
         try:
-            data = self.loadDataModel.loadData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
-            dataShape = np.shape(data)
-            rows = 0
-            # get shape for smallerData
-            if dataShape[0] < maxRownbrToShow:
-                rows = dataShape[0]
-            else:
-                rows = maxRownbrToShow
-
-            if dataShape[1] < maxColnbrToShow:
-                cols = dataShape[1]
-            else:
-                cols = maxColnbrToShow
-
-            smallerData = data[0:rows, 0:cols]
-            print(smallerData)
-
-            self.previewTable = TableCanvas(self.previewTableFrame, editable=False, data=smallerData)
-            self.previewTable.show()
+            self.loadDataModel.loadData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
+            print("LoadDataView: self.loadDataModel.data: ", self.loadDataModel.data)
+        except FileNotFoundError:
+            tk.messagebox.showerror("Error", " File not found.")
         except ValueError:
             tk.messagebox.showerror("Error", "The number of categories entered is incorrect. Enter number > 0 and smaller"
                                              " the number of columns in the dataset.")
+        except:
+            print("Load data failed because of something different than nbrOfCategories entered or file not found.")
+        else:  # if data load worked do the following
+            self.loadDataInformation.config(text="Data has been loaded successfully", fg="green")
+            self.previewData()
+
+    def previewData(self):
+        """Previews loaded data."""
+        x, y, rawData = self.loadDataModel.data
+        self.preViewDataText.insert(tk.END, rawData)
 
 
     def displayPreviewWarning(self):
-        self.previewWarning.config(text="Warning! Data cannot be previewed!", fg="red")
+        self.loadDataInformation.config(text="Warning! Data cannot be previewed!", fg="red")

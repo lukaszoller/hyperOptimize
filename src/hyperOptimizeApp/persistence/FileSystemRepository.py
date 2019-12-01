@@ -25,26 +25,20 @@ class FileSystemRepository:
                 "If data is used for prediction, nbrOfCategories has to be 0. Value of nbrOfCategories has been set to "
                 "0 automatically.")
 
-        # get data
-        try:
-            data = np.genfromtxt(pathToData, delimiter=',', skip_header=False)
-            return
-        except IOError:
-            print("IOError: Could not read file: ", pathToData)
+        # get data, no error handling needed. Error handled in LoadDataModel
+        data = np.genfromtxt(pathToData, delimiter=',', skip_header=False)
 
         # get dataset info
         nbrOfRows, nbrOfCols = np.shape(data)
-        nbrOfFeatures = nbrOfCols - nbrOfCategories
-        # return error if nbrOfFeatures is bigger than nbrOfcols
-        if nbrOfFeatures > nbrOfCols:
+        # if data is for training, nbrOfCategories has to be between 1 and nbrOfCols
+        a = (nbrOfCategories >= nbrOfCols)
+        b = (nbrOfCategories == 0)
+        c = dataIsForTraining and (nbrOfCategories >= nbrOfCols or nbrOfCategories == 0)
+        if dataIsForTraining and (nbrOfCategories >= nbrOfCols or nbrOfCategories == 0):
             raise ValueError(
-                "nbrOfFeatures is bigger than nbrOfCols in dataset. nbrOfFeatures should be smaller.Probably "
-                "parameter nbrOfCategories is set wrongly.")
-        # return error if nbrOfFeatures is equal to nbrOfColumns but dataset is for training (y needed)
-        if nbrOfFeatures == nbrOfCols and dataIsForTraining:
-            raise ValueError(
-                "nbrOfFeatures has to be smaller than nbrOfCols in dataset. Probably parameter nbrOfCategories "
-                "is set wrongly.")
+                "nbrOfCategories is bigger than nbrOfCols in dataset. nbrOfFeatures should be smaller. Change "
+                "this input.")
+
         # Store data before manipulation
         rawData = data
 
@@ -56,6 +50,7 @@ class FileSystemRepository:
             data = data[:, 1:nbrOfCols]
             rawData = rawData[:, 1:nbrOfCols]
 
+        nbrOfFeatures = nbrOfCols - nbrOfCategories
         x = data[:, 0:nbrOfFeatures]
 
         # return data
