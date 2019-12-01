@@ -16,8 +16,8 @@ class DatabaseConnector:
         if not glob.glob(self.DATABASE_NAME):
             sql = "CREATE TABLE project(id INTEGER PRIMARY KEY, name VARCHAR NOT NULL, date DATE NOT NULL)"
             self.writeDB(sql)
-            sql = "CREATE TABLE model(id INTEGER PRIMARY KEY, date DATE NOT NULL, serializedModel VARCHAR NOT NULL, " \
-                  "projectId INTEGER, FOREIGN KEY(projectId) REFERENCES project(id))"
+            sql = "CREATE TABLE model(id INTEGER PRIMARY KEY, modelName VARCHAR NOT NULL, date DATE NOT NULL, " \
+                  "serializedModel VARCHAR NOT NULL, projectId INTEGER, FOREIGN KEY(projectId) REFERENCES project(id))"
             self.writeDB(sql)
         # self.addProject("Project 1")
         # self.addProject("Project 2")
@@ -72,12 +72,13 @@ class DatabaseConnector:
         connector.commit()
         connector.close()
 
-    def saveModel(self, model, projectId):
+    def saveModel(self, modelName, model, projectId):
         model_json = model.to_json()
         print("saveModel: print model_json: ", model_json)
         date = datetime.date.today().strftime('%Y-%m-%d')
         projectId = str(projectId)
-        sql = "INSERT INTO model(date, serializedModel, projectID) VALUES(" + date + ", '" + model_json + "', '" + projectId + "')"
+        sql = "INSERT INTO model(modelName, date, serializedModel, projectID) VALUES('" + modelName + "', " + date + \
+              ", '" + model_json + "', '" + projectId + "')"
         self.writeDB(sql)
 
     def getModelByID(self, modelId):
@@ -91,19 +92,26 @@ class DatabaseConnector:
         connector.close()
         return model
 
-    # TODO: Fill here
     def getAllModelsByProjectId(self, projectId):
         connector = sqlite3.connect(self.DATABASE_NAME)
         cursor = connector.cursor()
         models = []
-        sql = "SELECT * FROM model WHERE projectId = {}".format(projectId)
+        sql = "SELECT modelName, serializedModel FROM model WHERE projectId = {}".format(projectId)
         cursor.execute(sql)
         for element in cursor:
-            print(element[1])
-            model = DatabaseModelModel(element[0], element[1], element[2])
+            # JUST FOR TESTING
+            hyperParams = HyperParamsObj()
+            model = MachineLearningModel(hyperParams, element[0])
+            model.model = tf.keras.models.model_from_json(element[1])
             models.append(model)
         connector.close()
+        for model in models:
+            print(model.modelName)
         return models
+
+    def deleteModelsByProjectId(self, projectId):
+        sql = "DELETE FROM model WHERE projectId = {}".format(projectId)
+        self.writeDB(sql)
 
 
 

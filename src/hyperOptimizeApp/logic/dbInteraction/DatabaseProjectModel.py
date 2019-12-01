@@ -5,7 +5,7 @@ class DatabaseProjectModel:
     projectName = ""
 
     # Loading old project
-    def __init__(self, projectId=int, projectName="", dataInformation=None, dataPath=None):
+    def __init__(self, projectId=0, projectName="", dataInformation=None, dataPath=None):
         self.projectId = projectId
         self.projectName = projectName
         self.dataInformation = dataInformation

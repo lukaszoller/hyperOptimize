@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox
 from tkinter.filedialog import askopenfile
+from tkinter import simpledialog
 
 from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
@@ -23,6 +24,7 @@ class ProjectView(tk.Frame):
     modelInteract = ModelInteractionModel()
     modelList = []
     modelRow = 0
+    nameLabelRow = 0
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
@@ -38,8 +40,8 @@ class ProjectView(tk.Frame):
         # ROW 2
         nameLabel = tk.Label(self, text="Project Name").grid(row=rowCount, column=2)
         self.nameEntry = tk.Entry(self)
-        self.nameEntry.insert(tk.END, self.project.projectName)
-        self.nameEntry.grid(row=rowCount, column=3)
+        self.fillNameLabel(rowCount)
+        self.nameLabelRow = rowCount
         rowCount += 1
 
         # ROW 3
@@ -62,7 +64,7 @@ class ProjectView(tk.Frame):
         loadModelButton = tk.Button(self, text="Load Model", command=lambda: self.passModel()) \
             .grid(row=rowCount, column=1)
         newModelButton = tk.Button(self, text="New Model",
-                                   command=lambda: self.controlFrame.setModelFrame(False, None)) \
+                                   command=lambda: self.addNewModel()) \
             .grid(row=rowCount, column=2)
         rowCount += 1
 
@@ -80,6 +82,7 @@ class ProjectView(tk.Frame):
         if self.project.projectId != 0:
             self.modelList = self.modelInteract.getModelsByProjectId(self.project.projectId)
         self.fillListBox(self.modelRow)
+        self.fillNameLabel(self.nameLabelRow)
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
@@ -104,7 +107,7 @@ class ProjectView(tk.Frame):
         if answer == 1:
             if self.project is not None:
                 self.projectInteract.deleteProjectById(self.project.projectId)
-                self.modelInteract.deleteModelsByProjectId(self.projectId)
+                self.modelInteract.deleteModelsByProjectId(self.project.projectId)
                 print("Project deleted")
                 self.controlFrame.setHomeFrame()
             else:
@@ -112,13 +115,30 @@ class ProjectView(tk.Frame):
         else:
             print("nothing done.")
 
+    def addNewModel(self):
+        modelName = tk.simpledialog.askstring("Input", "User friendly name of the Model:")
+        if modelName == "":
+            print("Model not created")
+        else:
+            try:
+                self.modelInteract.addModelByProjectId(modelName, self.project.projectId)
+                print("Model created")
+                self.controlFrame.setModelFrame(self.modelInteract.lastModel)
+            except:
+                print("Model creation failed")
+
     def passModel(self):
         modelNumber = self.modelListbox.curselection()[0]
         model = self.modelList.__getitem__(modelNumber)
-        self.controlFrame.setModelFrame(True, model)
+        self.controlFrame.setModelFrame(model)
 
     def fillListBox(self, rowCount):
         self.modelListbox.delete(0, tk.END)
         for model in self.modelList:
-            self.modelListbox.insert(tk.END, model)
+            self.modelListbox.insert(tk.END, model.modelName)
         self.modelListbox.grid(row=rowCount, column=1)
+
+    def fillNameLabel(self, rowCount):
+        self.nameEntry.delete(0, tk.END)
+        self.nameEntry.insert(tk.END, self.project.projectName)
+        self.nameEntry.grid(row=rowCount, column=3)

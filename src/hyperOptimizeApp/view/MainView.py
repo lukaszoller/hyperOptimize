@@ -10,6 +10,7 @@ from src.hyperOptimizeApp.view.ModelView import ModelView
 from src.hyperOptimizeApp.view.OptimizeModelView import OptimizeModelView
 from src.hyperOptimizeApp.view.LoadDataView import LoadDataView
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
+from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
 from src.hyperOptimizeApp.logic.viewInteraction.ModelModel import ModelModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -42,7 +43,7 @@ class ControlFrame(tk.Frame):
         self.place(x=0, y=450, height=50, width=width)
 
         # Fenster Zeichen
-        tk.Button(self, text="Home", command=lambda: showFrame(self.homeView)).pack(side=tk.LEFT, padx=5)
+        tk.Button(self, text="Home", command=lambda: self.setHomeFrame()).pack(side=tk.LEFT, padx=5)
         tk.Button(self, text="New Project", command=lambda: self.setProjectFrame(False, "New Project")).pack(
             side=tk.LEFT, padx=5)
         tk.Button(self, text="Quit", command=mainView.close).pack(side=tk.LEFT, padx=5)
@@ -105,17 +106,12 @@ class ControlFrame(tk.Frame):
             self.projectView.setProject(project)
         showFrame(self.projectView)
 
-    def setModelFrame(self, newModel=bool, model=DatabaseModelModel()):
-        if not newModel:
-            self.modelView.setTopText("New Model")
-            newModel = DatabaseModelModel()
-            self.modelView.setModel(newModel)
-        else:
-            self.modelView.setTopText(model.getModelName())
-            self.modelView.setModel(model)
+    def setModelFrame(self, model=MachineLearningModel):
+        self.modelView.setTopText(model.modelName)
+        self.modelView.setModel(model)
         showFrame(self.modelView)
 
-    def setOptimizeModelFrame(self, model=DatabaseModelModel):
+    def setOptimizeModelFrame(self, model=MachineLearningModel):
         self.optimizeModelView.setModel(model)
         showFrame(self.optimizeModelView)
 
