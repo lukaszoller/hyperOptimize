@@ -49,7 +49,8 @@ class ProjectView(tk.Frame):
         loadFileButton = tk.Button(self, text='Open', command=lambda: openFile())
         loadFileButton.grid(row=rowCount, column=3, pady=10)
 
-        loadDataButton = tk.Button(self, text="Load data", command=lambda: self.controlFrame.setLoadDataFrame()) \
+        loadDataButton = tk.Button(self, text="Load data",
+                                   command=lambda: self.controlFrame.setLoadDataFrame(self.project)) \
             .grid(row=rowCount, column=4)
 
         rowCount += 1

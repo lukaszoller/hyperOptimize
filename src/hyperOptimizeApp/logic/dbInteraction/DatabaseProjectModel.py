@@ -5,11 +5,11 @@ class DatabaseProjectModel:
     projectName = ""
 
     # Loading old project
-    def __init__(self, projectId=0, projectName="", dataInformation=None, dataPath=None):
+    def __init__(self, projectId=0, projectName="", dataPath=None, dataIsSet=False):
         self.projectId = projectId
         self.projectName = projectName
-        self.dataInformation = dataInformation
         self.dataPath = dataPath
+        self.dataIsSet = dataIsSet
 
     def __str__(self):
         return self.projectName

@@ -115,7 +115,8 @@ class ControlFrame(tk.Frame):
         self.optimizeModelView.setModel(model)
         showFrame(self.optimizeModelView)
 
-    def setLoadDataFrame(self):
+    def setLoadDataFrame(self, project):
+        self.loadDataView.setProject(project)
         showFrame(self.loadDataView)
 
     # ########################################## Lukas Code #########################################

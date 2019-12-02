@@ -1,8 +1,13 @@
 import tkinter as tk  # python 3
+import tkinter.messagebox
 import numpy as np
+from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
+
 
 class LoadDataView(tk.Frame):
     controlFrame = None
+    project = None
+    dbInteraction = DataInteractionModel()
 
     def __init__(self, main, width, height, loadDataModel):
         self.loadDataModel = loadDataModel
@@ -46,12 +51,17 @@ class LoadDataView(tk.Frame):
         self.nbrCategoriesWarning.pack(side=tk.LEFT, padx=padding, pady=padding)
 
         # Load data btn
-        loadDataBtnFrame = tk.Frame(self)
-        loadDataBtnFrame.pack(fill=tk.X)
-        loadDataBtn = tk.Button(loadDataBtnFrame, text="Load data", command=lambda: self.loadData())
+        dataBtnFrame = tk.Frame(self)
+        dataBtnFrame.pack(fill=tk.X)
+        loadDataBtn = tk.Button(dataBtnFrame, text="Load data", command=lambda: self.loadData())
         loadDataBtn.pack(side=tk.LEFT,  padx=padding, pady=padding)
-        self.loadDataInformation = tk.Label(loadDataBtnFrame, text="")
+        self.loadDataInformation = tk.Label(dataBtnFrame, text="")
         self.loadDataInformation.pack(side=tk.LEFT, padx=padding, pady=padding)
+
+        # Set data btn
+        setDataBtn = tk.Button(dataBtnFrame, text="Set data", command=lambda: self.setData())
+        setDataBtn.pack(side=tk.LEFT)
+
 
         # Preview data table
         previewDataFrame = tk.Frame(self)
@@ -109,11 +119,39 @@ class LoadDataView(tk.Frame):
             self.loadDataInformation.config(text="Data has been loaded successfully", fg="green")
             self.previewData()
 
+    def setData(self):
+        answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to set Data?\n"
+                                                            "This process can't be reversed!")
+        if answer == 1:
+            print(self.entryPath.get())
+            if self.entryPath.get() == "":
+                print("No File Chosen")
+            else:
+                self.loadDataModel.pathToDataSet = self.entryPath.get()
+                self.loadDataModel.firstRowIsTitle = bool(self.checkVarRow.get())
+                self.loadDataModel.firstColumnAreColNumbers = bool(self.checkVarCol.get())
+                # if entry field is empty, set nbrOfCategories to 0
+                if len(
+                        self.entryNbrCategories.get()) == 0:  # Code for this line from: https://stackoverflow.com/questions/15455113/tkinter-check-if-entry-box-is-empty
+                    self.loadDataModel.nbrOfFeatures = 0
+                else:
+                    self.loadDataModel.nbrOfFeatures = int(self.entryNbrCategories.get())
+                try:
+                    self.dbInteraction.setDataForProject(self.project.projectId, self.loadDataModel)
+                    print("Data for Project set")
+                    self.controlFrame.setProjectFrame(False, self.project)
+                except:
+                    print("Something went wrong!")
+        else:
+            print("Nothing done")
+
     def previewData(self):
         """Previews loaded data."""
         x, y, rawData = self.loadDataModel.data
         self.preViewDataText.insert(tk.END, rawData)
 
-
     def displayPreviewWarning(self):
         self.loadDataInformation.config(text="Warning! Data cannot be previewed!", fg="red")
+
+    def setProject(self, project):
+        self.project = project
