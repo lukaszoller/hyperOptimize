@@ -135,7 +135,7 @@ class OptimizeParamsModel:
             #####################################################################################
             # create model
             #####################################################################################
-            model = MachineLearningModel(hyperParamsObj)
+            model = MachineLearningModel(hyperParamsObj, str(i))
             model.createNetwork()
             print("OptimizeParamsModel.evaluateModels: Model created.", model)
 
@@ -257,6 +257,16 @@ class OptimizeParamsModel:
                                     'lossFunction', 'modelOptimizer', 'learningRate', 'learningRateDecay', 'successRate'])
         # Store table in self
         self.resultData = t
+
+    def getBestModel(self):
+        """Checks if self.modelList is empty (that means if Optimization was executed). If not empty, it returns the
+        model with the max success rate."""
+        # Get best model is only possible if self.model list is not empty
+        if not self.modelList:
+            maxSuccessIndex = np.argmax(self.successRate)
+            return self.modelList[maxSuccessIndex]
+        else:
+            raise Exception("OptimizeParamsModel.modelList is empty")
 
     def visualizeHyperparamsPerformance(self):
         t = self.resultData

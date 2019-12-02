@@ -5,6 +5,8 @@ from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.viewInteraction.Tooltip import CreateToolTip as tt
 from src.hyperOptimizeApp.logic.viewInteraction.RangeSlider import *
+from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
+import numpy as np
 
 
 class OptimizeModelView(tk.Frame):
@@ -109,6 +111,16 @@ class OptimizeModelView(tk.Frame):
         if not self.checkActivation():
             tk.messagebox.showwarning("Activation Error", "Please select at least one activation function!")
         else:
+            # Get hyperparam ranges
+            minNbrOfNodes = 2
+            maxNbrOfNodes = 4
+            minNbrOfLayers = 2
+            maxNbrOfLayers = 4
+            minDropout = 0
+            maxDropout = 1
+            activationArray = np.array(['sigmoid', 'elu', 'softmax'])
+
+
             pass
 
     def setMaxNodeValue(self, number):
