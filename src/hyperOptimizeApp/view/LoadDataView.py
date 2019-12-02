@@ -53,7 +53,7 @@ class LoadDataView(tk.Frame):
         # Load data btn
         dataBtnFrame = tk.Frame(self)
         dataBtnFrame.pack(fill=tk.X)
-        loadDataBtn = tk.Button(dataBtnFrame, text="Load data", command=lambda: self.loadPreviewData()Data())
+        loadDataBtn = tk.Button(dataBtnFrame, text="Load data", command=lambda: self.loadPreviewData())
         loadDataBtn.pack(side=tk.LEFT,  padx=padding, pady=padding)
         self.loadDataInformation = tk.Label(dataBtnFrame, text="")
         self.loadDataInformation.pack(side=tk.LEFT, padx=padding, pady=padding)
