@@ -90,6 +90,9 @@ class OptimizeModelView(tk.Frame):
         # Final Row (Train Model)
         trainModelButton = tk.Button(self, text='Optimize', command=lambda: self.checkAndOptimize()).grid(
             row=rowCount, column=3)
+        estTimeButton = tk.Button(self, text='Estimate running time', command=lambda: self.estimateTime()).grid(
+            row=rowCount, column=4)
+
         rowCount += 1
 
         # TOOLTIPS ---------------
@@ -111,14 +114,7 @@ class OptimizeModelView(tk.Frame):
         if not self.checkActivation():
             tk.messagebox.showwarning("Activation Error", "Please select at least one activation function!")
         else:
-            # Get hyperparam ranges
-            minNbrOfNodes = 2
-            maxNbrOfNodes = 4
-            minNbrOfLayers = 2
-            maxNbrOfLayers = 4
-            minDropout = 0
-            maxDropout = 1
-            activationArray = np.array(['sigmoid', 'elu', 'softmax'])
+            rangeForHyperParamsObj = self.getHyperParamsObject()
 
 
             pass
@@ -134,5 +130,21 @@ class OptimizeModelView(tk.Frame):
             return False
         return True
 
-    def checkTime(self):
+    def estimateTime(self):
         pass
+
+    def createHyperParamsObject(self):
+        # Get hyperparam ranges
+        minNbrOfNodes = 2
+        maxNbrOfNodes = 4
+        minNbrOfLayers = 2
+        maxNbrOfLayers = 4
+        minDropout = 0
+        maxDropout = 1
+        activationArray = np.array(['sigmoid', 'elu', 'softmax'])
+
+        self.rangeForHyperParamsObj = RangeForHyperParamsObj()
+        self.rangeForHyperParamsObj.nbrOfHiddenLayersDict = dict({'min': minNbrOfLayers, 'max': maxNbrOfLayers})
+        self.rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': minNbrOfNodes, 'max': maxNbrOfNodes})
+        self.rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
+        self.rangeForHyperParamsObj.activationArray = activationArray
