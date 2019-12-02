@@ -45,12 +45,12 @@ class LoadDataView(tk.Frame):
         self.nbrCategoriesWarning = tk.Label(nbrCategoriesFrame, text="")
         self.nbrCategoriesWarning.pack(side=tk.LEFT, padx=padding, pady=padding)
 
-        # Load data btn
-        loadDataBtnFrame = tk.Frame(self)
-        loadDataBtnFrame.pack(fill=tk.X)
-        loadDataBtn = tk.Button(loadDataBtnFrame, text="Load data", command=lambda: self.loadData())
-        loadDataBtn.pack(side=tk.LEFT,  padx=padding, pady=padding)
-        self.loadDataInformation = tk.Label(loadDataBtnFrame, text="")
+        # Load and preview data btn
+        loadPreviewDataFrame = tk.Frame(self)
+        loadPreviewDataFrame.pack(fill=tk.X)
+        loadPreviewDataBtn = tk.Button(loadPreviewDataFrame, text="Preview data", command=lambda: self.loadPreviewData())
+        loadPreviewDataBtn.pack(side=tk.LEFT,  padx=padding, pady=padding)
+        self.loadDataInformation = tk.Label(loadPreviewDataFrame, text="")
         self.loadDataInformation.pack(side=tk.LEFT, padx=padding, pady=padding)
 
         # Preview data table
@@ -58,6 +58,12 @@ class LoadDataView(tk.Frame):
         previewDataFrame.pack(fill=tk.X)
         self.preViewDataText = tk.Text(previewDataFrame)
         self.preViewDataText.pack(side=tk.LEFT, expand=True, padx=padding, pady=padding)
+
+        # Load data to project
+        loadPreviewDataFrame = tk.Frame(self)
+        loadPreviewDataFrame.pack(fill=tk.X)
+        loadPreviewDataBtn = tk.Button(loadPreviewDataFrame, text="Assign data to model", command=lambda: self.assignDataToProject())
+        loadPreviewDataBtn.pack(side=tk.LEFT, padx=padding, pady=padding)
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
@@ -79,7 +85,7 @@ class LoadDataView(tk.Frame):
         self.entryPath.insert(0, tk.filedialog.askopenfilename(filetypes=[('csv Files', '*.csv')]))
         return
 
-    def loadData(self):
+    def loadPreviewData(self):
         """Runs loadData from LoadDataModel. Runs also previewData from this class. Shows error warning in GUI if data
         load does not work."""
         # parameters for data load from GUI
@@ -96,7 +102,7 @@ class LoadDataView(tk.Frame):
 
         # Load data
         try:
-            self.loadDataModel.loadData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
+            self.loadDataModel.loadPreviewData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
             print("LoadDataView: self.loadDataModel.data: ", self.loadDataModel.data)
         except FileNotFoundError:
             tk.messagebox.showerror("Error", " File not found.")
@@ -106,14 +112,17 @@ class LoadDataView(tk.Frame):
         except:
             print("Load data failed because of something different than nbrOfCategories entered or file not found.")
         else:  # if data load worked do the following
-            self.loadDataInformation.config(text="Data has been loaded successfully", fg="green")
+            self.loadDataInformation.config(text="Data has been successfully read from file.", fg="green")
             self.previewData()
 
     def previewData(self):
         """Previews loaded data."""
         x, y, rawData = self.loadDataModel.data
+        self.preViewDataText.delete(1, tk.END)
         self.preViewDataText.insert(tk.END, rawData)
-
 
     def displayPreviewWarning(self):
         self.loadDataInformation.config(text="Warning! Data cannot be previewed!", fg="red")
+
+    def assignDataToProject(self):
+        """Data is already loaded. This method closes the load window which won't be accessible later."""

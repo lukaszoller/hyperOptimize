@@ -42,9 +42,9 @@ class TestOptimizeParamsModel():
             print(h.activationFunction)
             i = i + 1
 
-        return hyperParamsObjList
+        return hyperParamsObjList, rangeForHyperParamsObj, nbrOfModels
 
-    def test_evaluateModels(self, hyperParamsObjList):
+    def test_evaluateModels(self, hyperParamsObjList, rangeForHyperParamsObj, nbrOfModels):
         #####################################################################
         # Get data
         #####################################################################
@@ -66,7 +66,7 @@ class TestOptimizeParamsModel():
         x_train, x_test = x_train / 255.0, x_test / 255.0
 
         optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test)
-        optimizeParamsModel.evaluateModels(hyperParamsObjList)
+        optimizeParamsModel.evaluateModels(rangeForHyperParamsObj, nbrOfModels)
 
         for i in range(0, len(hyperParamsObjList)):
             print("################################## Model", i+1, "##################################")
@@ -83,5 +83,5 @@ class TestOptimizeParamsModel():
 
 
 testOptimizeParamsModel = TestOptimizeParamsModel()
-hyperParamsObjList = testOptimizeParamsModel.test_createHyperParamsListRandom()
-testOptimizeParamsModel.test_evaluateModels(hyperParamsObjList)
+hyperParamsObjList, rangeForHyperParamsObj, nbrOfModels = testOptimizeParamsModel.test_createHyperParamsListRandom()
+testOptimizeParamsModel.test_evaluateModels(hyperParamsObjList, rangeForHyperParamsObj, nbrOfModels)
