@@ -135,7 +135,7 @@ class OptimizeParamsModel:
             #####################################################################################
             # create model
             #####################################################################################
-            model = MachineLearningModel(hyperParamsObj, str(i))
+            model = MachineLearningModel(hyperParamsObj, "unnamed Model")
             model.createNetwork()
             print("OptimizeParamsModel.evaluateModels: Model created.", model)
 

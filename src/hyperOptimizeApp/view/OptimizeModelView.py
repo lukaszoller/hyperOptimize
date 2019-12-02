@@ -1,11 +1,9 @@
 import tkinter as tk
 import tkinter.messagebox
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
-from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
-from src.hyperOptimizeApp.logic.viewInteraction.Tooltip import CreateToolTip as tt
-from src.hyperOptimizeApp.logic.viewInteraction.RangeSlider import *
-from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
+from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
+from src.hyperOptimizeApp.view.tools.RangeSlider import *
 import numpy as np
 
 

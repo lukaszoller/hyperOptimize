@@ -1,5 +1,4 @@
 import tkinter as tk  # python 3
-from tkintertable import TableCanvas, TableModel
 import numpy as np
 
 class LoadDataView(tk.Frame):
