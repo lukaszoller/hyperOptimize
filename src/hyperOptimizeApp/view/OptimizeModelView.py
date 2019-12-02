@@ -1,5 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox
+
+from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
@@ -71,18 +73,35 @@ class OptimizeModelView(tk.Frame):
         self.sigmoidVar = tk.IntVar(0)
         sigmoidBox = tk.Checkbutton(self, text='Sigmoid Function', variable=self.sigmoidVar)
         sigmoidBox.grid(row=rowCount, column=2)
-        self.gaussianVar = tk.IntVar(0)
-        gaussianBox = tk.Checkbutton(self, text='Gaussian Function', variable=self.gaussianVar)
+        self.linearVar = tk.IntVar(0)
+        gaussianBox = tk.Checkbutton(self, text='Linear Function', variable=self.linearVar)
         gaussianBox.grid(row=rowCount, column=3)
         rowCount += 1
-        self.thirdVar = tk.IntVar(0)
-        thirdBox = tk.Checkbutton(self, text='Third Function', variable=self.thirdVar)
+        self.tanhVar = tk.IntVar(0)
+        thirdBox = tk.Checkbutton(self, text='Tanh Function', variable=self.tanhVar)
         thirdBox.grid(row=rowCount, column=2)
-        self.fourthVar = tk.IntVar(0)
-        fourthBox = tk.Checkbutton(self, text='Fourth Function', variable=self.fourthVar)
+        self.reluVar = tk.IntVar(0)
+        fourthBox = tk.Checkbutton(self, text='ReLu Function', variable=self.reluVar)
         fourthBox.grid(row=rowCount, column=3)
         activationHelp = tk.Label(self, text='?')
         activationHelp.grid(row=rowCount, column=4)
+        rowCount += 1
+
+        # # Dropdown list for activation function
+        # activationList = ['sigmoid', 'linear', 'tanh', 'relu']
+        # dropdownVar = tk.StringVar(self)
+        # dropdownVar.set(activationList[0])
+        # activationMenu = tk.OptionMenu(self, dropdownVar, *activationList)
+        # activationMenu.config(width=30, pady=5, padx=5)
+        # activationMenu.grid(row=rowCount, column=1)
+        # rowCount += 1
+
+        # Row with slider für nbrOfModels
+        nbrOfModelsText = tk.Label(self, text='Number of models').grid(row=rowCount, column=1)
+        self.nbrOfModelsSlider = tk.Scale(self, from_=0, to=1, orient=tk.HORIZONTAL, resolution=0.01). \
+            grid(row=rowCount, column=2, padx=5, pady=3)
+        nbrOfModelsHelp = tk.Label(self, text='?')
+        nbrOfModelsHelp.grid(row=rowCount, column=4)
         rowCount += 1
 
         # Final Row (Train Model)
@@ -98,6 +117,7 @@ class OptimizeModelView(tk.Frame):
         nodeTooltip = tt(nodeHelp, 'Tooltip for Nodes')
         dropoutTooltip = tt(dropoutHelp, 'Tooltip for dropout percentage')
         activationTooltip = tt(activationHelp, 'Tooltip for activation function')
+        nbrOfModelsTooltip = tt(nbrOfModelsHelp, 'Number of models which are picked randomly from specified range.')
         rowCount += 1
 
         # TOOLTIPS ---------------
@@ -113,7 +133,9 @@ class OptimizeModelView(tk.Frame):
             tk.messagebox.showwarning("Activation Error", "Please select at least one activation function!")
         else:
             rangeForHyperParamsObj = self.getHyperParamsObject()
-
+            optimizeParamsModel = OptimizeParamsModel()
+            nbrOfModels = 1
+            optimizeParamsModel.evaluateModels(rangeForHyperParamsObj, nbrOfModels)
 
             pass
 
@@ -123,15 +145,16 @@ class OptimizeModelView(tk.Frame):
 
     def checkActivation(self):
         # Check if an activation function is set
-        if (self.sigmoidVar.get() == 0) & (self.gaussianVar.get() == 0) & \
-                (self.thirdVar.get() == 0) & (self.fourthVar.get() == 0):
+        if (self.sigmoidVar.get() == 0) & (self.linearVar.get() == 0) & \
+                (self.tanhVar.get() == 0) & (self.reluVar.get() == 0):
             return False
         return True
 
     def estimateTime(self):
         pass
 
-    def createHyperParamsObject(self):
+    def createRangeForHyperParamsObj(self):
+        """Takes information from GUI and creates a RangeForHyperParamsobj."""
         # Get hyperparam ranges
         minNbrOfNodes = 2
         maxNbrOfNodes = 4

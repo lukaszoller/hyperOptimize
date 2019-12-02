@@ -53,7 +53,7 @@ class LoadDataView(tk.Frame):
         # Load data btn
         dataBtnFrame = tk.Frame(self)
         dataBtnFrame.pack(fill=tk.X)
-        loadDataBtn = tk.Button(dataBtnFrame, text="Load data", command=lambda: self.loadData())
+        loadDataBtn = tk.Button(dataBtnFrame, text="Load data", command=lambda: self.loadPreviewData()Data())
         loadDataBtn.pack(side=tk.LEFT,  padx=padding, pady=padding)
         self.loadDataInformation = tk.Label(dataBtnFrame, text="")
         self.loadDataInformation.pack(side=tk.LEFT, padx=padding, pady=padding)
@@ -89,7 +89,7 @@ class LoadDataView(tk.Frame):
         self.entryPath.insert(0, tk.filedialog.askopenfilename(filetypes=[('csv Files', '*.csv')]))
         return
 
-    def loadData(self):
+    def loadPreviewData(self):
         """Runs loadData from LoadDataModel. Runs also previewData from this class. Shows error warning in GUI if data
         load does not work."""
         # parameters for data load from GUI
@@ -106,7 +106,7 @@ class LoadDataView(tk.Frame):
 
         # Load data
         try:
-            self.loadDataModel.loadData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
+            self.loadDataModel.loadPreviewData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
             print("LoadDataView: self.loadDataModel.data: ", self.loadDataModel.data)
         except FileNotFoundError:
             tk.messagebox.showerror("Error", " File not found.")
@@ -116,7 +116,7 @@ class LoadDataView(tk.Frame):
         except:
             print("Load data failed because of something different than nbrOfCategories entered or file not found.")
         else:  # if data load worked do the following
-            self.loadDataInformation.config(text="Data has been loaded successfully", fg="green")
+            self.loadDataInformation.config(text="Data has been successfully read from file.", fg="green")
             self.previewData()
 
     def setData(self):
@@ -148,6 +148,7 @@ class LoadDataView(tk.Frame):
     def previewData(self):
         """Previews loaded data."""
         x, y, rawData = self.loadDataModel.data
+        self.preViewDataText.delete(1, tk.END)
         self.preViewDataText.insert(tk.END, rawData)
 
     def displayPreviewWarning(self):
