@@ -4,16 +4,20 @@ import tkinter.messagebox
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
+from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
 from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
 from src.hyperOptimizeApp.view.tools.RangeSlider import *
 import numpy as np
 
 
 class OptimizeModelView(tk.Frame):
+    dataInteraction = DataInteractionModel()
     controlFrame = None
     databaseModel = None
     model = None
     range = RangeForHyperParamsObj()
+    project = None
+    data = None
 
     # Constants:
     MAX_LAYERS = RangeForHyperParamsObj.MAX_NUMBER_OF_HIDDEN_LAYERS
@@ -169,3 +173,7 @@ class OptimizeModelView(tk.Frame):
         self.rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': minNbrOfNodes, 'max': maxNbrOfNodes})
         self.rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
         self.rangeForHyperParamsObj.activationArray = activationArray
+
+    def setProject(self, project):
+        self.project = project
+        self.data = self.dataInteraction.getLoadDataView(self.project.projectId)

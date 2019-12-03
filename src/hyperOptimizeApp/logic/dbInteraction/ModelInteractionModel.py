@@ -20,4 +20,3 @@ class ModelInteractionModel:
         model = MachineLearningModel(hyperParams, modelName)
         self.projectDB.saveModel(modelName, model, projectId)
         self.lastModel = model
-

@@ -95,7 +95,7 @@ class ControlFrame(tk.Frame):
         self.homeView.fillProjectList()
         showFrame(self.homeView)
 
-    def setProjectFrame(self, newProject=bool, project=DatabaseProjectModel()):
+    def setProjectFrame(self, newProject, project):
         if newProject:
             self.projectView.setTopText("New Project")
             newProjectModel = DatabaseProjectModel()
@@ -106,13 +106,14 @@ class ControlFrame(tk.Frame):
             self.projectView.setProject(project)
         showFrame(self.projectView)
 
-    def setModelFrame(self, model=MachineLearningModel):
+    def setModelFrame(self, model):
         self.modelView.setTopText(model.modelName)
         self.modelView.setModel(model)
         showFrame(self.modelView)
 
-    def setOptimizeModelFrame(self, model=MachineLearningModel):
+    def setOptimizeModelFrame(self, model, project):
         self.optimizeModelView.setModel(model)
+        self.optimizeModelView.setProject(project)
         showFrame(self.optimizeModelView)
 
     def setLoadDataFrame(self, project):

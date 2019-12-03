@@ -24,7 +24,7 @@ class ModelView(tk.Frame):
 
         # ROW 2
         trainModelButton = tk.Button(self, text='Optimize Model',
-                                     command=lambda: self.controlFrame.setOptimizeModelFrame(self.model))\
+                                     command=lambda: self.controlFrame.setOptimizeModelFrame(self.model, self.project))\
             .grid(row=rowCount, column=3)
         rowCount += 1
 

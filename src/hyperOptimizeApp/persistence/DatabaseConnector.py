@@ -51,9 +51,16 @@ class DatabaseConnector:
         return projects
 
     def addProject(self, projectName):
+        connector = sqlite3.connect(self.DATABASE_NAME)
+        cursor = connector.cursor()
         date = datetime.date.today().strftime('%Y-%m-%d')
         sql = "INSERT INTO project(name, date, dataIsSet) VALUES('" + projectName + "', " + date + ", 0)"
-        self.writeDB(sql)
+        cursor.execute(sql)
+        lastRowId = cursor.lastrowid
+        print(lastRowId)
+        connector.commit()
+        connector.close()
+        return lastRowId
 
     def getProjectById(self, projectId):
         connector = sqlite3.connect(self.DATABASE_NAME)

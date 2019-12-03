@@ -138,6 +138,7 @@ class LoadDataView(tk.Frame):
                     self.loadDataModel.nbrOfFeatures = int(self.entryNbrCategories.get())
                 try:
                     self.dbInteraction.setDataForProject(self.project.projectId, self.loadDataModel)
+                    self.project.dataIsSet = True
                     print("Data for Project set")
                     self.controlFrame.setProjectFrame(False, self.project)
                 except:

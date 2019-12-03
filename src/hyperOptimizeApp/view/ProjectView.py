@@ -9,14 +9,6 @@ from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import Pro
 from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
 
 
-def openFile():
-    saverLoader = SaverLoader()
-    file = askopenfile(mode='r', filetypes=[('csv Files', '*.csv')])
-    if file is not None:
-        saverLoader.setFileName(file.name)
-        print(saverLoader.getEstTimeData())
-
-
 class ProjectView(tk.Frame):
     controlFrame = None
     project = DatabaseProjectModel()
@@ -46,12 +38,12 @@ class ProjectView(tk.Frame):
 
         # ROW 3
         fileLabel = tk.Label(self, text="Data CSV").grid(row=rowCount, column=2)
-        loadFileButton = tk.Button(self, text='Open', command=lambda: openFile())
-        loadFileButton.grid(row=rowCount, column=3, pady=10)
+        self.fileSetLabel = tk.Label(self, text='Select Data')
+        self.fileSetLabel.grid(row=rowCount, column=3, pady=10)
 
-        loadDataButton = tk.Button(self, text="Load data",
-                                   command=lambda: self.controlFrame.setLoadDataFrame(self.project)) \
-            .grid(row=rowCount, column=4)
+        self.loadDataButton = tk.Button(self, text="Load data",
+                                   command=lambda: self.controlFrame.setLoadDataFrame(self.project))
+        self.loadDataButton.grid(row=rowCount, column=4)
 
         rowCount += 1
 
@@ -82,6 +74,15 @@ class ProjectView(tk.Frame):
         print(self.project.projectId)
         if self.project.projectId != 0:
             self.modelList = self.modelInteract.getModelsByProjectId(self.project.projectId)
+            if self.project.dataIsSet:
+                self.loadDataButton.grid_remove()
+                self.fileSetLabel.config(text="Data is Set.")
+            else:
+                self.loadDataButton.grid()
+                self.fileSetLabel.config(text="Select Data")
+        else:
+            self.loadDataButton.grid_remove()
+            self.fileSetLabel.config(text="Please save Project first.")
         self.fillListBox(self.modelRow)
         self.fillNameLabel(self.nameLabelRow)
 
@@ -99,6 +100,8 @@ class ProjectView(tk.Frame):
             print("Project saved")
         else:
             self.projectInteract.saveProject(self.project)
+            self.loadDataButton.grid()
+            self.fileSetLabel.config(text="Select Data")
             print("Project created")
         self.setTopText(projectName)
 
@@ -117,16 +120,19 @@ class ProjectView(tk.Frame):
             print("nothing done.")
 
     def addNewModel(self):
-        modelName = tk.simpledialog.askstring("Input", "User friendly name of the Model:")
-        if modelName == "":
-            print("Model not created")
+        if not self.project.dataIsSet:
+            tk.messagebox.showwarning("Activation Error", "Please select the data for your Project first.")
         else:
-            try:
-                self.modelInteract.addModelByProjectId(modelName, self.project.projectId)
-                print("Model created")
-                self.controlFrame.setModelFrame(self.modelInteract.lastModel)
-            except:
-                print("Model creation failed")
+            modelName = tk.simpledialog.askstring("Input", "User friendly name of the Model:")
+            if modelName == "":
+                print("Model not created")
+            else:
+                try:
+                    self.modelInteract.addModelByProjectId(modelName, self.project.projectId)
+                    print("Model created")
+                    self.controlFrame.setModelFrame(self.modelInteract.lastModel)
+                except:
+                    print("Model creation failed")
 
     def passModel(self):
         modelNumber = self.modelListbox.curselection()[0]
