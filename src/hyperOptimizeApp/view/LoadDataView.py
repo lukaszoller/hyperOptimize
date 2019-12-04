@@ -106,7 +106,7 @@ class LoadDataView(tk.Frame):
 
         # Load data
         try:
-            self.loadDataModel.loadPreviewData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
+            self.loadDataModel.loadData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
             print("LoadDataView: self.loadDataModel.data: ", self.loadDataModel.data)
         except FileNotFoundError:
             tk.messagebox.showerror("Error", " File not found.")
@@ -149,6 +149,10 @@ class LoadDataView(tk.Frame):
     def previewData(self):
         """Previews loaded data."""
         x, y, rawData = self.loadDataModel.data
+        shapeRaw = np.shape(rawData)
+
+
+
         self.preViewDataText.delete(1, tk.END)
         self.preViewDataText.insert(tk.END, rawData)
 

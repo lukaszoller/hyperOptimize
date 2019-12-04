@@ -4,6 +4,7 @@ import tkinter.messagebox
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
+from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
 from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
 from src.hyperOptimizeApp.view.tools.RangeSlider import *
@@ -11,11 +12,13 @@ import numpy as np
 
 
 class OptimizeModelView(tk.Frame):
+    estimateTimeAlreadyShowed = False       # needed to decide if optimize button should execute optimize function
+                                            # without showing running time estimation warning
     dataInteraction = DataInteractionModel()
     controlFrame = None
     databaseModel = None
     model = None
-    range = RangeForHyperParamsObj()
+    rangeForHyperParamsObj = None
     project = None
     data = None
 
@@ -73,32 +76,36 @@ class OptimizeModelView(tk.Frame):
         rowCount += 1
 
         # Row with picking of different activation Functions
+        self.activationCheckBtnDict = dict()
+        ## Sigmoid
+        sigmoidBoxName = "Sigmoid Function"
         activationText = tk.Label(self, text='Activation functions to choose').grid(row=rowCount, column=1)
         self.sigmoidVar = tk.IntVar(0)
-        sigmoidBox = tk.Checkbutton(self, text='Sigmoid Function', variable=self.sigmoidVar)
+        sigmoidBox = tk.Checkbutton(self, text=sigmoidBoxName, variable=self.sigmoidVar)
         sigmoidBox.grid(row=rowCount, column=2)
+        self.activationCheckBtnDict['sigmoid'] = sigmoidBox
+        ## Linear
+        linearBoxName = "Linear Function"
         self.linearVar = tk.IntVar(0)
-        gaussianBox = tk.Checkbutton(self, text='Linear Function', variable=self.linearVar)
-        gaussianBox.grid(row=rowCount, column=3)
+        linearBox = tk.Checkbutton(self, text=linearBoxName, variable=self.linearVar)
+        linearBox.grid(row=rowCount, column=3)
+        self.activationCheckBtnDict['linear'] = linearBox
         rowCount += 1
+        ## Tanh
+        tanhBoxName = "Tanh Function"
         self.tanhVar = tk.IntVar(0)
-        thirdBox = tk.Checkbutton(self, text='Tanh Function', variable=self.tanhVar)
-        thirdBox.grid(row=rowCount, column=2)
+        tanhBox = tk.Checkbutton(self, text=tanhBoxName, variable=self.tanhVar)
+        tanhBox.grid(row=rowCount, column=2)
+        self.activationCheckBtnDict['tanh'] = tanhBox
+        ## Relu
+        reluBoxName = "ReLu Function"
         self.reluVar = tk.IntVar(0)
-        fourthBox = tk.Checkbutton(self, text='ReLu Function', variable=self.reluVar)
-        fourthBox.grid(row=rowCount, column=3)
+        reluBox = tk.Checkbutton(self, text=reluBoxName, variable=self.reluVar)
+        reluBox.grid(row=rowCount, column=3)
+        self.activationCheckBtnDict['relu'] = reluBox
         activationHelp = tk.Label(self, text='?')
         activationHelp.grid(row=rowCount, column=4)
         rowCount += 1
-
-        # # Dropdown list for activation function
-        # activationList = ['sigmoid', 'linear', 'tanh', 'relu']
-        # dropdownVar = tk.StringVar(self)
-        # dropdownVar.set(activationList[0])
-        # activationMenu = tk.OptionMenu(self, dropdownVar, *activationList)
-        # activationMenu.config(width=30, pady=5, padx=5)
-        # activationMenu.grid(row=rowCount, column=1)
-        # rowCount += 1
 
         # Row with slider für nbrOfModels
         nbrOfModelsText = tk.Label(self, text='Number of models').grid(row=rowCount, column=1)
@@ -107,6 +114,10 @@ class OptimizeModelView(tk.Frame):
         nbrOfModelsHelp = tk.Label(self, text='?')
         nbrOfModelsHelp.grid(row=rowCount, column=4)
         rowCount += 1
+
+        # Estimate running time of optimization
+        estimateTimeButton = tk.Button(self, text='Estimate running time', command=lambda: self.estimateTime()).grid(
+            row=rowCount, column=3)
 
         # Final Row (Train Model)
         trainModelButton = tk.Button(self, text='Optimize', command=lambda: self.checkAndOptimize()).grid(
@@ -133,15 +144,28 @@ class OptimizeModelView(tk.Frame):
         self.controlFrame = frame
 
     def checkAndOptimize(self):
+        print("OptimizeModelView.checkAndOptimize executed")
+        # Check if at least one activation function has been chosen
         if not self.checkActivation():
             tk.messagebox.showwarning("Activation Error", "Please select at least one activation function!")
+        # Check if data has been loaded
+        elif self.data == None:
+            tk.messagebox.showwarning("Data Error", "No data has been loaded to project. Load data before optimizing.")
         else:
-            rangeForHyperParamsObj = self.getHyperParamsObject()
-            optimizeParamsModel = OptimizeParamsModel()
-            nbrOfModels = 1
-            optimizeParamsModel.evaluateModels(rangeForHyperParamsObj, nbrOfModels)
+            # if not existent, create optimizeParamsModel (this has to be optional because self.estimateTime needs it too
+            # and its not clear if this function or self.estimateTime is executed first.
+            self.createOptimizeParamsModel()        # this line exists two times, second one in self.estimateTime it
+                                                    # runs optionally.
 
-            pass
+            # Check running time estimation
+            stringTime, timeInSeconds = self.estimateTime()
+            if timeInSeconds > 36000:
+                answer = self.showTimeEstimateWarning()
+                if answer:    # User clicks on "Yes continue with evaluation"
+                    self.optimizeParamsModel.evaluateModels()
+                else: return    # Stop execution if User clicks on "No"
+
+            self.optimizeParamsModel.evaluateModels()
 
     def setMaxNodeValue(self, number):
         self.maxNodeSliderValue.set(number)
@@ -155,7 +179,31 @@ class OptimizeModelView(tk.Frame):
         return True
 
     def estimateTime(self):
-        pass
+        """Creates the OptimizeParamsModel-Object, if not already existent (because some information from this object
+        is needed for the estimation. Return the time estimate (stringTime, timeInSeconds)."""
+        # if not existent, create optimizeParamsModel (this has to be optional because self.checkAndOptimize() needs it too
+        # and its not clear if this function or self.estimateTime is executed first.
+        self.createOptimizeParamsModel()    # this line exists two times, second one in self.checkAndOptimize. It runs
+                                            # optionally.
+        etm = EstimateTimeModel()
+        timeEstimate = etm.estimateTime(self.optimizeParamsModel.hyperParamsObjList)
+        return timeEstimate
+
+    def showTimeEstimateInformation(self):
+        stringTime, timeInSeconds = self.estimateTime()
+        message = "The optimization will take approximately " + stringTime + "[hh:mm:ss]."
+        tk.messagebox.showinfo("Running time estimation", message)
+
+    def showTimeEstimateWarning(self):
+        stringTime, timeInSeconds = self.estimateTime()
+        message = "Attention! The optimization will take approximately " + stringTime + "[hh:mm:ss].\nDo " \
+                                                                                                    "you want to continue?"
+        msgBox = tk.messagebox.askquestion("Warning: long running time", message, icon='warning')
+        if msgBox == 'yes':
+            return True
+        else:
+            return False
+
 
     def createRangeForHyperParamsObj(self):
         """Takes information from GUI and creates a RangeForHyperParamsobj."""
@@ -166,7 +214,8 @@ class OptimizeModelView(tk.Frame):
         maxNbrOfLayers = 4
         minDropout = 0
         maxDropout = 1
-        activationArray = np.array(['sigmoid', 'elu', 'softmax'])
+        activationArray = self.getActivationCheckBtnValues()
+        # activationArray = np.array(['sigmoid', 'elu', 'softmax'])
 
         self.rangeForHyperParamsObj = RangeForHyperParamsObj()
         self.rangeForHyperParamsObj.nbrOfHiddenLayersDict = dict({'min': minNbrOfLayers, 'max': maxNbrOfLayers})
@@ -177,3 +226,48 @@ class OptimizeModelView(tk.Frame):
     def setProject(self, project):
         self.project = project
         self.data = self.dataInteraction.getLoadDataView(self.project.projectId)
+
+    def getActivationCheckBtnValues(self):
+        """Gets values from checkbuttons for activation functions and returns an array in the form the optimizing
+        function requires."""
+        l = len(self.activationCheckBtnDict)
+        activationFunctionArray = np.array((1,l))
+
+        i = 0   # Index for loop
+        for key, boxObject in self.activationCheckBtnDict:
+            if boxObject.getboolean() == True:
+                np.insert(activationFunctionArray[1, i], key)
+            i += 1
+
+        return activationFunctionArray
+
+
+    def createOptimizeParamsModel(self):
+        """The creation of the optimizeParamsModel is placed in a separate function because this object is needed from
+        two functions (self.estimateTime and self.checkAndOptimize). But it is not clear, which function will be
+        executed first."""
+        if self.rangeForHyperParamsObj == None:
+            rangeForHyperParamsObj = self.getHyperParamsObject()
+            nbrOfModels = self.nbrOfModelsSlider.get()
+            x_train, y_train, x_test, y_test = self.getTrainTestData()
+            self.optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, rangeForHyperParamsObj, nbrOfModels)
+
+
+
+
+
+    def getTrainTestData(self):
+        """Get the whole data and splits it into training and testing set."""
+        # get whole dataset
+        x, y, rawData = self.data
+
+        # split dataset
+        nbrOfTrainRows = 60000
+        l = len(x[:,0]) # rownumber of whole dataset
+
+        x_train = x[0:nbrOfTrainRows, :]
+        y_train = y[0:nbrOfTrainRows, :]
+        x_test = x[nbrOfTrainRows:l, :]
+        y_test = y[nbrOfTrainRows:l, :]
+
+        return x_train, y_train, x_test, y_test

@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 import cpuinfo
+import time
 
 
 class EstimateTimeModel:
@@ -18,7 +19,7 @@ class EstimateTimeModel:
         """This method trains a linear model (with polynomial features) to predict the running time of the optimization.
         The model is trained with data from earlier optimizations.
         The return value of this function is the sum of the running times of each model which has to be built basing on
-        the inputted hyperParamsObjList."""
+        the inputted hyperParamsObjList. Unit: hh mm ss."""
 
         # Add polynomial features to training data
         transformer = PolynomialFeatures(degree=3, include_bias=True)
@@ -40,7 +41,8 @@ class EstimateTimeModel:
         predictionTable = estTimeModel.predict(hyperParamsPoly)
         # sum up prediction time of all models
         predictionTimeForAllModels = np.sum(predictionTable)
-        return predictionTimeForAllModels
+        stringTime = time.strftime('%H:%M:%S', time.gmtime(predictionTimeForAllModels))
+        return stringTime, predictionTimeForAllModels
         # return estTimeModel.predict(xPoly)        ## Just to check if training y are more or less like prediction
 
     def getEstimateTimeAccuracy(self, nbrOfValuesForMean):

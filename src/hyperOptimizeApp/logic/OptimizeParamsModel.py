@@ -12,7 +12,7 @@ from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 
 class OptimizeParamsModel:
 
-    def __init__(self, xTrain, yTrain, xTest, yTest):
+    def __init__(self, xTrain, yTrain, xTest, yTest, rangeForHyperParamsObj, nbrOfModels):
         self.modelList = list()
         self.successRate = list()
         self.resultData = None
@@ -21,11 +21,15 @@ class OptimizeParamsModel:
         self.yTrain = yTrain
         self.xTest = xTest
         self.yTest = yTest
+        self.rangeForHyperparamsObj = rangeForHyperParamsObj
+        self.nbrOfModels = nbrOfModels
+        self.hyperParamsObjList = self.createHyperParamsListRandom()
+
 
     def estimateTime(self):
-        return EstimateTimeModel.estimateTime(hyperParams=self.hyperParams)
+        return EstimateTimeModel.estimateTime(hyperParams=self.hyperParamsObjList)
 
-    def createHyperParamsListRandom(self, rangeForHyperparamsObj, nbrOfModels):
+    def createHyperParamsListRandom(self):
         """This method takes as input the number of models to be created and ranges for hyperparameters and returns a
         list of dicts where each dict contains the hyperparams for one model. The input object has to be a dict with the
         following names as key and as values an integer array with min, max values to specify a range OR a string array
@@ -40,33 +44,33 @@ class OptimizeParamsModel:
         #############################################################
 
         # 1. Choose number of layers
-        nbrOfLayersMin = rangeForHyperparamsObj.nbrOfHiddenLayersDict.get('min')
-        nbrOfLayersMMax = rangeForHyperparamsObj.nbrOfHiddenLayersDict.get('max')
-        nbrOfLayersArray = np.random.random_integers(nbrOfLayersMin, nbrOfLayersMMax, nbrOfModels)
+        nbrOfLayersMin = self.rangeForHyperparamsObj.nbrOfHiddenLayersDict.get('min')
+        nbrOfLayersMMax = self.rangeForHyperparamsObj.nbrOfHiddenLayersDict.get('max')
+        nbrOfLayersArray = np.random.random_integers(nbrOfLayersMin, nbrOfLayersMMax, self.nbrOfModels)
 
         # 2. Choose number of nodes per Layer
-        nbrOfNodesMin = rangeForHyperparamsObj.nbrOfHiddenUnitsDict.get('min')
-        nbrOfNodesMax = rangeForHyperparamsObj.nbrOfHiddenUnitsDict.get('max')
+        nbrOfNodesMin = self.rangeForHyperparamsObj.nbrOfHiddenUnitsDict.get('min')
+        nbrOfNodesMax = self.rangeForHyperparamsObj.nbrOfHiddenUnitsDict.get('max')
         # This results the same number of nodes per Layer for each model
-        nbrOfNodesArray = np.random.random_integers(nbrOfNodesMin, nbrOfNodesMax, nbrOfModels)
+        nbrOfNodesArray = np.random.random_integers(nbrOfNodesMin, nbrOfNodesMax, self.nbrOfModels)
 
         # activationArray
-        indexForActivationArray = np.random.random_integers(0, len(rangeForHyperparamsObj.activationArray) - 1, nbrOfModels)
+        indexForActivationArray = np.random.random_integers(0, len(self.rangeForHyperparamsObj.activationArray) - 1, self.nbrOfModels)
         # dropOutArray: The dropout rate for each model
-        dropOutArray = np.random.random_sample(nbrOfModels)
+        dropOutArray = np.random.random_sample(self.nbrOfModels)
         # lossFunction
-        lossFunctionArray = np.random.choice(rangeForHyperparamsObj.lossFunctionArray, nbrOfModels, replace=True)
+        lossFunctionArray = np.random.choice(self.rangeForHyperparamsObj.lossFunctionArray, self.nbrOfModels, replace=True)
         # modelOptimizer
-        modelOptimizerArray = np.random.choice(rangeForHyperparamsObj.modelOptimizerArray, nbrOfModels, replace=True)
+        modelOptimizerArray = np.random.choice(self.rangeForHyperparamsObj.modelOptimizerArray, self.nbrOfModels, replace=True)
         # Learning Rate (code from: https://www.coursera.org/learn/deep-neural-network/lecture/3rdqN/using-an-appropriate-scale-to-pick-hyperparameters Video: 02min55s)
-        minLog = np.log10(rangeForHyperparamsObj.learningRateDict.get('min'))
-        maxLog = np.log10(rangeForHyperparamsObj.learningRateDict.get('max'))
-        exponents = (maxLog - minLog) * np.random.random_sample(nbrOfModels) + minLog    # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
+        minLog = np.log10(self.rangeForHyperparamsObj.learningRateDict.get('min'))
+        maxLog = np.log10(self.rangeForHyperparamsObj.learningRateDict.get('max'))
+        exponents = (maxLog - minLog) * np.random.random_sample(self.nbrOfModels) + minLog    # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
         learningRateArray = np.power(10, exponents)
         # learningRateDecay
-        minLrd = rangeForHyperparamsObj.learningRateDecayDict.get('min')
-        maxLrd = rangeForHyperparamsObj.learningRateDecayDict.get('max')
-        learningRateDecayArray = (maxLrd - minLrd) * np.random.random_sample(nbrOfModels) + minLrd   # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
+        minLrd = self.rangeForHyperparamsObj.learningRateDecayDict.get('min')
+        maxLrd = self.rangeForHyperparamsObj.learningRateDecayDict.get('max')
+        learningRateDecayArray = (maxLrd - minLrd) * np.random.random_sample(self.nbrOfModels) + minLrd   # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
 
         #############################################################
         # Construct a dict for each model with the above arrays
@@ -75,7 +79,7 @@ class OptimizeParamsModel:
         hyperParamsList = list()
 
         # nbrOfModel times: create a HyperParamsObj (for each model one)
-        for i in range(0,nbrOfModels):
+        for i in range(0,self.nbrOfModels):
             # Initialize HyperParamsObj
             tmpHyperParamsObj = HyperParamsObj()
             # Get nbrOfLayers
@@ -85,9 +89,9 @@ class OptimizeParamsModel:
             # Store values in tmpHyperParamsObj
             ###################################################
             # nbrOfFeatures
-            nbrOfFeatures = rangeForHyperparamsObj.nbrOfFeatures
+            nbrOfFeatures = self.rangeForHyperparamsObj.nbrOfFeatures
             # nbrOfCategories
-            nbrOfCategories = rangeForHyperparamsObj.nbrOfCategories
+            nbrOfCategories = self.rangeForHyperparamsObj.nbrOfCategories
             # nbr of nodes in hidden layers  Create Array with length nbrOfLayersArray[i] and all values = nbrOfNodesArray[i] <<<--- This results in the same number of nodes per Layer for each model
             if tmpNbrOfLayers < 3:
                 tmpHyperParamsObj.nbrOfNodesArray = [nbrOfFeatures, nbrOfCategories]
@@ -98,15 +102,15 @@ class OptimizeParamsModel:
                 tmpHyperParamsObj.nbrOfNodesArray = np.concatenate([nbrOfFeaturesAsArray, hiddenNodesArray, nbrOfCategoriesAsArray])
 
             # nbr of Features
-            tmpHyperParamsObj.nbrOfFeatures = rangeForHyperparamsObj.nbrOfFeatures
+            tmpHyperParamsObj.nbrOfFeatures = self.rangeForHyperparamsObj.nbrOfFeatures
             # learning rate
             tmpHyperParamsObj.learningRate = learningRateArray[i]
             # model optimizer
             tmpHyperParamsObj.modelOptimizer = modelOptimizerArray[i]
             # Activation function: Choose from the range of activation functions with the above randomly created indexes the activation Function for this model
-            tmpHyperParamsObj.activationFunction = rangeForHyperparamsObj.activationArray[indexForActivationArray[i]]
+            tmpHyperParamsObj.activationFunction = self.rangeForHyperparamsObj.activationArray[indexForActivationArray[i]]
             # Activation function for all layers of one model
-            tmpHyperParamsObj.activationFunction = rangeForHyperparamsObj.activationArray[indexForActivationArray[i]]
+            tmpHyperParamsObj.activationFunction = self.rangeForHyperparamsObj.activationArray[indexForActivationArray[i]]
             # Drop out rate for all layers of one model
             tmpHyperParamsObj.dropOutRate = dropOutArray[i]
             # Loss function
@@ -121,16 +125,15 @@ class OptimizeParamsModel:
         # Return the list of dicts, each with hyperparams for each model
         return hyperParamsList
 
-    def evaluateModels(self, rangeForHyperParamsObj, nbrOfModels):
+    def evaluateModels(self):
         """This method takes as input a list of HyperParamsObj (a HyperParamsObj for every model to create). It creates,
         trains and evaluates models basing on this list of HyperParamsObj and stores the time measurements for later
         time predictions. """
 
-        hyperParamsObjList = self.createHyperParamsListRandom(rangeForHyperParamsObj, nbrOfModels)
         # Loop through list with hyperParamsObj for each model
-        l = len(hyperParamsObjList)
+        l = len(self.hyperParamsObjList)
         for i in range(0, l):
-            hyperParamsObj = hyperParamsObjList[i]
+            hyperParamsObj = self.hyperParamsObjList[i]
             startTime = time.clock()
             print("################################ Building of model", i+1, "of", l, "started. ################################")
             #####################################################################################
@@ -180,14 +183,14 @@ class OptimizeParamsModel:
         # Save running time measurements
         #####################################################################################
         sl = SaverLoader()
-        sl.saveTimeMeasurementData(hyperParamsObjList, self.runningTimeList)
+        sl.saveTimeMeasurementData(self.hyperParamsObjList, self.runningTimeList)
 
         #####################################################################################
         # Save running time accuracy
         #####################################################################################
         # get running time accuracy
         etm = EstimateTimeModel()
-        estimate = etm.estimateTime(hyperParamsObjList)
+        estimate = etm.estimateTime(self.hyperParamsObjList)
         actualRunningTime = sum(self.runningTimeList)
         # Accuracy: Difference between estimate in relation to actual time and 1
 
@@ -208,13 +211,13 @@ class OptimizeParamsModel:
         #####################################################################################
         print("######################### Stats from OptimizeModel.evaluateModels ############################")
         print("HyperParams: nbrOfLayers")
-        for h in hyperParamsObjList:
+        for h in self.hyperParamsObjList:
             print(len(h.nbrOfNodesArray))
 
-        for h in hyperParamsObjList:
+        for h in self.hyperParamsObjList:
             print(h.nbrOfNodesArray)
 
-        for h in hyperParamsObjList:
+        for h in self.hyperParamsObjList:
             print(h.learningRate)
 
         print("Estimated time: ", estimate, " actual time: ", actualRunningTime)
