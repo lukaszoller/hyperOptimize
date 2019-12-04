@@ -2,7 +2,7 @@ import glob
 import sqlite3
 import datetime
 import tensorflow as tf
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
+import jsonpickle
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
@@ -20,7 +20,8 @@ class DatabaseConnector:
                   "dataIsSet INTEGER NOT NULL)"
             self.writeDB(sql)
             sql = "CREATE TABLE model(id INTEGER PRIMARY KEY, modelName VARCHAR NOT NULL, date DATE NOT NULL, " \
-                  "serializedModel VARCHAR NOT NULL, projectId INTEGER, FOREIGN KEY(projectId) REFERENCES project(id))"
+                  "serializedModel VARCHAR NOT NULL, hyperParams VARCHAR, " \
+                  "projectId INTEGER, FOREIGN KEY(projectId) REFERENCES project(id))"
             self.writeDB(sql)
         # self.addProject("Project 1")
         # self.addProject("Project 2")
@@ -67,11 +68,12 @@ class DatabaseConnector:
         cursor = connector.cursor()
         sql = "SELECT id, name, dataPath, dataIsSet FROM project WHERE id = {}".format(projectId)
         cursor.execute(sql)
-        data = cursor.fetchone()[3]
+        element = cursor.fetchone()
+        data = element[3]
         dataIsSet = False
         if data == 1:
             dataIsSet = True
-        project = DatabaseProjectModel(cursor.fetchone()[0], cursor.fetchone()[1], cursor.fetchone()[2], dataIsSet)
+        project = DatabaseProjectModel(element[0], element[1], element[2], dataIsSet)
         connector.close()
         return project
 
@@ -95,20 +97,22 @@ class DatabaseConnector:
         self.writeDB(sql)
 
     def getProjectDataInformation(self, projectId):
+        print(projectId)
         connector = sqlite3.connect(self.DATABASE_NAME)
         cursor = connector.cursor()
         sql = "SELECT dataPath, firstRowIsTitle, firstColIsRowNbr, nbrOfFeatures FROM project WHERE id = {}"\
             .format(projectId)
         cursor.execute(sql)
-        rowHeader = cursor.fetchone()[1]
-        colRowNbr = cursor.fetchone()[2]
+        element = cursor.fetchone()
+        rowHeader = element[1]
+        colRowNbr = element[2]
         firstRowIsTitle = False
         if rowHeader == 1:
             firstRowIsTitle = True
         firstColIsRowNbr = False
         if colRowNbr == 1:
             firstColIsRowNbr = True
-        dataModel = LoadDataModel(firstRowIsTitle, firstColIsRowNbr, cursor.fetchone()[3], cursor.fetchone()[0])
+        dataModel = LoadDataModel(firstRowIsTitle, firstColIsRowNbr, element[3], element[0])
         return dataModel
 
     def writeDB(self, sql):
@@ -130,11 +134,15 @@ class DatabaseConnector:
     def getModelByID(self, modelId):
         connector = sqlite3.connect(self.DATABASE_NAME)
         cursor = connector.cursor()
-        sql = "SELECT serializedModel FROM model WHERE id = {}".format(modelId)
+        sql = "SELECT modelName, serializedModel, hyperParams, id FROM model WHERE id = {}".format(modelId)
         cursor.execute(sql)
-        model_json = str(cursor.fetchone())
-        print("getModelByID: print model_json: ", model_json)
-        model = tf.keras.models.model_from_json(model_json)
+        element = cursor.fetchone()
+        if element[2] is None:
+            hyperParams = HyperParamsObj()
+        else:
+            hyperParams = jsonpickle.decode(element[2])
+        kerasModel = tf.keras.models.model_from_json(element[1])
+        model = MachineLearningModel(hyperParams, element[0], element[3], kerasModel)
         connector.close()
         return model
 
@@ -142,18 +150,27 @@ class DatabaseConnector:
         connector = sqlite3.connect(self.DATABASE_NAME)
         cursor = connector.cursor()
         models = []
-        sql = "SELECT modelName, serializedModel FROM model WHERE projectId = {}".format(projectId)
+        sql = "SELECT modelName, serializedModel, hyperParams, id FROM model WHERE projectId = {}".format(projectId)
         cursor.execute(sql)
         for element in cursor:
-            # JUST FOR TESTING
-            hyperParams = HyperParamsObj()
-            model = MachineLearningModel(hyperParams, element[0])
-            model.model = tf.keras.models.model_from_json(element[1])
+            if element[2] is None:
+                hyperParams = HyperParamsObj()
+            else:
+                hyperParams = jsonpickle.decode(element[2])
+            kerasModel = tf.keras.models.model_from_json(element[1])
+            model = MachineLearningModel(hyperParams, element[0], element[3], kerasModel)
             models.append(model)
         connector.close()
         for model in models:
             print(model.modelName)
         return models
+
+    def updateModelById(self, model):
+        hyperParamsJson = jsonpickle.encode(model.hyperParamsObj)
+        kerasModelJson = model.to_json()
+        sql = "UPDATE model SET modelName = '{}', hyperParams = {}, serializedModel = {} " \
+              "WHERE id = {}".format(model.modelName, hyperParamsJson, kerasModelJson, model.modelId)
+        self.writeDB(sql)
 
     def deleteModelsByProjectId(self, projectId):
         sql = "DELETE FROM model WHERE projectId = {}".format(projectId)

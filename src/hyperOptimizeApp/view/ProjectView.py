@@ -99,7 +99,7 @@ class ProjectView(tk.Frame):
             self.projectInteract.saveProjectById(self.project)
             print("Project saved")
         else:
-            self.projectInteract.saveProject(self.project)
+            self.project = self.projectInteract.saveProject(self.project)
             self.loadDataButton.grid()
             self.fileSetLabel.config(text="Select Data")
             print("Project created")
@@ -130,14 +130,14 @@ class ProjectView(tk.Frame):
                 try:
                     self.modelInteract.addModelByProjectId(modelName, self.project.projectId)
                     print("Model created")
-                    self.controlFrame.setModelFrame(self.modelInteract.lastModel)
+                    self.controlFrame.setModelFrame(self.modelInteract.lastModel, self.project)
                 except:
                     print("Model creation failed")
 
     def passModel(self):
         modelNumber = self.modelListbox.curselection()[0]
         model = self.modelList.__getitem__(modelNumber)
-        self.controlFrame.setModelFrame(model)
+        self.controlFrame.setModelFrame(model, self.project)
 
     def fillListBox(self, rowCount):
         self.modelListbox.delete(0, tk.END)

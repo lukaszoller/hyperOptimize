@@ -4,10 +4,11 @@ import tensorflow as tf
 
 class MachineLearningModel:
     # Constructor for new model
-    def __init__(self, hyperParamsObj, modelName):
+    def __init__(self, hyperParamsObj, modelName='', modelId=0, model=tf.keras.models.Sequential()):
         self.modelName = modelName
-        self.model = tf.keras.models.Sequential()
+        self.model = model
         self.hyperParamsObj = hyperParamsObj
+        self.modelId = modelId
         print("MachineLearningModel: MachineLearningModel-constructor executed: ", self.model)
 
     ## for available activation functions check https://keras.io/activations/

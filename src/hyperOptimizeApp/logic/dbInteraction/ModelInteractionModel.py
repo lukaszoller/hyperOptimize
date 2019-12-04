@@ -1,6 +1,7 @@
 from src.hyperOptimizeApp.persistence.DatabaseConnector import DatabaseConnector
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
+import json
 
 
 class ModelInteractionModel:
@@ -20,3 +21,9 @@ class ModelInteractionModel:
         model = MachineLearningModel(hyperParams, modelName)
         self.projectDB.saveModel(modelName, model, projectId)
         self.lastModel = model
+
+    def updateModelById(self, modelId, model):
+        self.projectDB.updateModelById(modelId, model)
+
+    def getMachineLearningModelData(self):
+        pass

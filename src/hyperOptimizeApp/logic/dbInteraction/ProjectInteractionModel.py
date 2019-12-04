@@ -19,6 +19,7 @@ class ProjectInteractionModel:
     def saveProject(self, project=DatabaseProjectModel):
         projectId = self.projectDB.addProject(project.projectName)
         project.projectId = projectId
+        return project
 
     def saveProjectById(self, project=DatabaseProjectModel):
         self.projectDB.updateProject(project)

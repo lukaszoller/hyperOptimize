@@ -106,9 +106,10 @@ class ControlFrame(tk.Frame):
             self.projectView.setProject(project)
         showFrame(self.projectView)
 
-    def setModelFrame(self, model):
+    def setModelFrame(self, model, project):
         self.modelView.setTopText(model.modelName)
         self.modelView.setModel(model)
+        self.modelView.setProject(project)
         showFrame(self.modelView)
 
     def setOptimizeModelFrame(self, model, project):
