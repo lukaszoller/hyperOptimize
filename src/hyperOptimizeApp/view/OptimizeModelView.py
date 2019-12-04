@@ -16,7 +16,6 @@ class OptimizeModelView(tk.Frame):
                                             # without showing running time estimation warning
     dataInteraction = DataInteractionModel()
     controlFrame = None
-    databaseModel = None
     model = None
     rangeForHyperParamsObj = None
     project = None
@@ -109,8 +108,8 @@ class OptimizeModelView(tk.Frame):
 
         # Row with slider für nbrOfModels
         nbrOfModelsText = tk.Label(self, text='Number of models').grid(row=rowCount, column=1)
-        self.nbrOfModelsSlider = tk.Scale(self, from_=0, to=1, orient=tk.HORIZONTAL, resolution=0.01). \
-            grid(row=rowCount, column=2, padx=5, pady=3)
+        self.nbrOfModelsSlider = tk.Scale(self, from_=0, to=1, orient=tk.HORIZONTAL, resolution=0.01)
+        self.nbrOfModelsSlider.grid(row=rowCount, column=2, padx=5, pady=3)
         nbrOfModelsHelp = tk.Label(self, text='?')
         nbrOfModelsHelp.grid(row=rowCount, column=4)
         rowCount += 1
@@ -137,8 +136,11 @@ class OptimizeModelView(tk.Frame):
 
         # TOOLTIPS ---------------
 
-    def setModel(self, model=DatabaseModelModel):
-        self.databaseModel = model
+    def setModel(self, model):
+        self.model = model
+
+    def setProject(self, project):
+        self.project = project
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
@@ -252,9 +254,8 @@ class OptimizeModelView(tk.Frame):
             x_train, y_train, x_test, y_test = self.getTrainTestData()
             self.optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, rangeForHyperParamsObj, nbrOfModels)
 
-
-
-
+    def getHyperParamsObject(self):
+        return self.model.hyperParamsObj
 
     def getTrainTestData(self):
         """Get the whole data and splits it into training and testing set."""
