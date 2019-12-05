@@ -7,20 +7,22 @@ class LoadDataModel:
     firstRowIsTitle = None
     firstColumnAreColNumbers = None
     nbrOfFeatures = None
+    trainRowNumber = None
     pathToDataSet = None
 
-    def __init__(self, firstRowIsTitle=None, firstColumnAreColNumbers=None, nbrOfFeatures=None, pathToDataSet=None):
+    def __init__(self, firstRowIsTitle=None, firstColumnAreColNumbers=None, trainRowNumber=None, nbrOfFeatures=None, pathToDataSet=None):
         self.firstRowIsTitle = firstRowIsTitle
         self.firstColumnAreColNumbers = firstColumnAreColNumbers
         self.nbrOfFeatures = nbrOfFeatures
+        self.trainRowNumber = trainRowNumber
         self.pathToDataSet = pathToDataSet
         self.data = None
 
-    def loadData(self, pathToData, firstRowIsHeader, firstColIsRowNbr, nbrOfCategories, dataIsForTraining=True):
+    def loadData(self, pathToData, firstRowIsHeader, firstColIsRowNbr, trainRowNumber, nbrOfCategories, dataIsForTraining=True):
         """Wrapper function for loadDataForTrainingOrPrediction() from FileSystemRepository"""
         fl = FileSystemRepository()
         try:
-            x, y, rawData = fl.loadDataForTrainingOrPrediction(pathToData, firstRowIsHeader, firstColIsRowNbr,
+            x, y, rawData = fl.loadDataForTrainingOrPrediction(pathToData, firstRowIsHeader, firstColIsRowNbr, trainRowNumber,
                                                             nbrOfCategories, dataIsForTraining)
             self.data = x, y, rawData
         except ValueError:
