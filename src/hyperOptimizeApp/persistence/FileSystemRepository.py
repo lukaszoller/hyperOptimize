@@ -29,15 +29,19 @@ class FileSystemRepository:
 
         # get dataset info
         nbrOfRows, nbrOfCols = np.shape(data)
-        # if data is for training, nbrOfCategories has to be between 1 and nbrOfCols
+
+        # Check conditions for debugging
         a = (nbrOfCategories >= nbrOfCols)
         b = (nbrOfCategories == 0)
         c = dataIsForTraining and (nbrOfCategories >= nbrOfCols or nbrOfCategories == 0)
+        d = dataIsForTraining and (trainRowNumber >= nbrOfRows or trainRowNumber == 0)
+
+        # if data is for training, nbrOfCategories has to be between 1 and nbrOfCols
         if dataIsForTraining and (nbrOfCategories >= nbrOfCols or nbrOfCategories == 0):
             raise ValueError(
                 "nbrOfCategories is bigger than nbrOfCols in dataset. nbrOfFeatures should be smaller. Change "
                 "this input.")
-        if dataIsForTraining and (trainRowNumber >= nbrOfCols or nbrOfCategories == 0):
+        if dataIsForTraining and (trainRowNumber >= nbrOfRows or nbrOfCategories == 0):
             raise ValueError(
                 "trainRowNumber is bigger than nbrOfCols in dataset. trainRowNumber should be smaller. Change "
                 "this input.")
@@ -61,6 +65,3 @@ class FileSystemRepository:
             return x, y, rawData
         else:
             return x, rawData
-
-    def hoi(self):
-        print("hoi")

@@ -3,27 +3,30 @@ from src.hyperOptimizeApp.persistence.FileSystemRepository import FileSystemRepo
 
 
 class LoadDataModel:
+    #
+    # firstRowIsTitle = None
+    # firstColIsRowNbr = None
+    # nbrOfFeatures = None
+    # trainRowNumber = None
+    # pathToDataSet = None
 
-    firstRowIsTitle = None
-    firstColumnAreColNumbers = None
-    nbrOfFeatures = None
-    trainRowNumber = None
-    pathToDataSet = None
-
-    def __init__(self, firstRowIsTitle=None, firstColumnAreColNumbers=None, trainRowNumber=None, nbrOfFeatures=None, pathToDataSet=None):
-        self.firstRowIsTitle = firstRowIsTitle
-        self.firstColumnAreColNumbers = firstColumnAreColNumbers
-        self.nbrOfFeatures = nbrOfFeatures
-        self.trainRowNumber = trainRowNumber
+    def __init__(self, firstRowIsTitle=None, firstColIsRowNbr=None, trainRowNumber=None, nbrOfCategories=None,
+                 pathToDataSet=None, dataIsForTraining=None):
         self.pathToDataSet = pathToDataSet
+        self.firstRowIsTitle = firstRowIsTitle
+        self.firstColIsRowNbr = firstColIsRowNbr
+        self.trainRowNumber = trainRowNumber
+        self.nbrOfCategories = nbrOfCategories
+        self.dataIsForTraining = dataIsForTraining
         self.data = None
 
-    def loadData(self, pathToData, firstRowIsHeader, firstColIsRowNbr, trainRowNumber, nbrOfCategories, dataIsForTraining=True):
+    def loadData(self):
         """Wrapper function for loadDataForTrainingOrPrediction() from FileSystemRepository"""
         fl = FileSystemRepository()
         try:
-            x, y, rawData = fl.loadDataForTrainingOrPrediction(pathToData, firstRowIsHeader, firstColIsRowNbr, trainRowNumber,
-                                                            nbrOfCategories, dataIsForTraining)
+            x, y, rawData = fl.loadDataForTrainingOrPrediction(self.pathToDataSet, self.firstRowIsTitle,
+                                                               self.firstColIsRowNbr, self.trainRowNumber,
+                                                               self.nbrOfCategories, self.dataIsForTraining)
             self.data = x, y, rawData
         except ValueError:
             print("FileSystemRepository.loadDataForTrainingOrPrediction has raised an error. Wrong input for nbrOfCategories.")

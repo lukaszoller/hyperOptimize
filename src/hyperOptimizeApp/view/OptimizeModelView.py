@@ -146,7 +146,7 @@ class OptimizeModelView(tk.Frame):
         if not self.checkActivation():
             tk.messagebox.showwarning("Activation Error", "Please select at least one activation function!")
         # Check if data has been loaded
-        elif self.data == None:
+        elif self.loadDataModel.data == None:
             tk.messagebox.showwarning("Data Error", "No data has been loaded to project. Load data before optimizing.")
         else:
             # if not existent, create optimizeParamsModel (this has to be optional because self.estimateTime needs it too
@@ -254,18 +254,16 @@ class OptimizeModelView(tk.Frame):
     def getTrainTestData(self):
         """Get the whole data and splits it into training and testing set."""
         # get whole dataset
-        #Todo: change function loadData to take the self.### parameters.
         self.loadDataModel.loadData()
         x, y, rawData = self.loadDataModel.data
 
         # split dataset
-
         l = len(x[:,0]) # rownumber of whole dataset
-        nbrOfTrainRows =  math.ceil(l/2)            # --- Change this parameter --------------------------------------------$
+        trainRowNumber =  self.loadDataModel.trainRowNumber
 
-        x_train = x[0:nbrOfTrainRows, :]
-        y_train = y[0:nbrOfTrainRows, :]
-        x_test = x[nbrOfTrainRows:l, :]
-        y_test = y[nbrOfTrainRows:l, :]
+        x_train = x[0:trainRowNumber, :]
+        y_train = y[0:trainRowNumber, :]
+        x_test = x[trainRowNumber:l, :]
+        y_test = y[trainRowNumber:l, :]
 
         return x_train, y_train, x_test, y_test
