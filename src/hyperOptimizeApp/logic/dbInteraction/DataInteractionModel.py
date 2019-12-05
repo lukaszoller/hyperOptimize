@@ -12,4 +12,5 @@ class DataInteractionModel:
 
     def setDataForProject(self, projectId, dataModel=LoadDataModel):
         self.projectDB.updateProjectDataInformation(projectId, dataModel.pathToDataSet, dataModel.firstRowIsTitle,
-                                                    dataModel.firstColumnAreColNumbers, dataModel.nbrOfFeatures)
+                                                    dataModel.firstColumnAreColNumbers, dataModel.nbrOfFeatures,
+                                                    dataModel.trainRowNumber)

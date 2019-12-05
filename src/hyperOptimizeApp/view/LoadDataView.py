@@ -147,6 +147,10 @@ class LoadDataView(tk.Frame):
                 self.loadDataModel.pathToDataSet = self.entryPath.get()
                 self.loadDataModel.firstRowIsTitle = bool(self.checkVarRow.get())
                 self.loadDataModel.firstColumnAreColNumbers = bool(self.checkVarCol.get())
+                if len(self.entrytrainRowNbr.get()) == 0:  # Code for this line from: https://stackoverflow.com/questions/15455113/tkinter-check-if-entry-box-is-empty
+                    self.loadDataModel.trainRowNumber = 0
+                else:
+                    self.loadDataModel.trainRowNumber = self.entrytrainRowNbr.get()
                 # if entry field is empty, set nbrOfCategories to 0
                 if len(self.entryNbrCategories.get()) == 0:  # Code for this line from: https://stackoverflow.com/questions/15455113/tkinter-check-if-entry-box-is-empty
                     self.loadDataModel.nbrOfFeatures = 0

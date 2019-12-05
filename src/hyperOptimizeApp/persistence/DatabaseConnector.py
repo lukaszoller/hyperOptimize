@@ -17,7 +17,7 @@ class DatabaseConnector:
         if not glob.glob(self.DATABASE_NAME):
             sql = "CREATE TABLE project(id INTEGER PRIMARY KEY, name VARCHAR NOT NULL, date DATE NOT NULL," \
                   "dataPath VARCHAR, firstRowIsTitle INTEGER, firstColIsRowNbr INTEGER, nbrOfFeatures INTEGER, " \
-                  "dataIsSet INTEGER NOT NULL)"
+                  "dataIsSet INTEGER NOT NULL, trainRowNbr INTEGER)"
             self.writeDB(sql)
             sql = "CREATE TABLE model(id INTEGER PRIMARY KEY, modelName VARCHAR NOT NULL, date DATE NOT NULL, " \
                   "serializedModel VARCHAR NOT NULL, hyperParams VARCHAR, " \
@@ -85,7 +85,8 @@ class DatabaseConnector:
         sql = "UPDATE project SET name = '{}' WHERE id = {}".format(project.projectName, project.projectId)
         self.writeDB(sql)
 
-    def updateProjectDataInformation(self, projectId, dataPath, firstRowIsHeader, firstColIsRowNbr, nbrOfFeatures):
+    def updateProjectDataInformation(self, projectId, dataPath, firstRowIsHeader, firstColIsRowNbr, nbrOfFeatures,
+                                     trainRowNumber):
         rowHeader = 0
         colRowNbr = 0
         if firstRowIsHeader:
@@ -93,15 +94,16 @@ class DatabaseConnector:
         if firstColIsRowNbr:
             colRowNbr = 1
         sql = "UPDATE project SET dataPath = '{}', firstRowIsTitle = {}, firstColIsRowNbr = {}, nbrOfFeatures = {}, " \
-              "dataIsSet=1 WHERE id = {}".format(dataPath, rowHeader, colRowNbr, nbrOfFeatures, projectId)
+              "dataIsSet=1, trainRowNbr={} WHERE id = {}".format(dataPath, rowHeader, colRowNbr, nbrOfFeatures,
+                                                                 projectId, trainRowNumber)
         self.writeDB(sql)
 
     def getProjectDataInformation(self, projectId):
         print(projectId)
         connector = sqlite3.connect(self.DATABASE_NAME)
         cursor = connector.cursor()
-        sql = "SELECT dataPath, firstRowIsTitle, firstColIsRowNbr, nbrOfFeatures FROM project WHERE id = {}"\
-            .format(projectId)
+        sql = "SELECT dataPath, firstRowIsTitle, firstColIsRowNbr, nbrOfFeatures, trainRowNbr FROM project " \
+              "WHERE id = {}".format(projectId)
         cursor.execute(sql)
         element = cursor.fetchone()
         rowHeader = element[1]
@@ -112,7 +114,7 @@ class DatabaseConnector:
         firstColIsRowNbr = False
         if colRowNbr == 1:
             firstColIsRowNbr = True
-        dataModel = LoadDataModel(firstRowIsTitle, firstColIsRowNbr, element[3], element[0])
+        dataModel = LoadDataModel(firstRowIsTitle, firstColIsRowNbr, element[4], element[3], element[0])
         return dataModel
 
     def writeDB(self, sql):
