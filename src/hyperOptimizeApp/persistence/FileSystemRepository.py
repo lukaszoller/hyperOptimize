@@ -5,7 +5,7 @@ import cpuinfo
 
 class FileSystemRepository:
 
-    def loadDataForTrainingOrPrediction(self, pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories=0,
+    def loadDataForTrainingOrPrediction(self, pathToData, firstRowIsHeader, firstColIsRownbr, trainRowNumber, nbrOfCategories=0,
                                         dataIsForTraining=False):
         """Loads data from filesystem. Takes as input pathToData (String representing full path to csv file),
         nbrOfFeatures (Size of X for training and prediction of model), firstRowIsHeader and firstColIsRownbr (both
@@ -37,7 +37,10 @@ class FileSystemRepository:
             raise ValueError(
                 "nbrOfCategories is bigger than nbrOfCols in dataset. nbrOfFeatures should be smaller. Change "
                 "this input.")
-
+        if dataIsForTraining and (trainRowNumber >= nbrOfCols or nbrOfCategories == 0):
+            raise ValueError(
+                "trainRowNumber is bigger than nbrOfCols in dataset. trainRowNumber should be smaller. Change "
+                "this input.")
         # Store data before manipulation
         rawData = data
 

@@ -1,6 +1,6 @@
 import tkinter as tk
 import tkinter.messagebox
-
+import math
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
@@ -114,10 +114,6 @@ class OptimizeModelView(tk.Frame):
         nbrOfModelsHelp.grid(row=rowCount, column=4)
         rowCount += 1
 
-        # Estimate running time of optimization
-        estimateTimeButton = tk.Button(self, text='Estimate running time', command=lambda: self.estimateTime()).grid(
-            row=rowCount, column=3)
-
         # Final Row (Train Model)
         trainModelButton = tk.Button(self, text='Optimize', command=lambda: self.checkAndOptimize()).grid(
             row=rowCount, column=3)
@@ -206,7 +202,6 @@ class OptimizeModelView(tk.Frame):
         else:
             return False
 
-
     def createRangeForHyperParamsObj(self):
         """Takes information from GUI and creates a RangeForHyperParamsobj."""
         # Get hyperparam ranges
@@ -263,8 +258,9 @@ class OptimizeModelView(tk.Frame):
         x, y, rawData = self.data
 
         # split dataset
-        nbrOfTrainRows = 60000
+
         l = len(x[:,0]) # rownumber of whole dataset
+        nbrOfTrainRows =  math.ceil(l/2)            # --- Change this parameter --------------------------------------------$
 
         x_train = x[0:nbrOfTrainRows, :]
         y_train = y[0:nbrOfTrainRows, :]

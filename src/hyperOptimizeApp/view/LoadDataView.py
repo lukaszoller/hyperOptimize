@@ -50,6 +50,20 @@ class LoadDataView(tk.Frame):
         self.nbrCategoriesWarning = tk.Label(nbrCategoriesFrame, text="")
         self.nbrCategoriesWarning.pack(side=tk.LEFT, padx=padding, pady=padding)
 
+        # training data starts at linenbr
+        trainRowNbrFrame = tk.Frame(self)
+        trainRowNbrFrame.pack(fill=tk.X)
+        trainRowNbrLabel = tk.Label(trainRowNbrFrame,
+                                      text="Input row number where training data starts",
+                                      width=50)
+        trainRowNbrLabel.pack(side=tk.LEFT, padx=padding, pady=padding)
+        trainRowNbrValidation = self.register(self.isPositiveNumber)
+        self.entrytrainRowNbr = tk.Entry(trainRowNbrFrame, width=10, validate="key",
+                                           validatecommand=(trainRowNbrValidation, '%S'))
+        self.entrytrainRowNbr.pack(fill=tk.X, side=tk.LEFT, padx=padding)
+        self.trainRowNbrWarning = tk.Label(trainRowNbrFrame, text="")
+        self.trainRowNbrWarning.pack(side=tk.LEFT, padx=padding, pady=padding)
+
         # Load data btn
         dataBtnFrame = tk.Frame(self)
         dataBtnFrame.pack(fill=tk.X)
@@ -79,10 +93,8 @@ class LoadDataView(tk.Frame):
         else:
             return False
 
-
-    def displayNbrCategoriesWarning(self):
+    def displayNbrInputWarning(self):
         self.nbrCategoriesWarning.config(text="Warning! Enter number smaller than number of columns.", fg="red")
-
 
     def getFileLocation(self):
         self.entryPath.delete(0, tk.END)
@@ -97,6 +109,11 @@ class LoadDataView(tk.Frame):
         firstRowIsHeader = bool(self.checkVarRow.get())
         firstColIsRownbr = bool(self.checkVarCol.get())
         # if entry field is empty, set nbrOfCategories to 0
+        if len(self.entrytrainRowNbr.get()) == 0:  # Code for this line from: https://stackoverflow.com/questions/15455113/tkinter-check-if-entry-box-is-empty
+            trainRowNumber = 0
+        else:
+            trainRowNumber = self.entrytrainRowNbr.get()
+        # if entry field is empty, set nbrOfCategories to 0
         if len(
                 self.entryNbrCategories.get()) == 0:  # Code for this line from: https://stackoverflow.com/questions/15455113/tkinter-check-if-entry-box-is-empty
             nbrOfCategories = 0
@@ -106,7 +123,7 @@ class LoadDataView(tk.Frame):
 
         # Load data
         try:
-            self.loadDataModel.loadData(pathToData, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
+            self.loadDataModel.loadData(pathToData, firstRowIsHeader, firstColIsRownbr, trainRowNumber, nbrOfCategories, dataIsForTraining)
             print("LoadDataView: self.loadDataModel.data: ", self.loadDataModel.data)
         except FileNotFoundError:
             tk.messagebox.showerror("Error", " File not found.")
@@ -149,11 +166,11 @@ class LoadDataView(tk.Frame):
         """Previews loaded data."""
         x, y, rawData = self.loadDataModel.data
         shapeRaw = np.shape(rawData)
-
-
+        nbrOfCols = shapeRaw[1]
+        data = rawData[0:100, 0:nbrOfCols]
 
         self.preViewDataText.delete(1, tk.END)
-        self.preViewDataText.insert(tk.END, rawData)
+        self.preViewDataText.insert(tk.END, data)
 
     def displayPreviewWarning(self):
         self.loadDataInformation.config(text="Warning! Data cannot be previewed!", fg="red")
