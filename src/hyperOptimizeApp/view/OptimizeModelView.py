@@ -2,7 +2,6 @@ import tkinter as tk
 import tkinter.messagebox
 
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
@@ -19,7 +18,7 @@ class OptimizeModelView(tk.Frame):
     model = None
     rangeForHyperParamsObj = None
     project = None
-    data = None
+    loadDataModel = None
 
     # Constants:
     MAX_LAYERS = RangeForHyperParamsObj.MAX_NUMBER_OF_HIDDEN_LAYERS
@@ -227,7 +226,7 @@ class OptimizeModelView(tk.Frame):
 
     def setProject(self, project):
         self.project = project
-        self.data = self.dataInteraction.getLoadDataView(self.project.projectId)
+        self.loadDataModel = self.dataInteraction.getLoadDataModel(self.project.projectId)
 
     def getActivationCheckBtnValues(self):
         """Gets values from checkbuttons for activation functions and returns an array in the form the optimizing

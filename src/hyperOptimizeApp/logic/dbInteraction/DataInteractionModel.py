@@ -6,7 +6,7 @@ class DataInteractionModel:
     def __init__(self):
         self.projectDB = DatabaseConnector()
 
-    def getLoadDataView(self, projectId):
+    def getLoadDataModel(self, projectId):
         dataModel = self.projectDB.getProjectDataInformation(projectId)
         return dataModel
 
