@@ -254,7 +254,9 @@ class OptimizeModelView(tk.Frame):
     def getTrainTestData(self):
         """Get the whole data and splits it into training and testing set."""
         # get whole dataset
-        x, y, rawData = self.data
+        #Todo: change function loadData to take the self.### parameters.
+        self.loadDataModel.loadData()
+        x, y, rawData = self.loadDataModel.data
 
         # split dataset
 
