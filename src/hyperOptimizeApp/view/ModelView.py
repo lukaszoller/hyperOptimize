@@ -5,6 +5,8 @@ from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParam
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.view import LayoutConstants
 from src.hyperOptimizeApp.view import ValidationFunctions
+from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
+
 
 
 class ModelView(tk.Frame):
@@ -133,11 +135,8 @@ class ModelView(tk.Frame):
         reluRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(reluRadio)
 
-        # # ROW 2
-        # trainModelButton = tk.Button(self, text='Optimize Model',
-        #                              command=lambda: self.controlFrame.setOptimizeModelFrame(self.model, self.project))\
-        #     .grid(row=rowCount, column=3)
-        # rowCount += 1
+        # Initially disable input fields
+        self.disableManualHyperParams()
 
     def setProject(self, project=DatabaseProjectModel):
         self.project = project
@@ -176,7 +175,13 @@ class ModelView(tk.Frame):
         rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
         rangeForHyperParamsObj.activationArray = activationArray
 
+        # Create hyperParamsObj
+        hyperParamsObj = createHyperParamsListRandom(rangeForHyperParamsObj)
 
         # create and train model
-        self.model = MachineLearningModel.createNetwork()
+        self.model.hyperParamsObj = hyperParamsObj
+        self.model.train(self.getTrainData())
+
+    def getTrainData(self):
+        pass
 
