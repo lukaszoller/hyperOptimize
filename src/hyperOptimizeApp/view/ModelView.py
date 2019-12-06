@@ -1,5 +1,6 @@
 import tkinter as tk
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
+from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.view import LayoutConstants
 from src.hyperOptimizeApp.view import ValidationFunctions
@@ -96,35 +97,41 @@ class ModelView(tk.Frame):
         self.activationCheckBtnDict = dict()
         activationFrame = tk.Frame(self)
         activationFrame.pack(fill=tk.X)
-        ## Sigmoid
-        sigmoidBoxName = "Sigmoid Function"
         activationLabel = tk.Label(activationFrame, text='Activation functions to choose:')
         activationLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.sigmoidVar = tk.IntVar(0)
-        sigmoidBox = tk.Checkbutton(activationFrame, text=sigmoidBoxName, variable=self.sigmoidVar)
-        sigmoidBox.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.inputFieldList.append(sigmoidBox)
+        self.activationVar = tk.IntVar()
+
+        ## Sigmoid
+        sigmoidRadioName = "Sigmoid Function"
+        # self.sigmoidVar = tk.IntVar(0)
+        sigmoidRadio = tk.Radiobutton(activationFrame, text=sigmoidRadioName, variable=self.activationVar,
+                                      value="sigmoid")
+        sigmoidRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(sigmoidRadio)
 
         ## Linear
-        linearBoxName = "Linear Function"
-        self.linearVar = tk.IntVar(0)
-        linearBox = tk.Checkbutton(activationFrame, text=linearBoxName, variable=self.linearVar)
-        linearBox.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.inputFieldList.append(linearBox)
+        linearRadioName = "Linear Function"
+        # self.linearVar = tk.IntVar(0)
+        linearRadio = tk.Radiobutton(activationFrame, text=linearRadioName, variable=self.activationVar,
+                                      value="linear")
+        linearRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(linearRadio)
 
         ## Tanh
-        tanhBoxName = "Tanh Function"
-        self.tanhVar = tk.IntVar(0)
-        tanhBox = tk.Checkbutton(activationFrame, text=tanhBoxName, variable=self.tanhVar)
-        tanhBox.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.inputFieldList.append(tanhBox)
+        tanhRadioName = "Tanh Function"
+        # self.tanhVar = tk.IntVar(0)
+        tanhRadio = tk.Radiobutton(activationFrame, text=tanhRadioName, variable=self.activationVar,
+                                      value="tanh")
+        tanhRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(tanhRadio)
 
         ## Relu
-        reluBoxName = "ReLu Function"
-        self.reluVar = tk.IntVar(0)
-        reluBox = tk.Checkbutton(activationFrame, text=reluBoxName, variable=self.reluVar)
-        reluBox.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.inputFieldList.append(reluBox)
+        reluRadioName = "ReLu Function"
+        # self.reluVar = tk.IntVar(0)
+        reluRadio = tk.Radiobutton(activationFrame, text=reluRadioName, variable=self.activationVar,
+                                      value="relu")
+        reluRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(reluRadio)
 
         # # ROW 2
         # trainModelButton = tk.Button(self, text='Optimize Model',
@@ -153,4 +160,19 @@ class ModelView(tk.Frame):
             element.config(state="disabled")
 
     def trainModel(self):
-        pass
+        # get parameters
+        rangeForHyperparamsObj = RangeForHyperParamsObj()
+        minNbrOfNodes = self.entryNbrNodes.get()
+        maxNbrOfNodes = minNbrOfNodes
+        minNbrOfLayers = self.entryNbrLayers.get()
+        maxNbrOfLayers = minNbrOfLayers
+        minDropout =1
+        maxDropout = 1
+        activationArray = self.getActivationCheckBtnValues()
+        # activationArray = np.array(['sigmoid', 'elu', 'softmax'])
+
+        self.rangeForHyperParamsObj = RangeForHyperParamsObj()
+        self.rangeForHyperParamsObj.nbrOfHiddenLayersDict = dict({'min': minNbrOfLayers, 'max': maxNbrOfLayers})
+        self.rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': minNbrOfNodes, 'max': maxNbrOfNodes})
+        self.rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
+        self.rangeForHyperParamsObj.activationArray = activationArray

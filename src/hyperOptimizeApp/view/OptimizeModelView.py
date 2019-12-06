@@ -204,6 +204,7 @@ class OptimizeModelView(tk.Frame):
     def createRangeForHyperParamsObj(self):
         """Takes information from GUI and creates a RangeForHyperParamsobj."""
         # Get hyperparam ranges
+        # ToDo: Replace hardcoded values with values from sliders, etc.
         minNbrOfNodes = 2
         maxNbrOfNodes = 4
         minNbrOfLayers = 2
@@ -245,13 +246,13 @@ class OptimizeModelView(tk.Frame):
         two functions (self.estimateTime and self.checkAndOptimize). But it is not clear, which function will be
         executed first."""
         if self.rangeForHyperParamsObj == None:
-            rangeForHyperParamsObj = self.getHyperParamsObject()
+            rangeForHyperParamsObj = self.createOptimizeParamsModel()
             nbrOfModels = self.nbrOfModelsSlider.get()
             x_train, y_train, x_test, y_test = self.getTrainTestData()
             self.optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, rangeForHyperParamsObj, nbrOfModels)
 
-    def getHyperParamsObject(self):
-        return self.model.hyperParamsObj
+    # def getHyperParamsObject(self):
+    #     return self.model.hyperParamsObj
 
     def getTrainTestData(self):
         """Get the whole data and splits it into training and testing set."""
