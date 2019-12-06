@@ -1,13 +1,12 @@
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
-from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
 from astropy.table import Table, Column
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-
 from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
+from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
 
 
 class OptimizeParamsModel:
@@ -23,63 +22,15 @@ class OptimizeParamsModel:
         self.yTest = yTest
         self.rangeForHyperparamsObj = rangeForHyperParamsObj
         self.nbrOfModels = nbrOfModels
-        self.hyperParamsObjList = self.createHyperParamsListRandom()
+        self.hyperParamsObjList = createHyperParamsListRandom(self.rangeForHyperparamsObj, self.nbrOfModels)
 
 
     def estimateTime(self):
         return EstimateTimeModel.estimateTime(hyperParams=self.hyperParamsObjList)
 
-    def createHyperParamsListRandom(self):
-        """This method takes as input the number of models to be created and ranges for hyperparameters and returns a
-        list of dicts where each dict contains the hyperparams for one model. The input object has to be a dict with the
-        following names as key and as values an integer array with min, max values to specify a range OR a string array
-        to specify optimizers or lossFunctions.
-        Keys for this dict: numberOfLayers, numberOfNodesPerLayer, activationFunctionPerLayer,
-        dropOutRatePerLayer, lossFunction, modelOptimizer, learningRate, learningRateDecay. Random: The parameter
-        values will be chosen randomly from the above ranges.
-        """
-
-        #############################################################
-        # Prepare arrays with values for dicts
-        #############################################################
-
-        # 1. Choose number of layers
-        nbrOfLayersMin = self.rangeForHyperparamsObj.nbrOfHiddenLayersDict.get('min')
-        nbrOfLayersMMax = self.rangeForHyperparamsObj.nbrOfHiddenLayersDict.get('max')
-        nbrOfLayersArray = np.random.random_integers(nbrOfLayersMin, nbrOfLayersMMax, self.nbrOfModels)
-
-        # 2. Choose number of nodes per Layer
-        nbrOfNodesMin = self.rangeForHyperparamsObj.nbrOfHiddenUnitsDict.get('min')
-        nbrOfNodesMax = self.rangeForHyperparamsObj.nbrOfHiddenUnitsDict.get('max')
-        # This results the same number of nodes per Layer for each model
-        nbrOfNodesArray = np.random.random_integers(nbrOfNodesMin, nbrOfNodesMax, self.nbrOfModels)
-
-        # activationArray
-        indexForActivationArray = np.random.random_integers(0, len(self.rangeForHyperparamsObj.activationArray) - 1, self.nbrOfModels)
-        # dropOutArray: The dropout rate for each model
-        dropOutArray = np.random.random_sample(self.nbrOfModels)
-        # lossFunction
-        lossFunctionArray = np.random.choice(self.rangeForHyperparamsObj.lossFunctionArray, self.nbrOfModels, replace=True)
-        # modelOptimizer
-        modelOptimizerArray = np.random.choice(self.rangeForHyperparamsObj.modelOptimizerArray, self.nbrOfModels, replace=True)
-        # Learning Rate (code from: https://www.coursera.org/learn/deep-neural-network/lecture/3rdqN/using-an-appropriate-scale-to-pick-hyperparameters Video: 02min55s)
-        minLog = np.log10(self.rangeForHyperparamsObj.learningRateDict.get('min'))
-        maxLog = np.log10(self.rangeForHyperparamsObj.learningRateDict.get('max'))
-        exponents = (maxLog - minLog) * np.random.random_sample(self.nbrOfModels) + minLog    # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
-        learningRateArray = np.power(10, exponents)
-        # learningRateDecay
-        minLrd = self.rangeForHyperparamsObj.learningRateDecayDict.get('min')
-        maxLrd = self.rangeForHyperparamsObj.learningRateDecayDict.get('max')
-        learningRateDecayArray = (maxLrd - minLrd) * np.random.random_sample(self.nbrOfModels) + minLrd   # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
-
-        #############################################################
-        # Construct a dict for each model with the above arrays
-        #############################################################
-        # Initialize list for HyperParamsObj (one HyperParamsObj for each model)
-        hyperParamsList = list()
 
         # nbrOfModel times: create a HyperParamsObj (for each model one)
-        for i in range(0,self.nbrOfModels):
+        for i in range(0, self.nbrOfModels):
             # Initialize HyperParamsObj
             tmpHyperParamsObj = HyperParamsObj()
             # Get nbrOfLayers
@@ -99,7 +50,8 @@ class OptimizeParamsModel:
                 hiddenNodesArray = np.full(tmpNbrOfLayers - 2, nbrOfNodesArray[i])
                 nbrOfFeaturesAsArray = [nbrOfFeatures]
                 nbrOfCategoriesAsArray = [nbrOfCategories]
-                tmpHyperParamsObj.nbrOfNodesArray = np.concatenate([nbrOfFeaturesAsArray, hiddenNodesArray, nbrOfCategoriesAsArray])
+                tmpHyperParamsObj.nbrOfNodesArray = np.concatenate(
+                    [nbrOfFeaturesAsArray, hiddenNodesArray, nbrOfCategoriesAsArray])
 
             # nbr of Features
             tmpHyperParamsObj.nbrOfFeatures = self.rangeForHyperparamsObj.nbrOfFeatures
@@ -108,9 +60,11 @@ class OptimizeParamsModel:
             # model optimizer
             tmpHyperParamsObj.modelOptimizer = modelOptimizerArray[i]
             # Activation function: Choose from the range of activation functions with the above randomly created indexes the activation Function for this model
-            tmpHyperParamsObj.activationFunction = self.rangeForHyperparamsObj.activationArray[indexForActivationArray[i]]
+            tmpHyperParamsObj.activationFunction = self.rangeForHyperparamsObj.activationArray[
+                indexForActivationArray[i]]
             # Activation function for all layers of one model
-            tmpHyperParamsObj.activationFunction = self.rangeForHyperparamsObj.activationArray[indexForActivationArray[i]]
+            tmpHyperParamsObj.activationFunction = self.rangeForHyperparamsObj.activationArray[
+                indexForActivationArray[i]]
             # Drop out rate for all layers of one model
             tmpHyperParamsObj.dropOutRate = dropOutArray[i]
             # Loss function
@@ -121,7 +75,7 @@ class OptimizeParamsModel:
             # Add tmpHyperParamsObj to list (one tmpHyperParamsObj for each model)
             ######################################################################
             hyperParamsList.append(tmpHyperParamsObj)
-            
+
         # Return the list of dicts, each with hyperparams for each model
         return hyperParamsList
 

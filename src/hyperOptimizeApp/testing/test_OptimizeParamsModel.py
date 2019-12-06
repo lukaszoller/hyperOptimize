@@ -4,7 +4,7 @@ from tensorflow.python.keras.utils import np_utils
 from matplotlib import pyplot as plt
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
-from keras.utils.np_utils import to_categorical
+from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
 import collections
 from keras.utils import plot_model
 import pydot
@@ -32,8 +32,7 @@ class TestOptimizeParamsModel():
 
         nbrOfModels = 2
 
-        optimizeParamsModel = OptimizeParamsModel(1,2,3,4, rangeForHyperParamsObj, nbrOfModels)
-        hyperParamsObjList = optimizeParamsModel.createHyperParamsListRandom()
+        hyperParamsObjList = createHyperParamsListRandom(rangeForHyperParamsObj, nbrOfModels)
 
         i = 1
         for h in hyperParamsObjList:

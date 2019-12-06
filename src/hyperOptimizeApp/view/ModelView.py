@@ -1,5 +1,6 @@
 import tkinter as tk
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
+from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.view import LayoutConstants
@@ -94,7 +95,6 @@ class ModelView(tk.Frame):
         self.inputFieldList.append(self.dropoutSlider)
 
         # Frame with picking of different activation Functions
-        self.activationCheckBtnDict = dict()
         activationFrame = tk.Frame(self)
         activationFrame.pack(fill=tk.X)
         activationLabel = tk.Label(activationFrame, text='Activation functions to choose:')
@@ -166,13 +166,17 @@ class ModelView(tk.Frame):
         maxNbrOfNodes = minNbrOfNodes
         minNbrOfLayers = self.entryNbrLayers.get()
         maxNbrOfLayers = minNbrOfLayers
-        minDropout =1
-        maxDropout = 1
-        activationArray = self.getActivationCheckBtnValues()
-        # activationArray = np.array(['sigmoid', 'elu', 'softmax'])
+        minDropout = self.dropoutSlider.get()
+        maxDropout = minDropout
+        activationArray = self.activationVar.get()
 
-        self.rangeForHyperParamsObj = RangeForHyperParamsObj()
-        self.rangeForHyperParamsObj.nbrOfHiddenLayersDict = dict({'min': minNbrOfLayers, 'max': maxNbrOfLayers})
-        self.rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': minNbrOfNodes, 'max': maxNbrOfNodes})
-        self.rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
-        self.rangeForHyperParamsObj.activationArray = activationArray
+        rangeForHyperParamsObj = RangeForHyperParamsObj()
+        rangeForHyperParamsObj.nbrOfHiddenLayersDict = dict({'min': minNbrOfLayers, 'max': maxNbrOfLayers})
+        rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': minNbrOfNodes, 'max': maxNbrOfNodes})
+        rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
+        rangeForHyperParamsObj.activationArray = activationArray
+
+
+        # create and train model
+        self.model = MachineLearningModel.createNetwork()
+
