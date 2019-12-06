@@ -222,6 +222,8 @@ class OptimizeModelView(tk.Frame):
     def setProject(self, project):
         self.project = project
         self.loadDataModel = self.dataInteraction.getLoadDataModel(self.project.projectId)
+        self.loadDataModel.dataIsForTraining=True
+        self.loadDataModel.loadData()
 
     def getActivationCheckBtnValues(self):
         """Gets values from checkbuttons for activation functions and returns an array in the form the optimizing
@@ -254,7 +256,6 @@ class OptimizeModelView(tk.Frame):
     def getTrainTestData(self):
         """Get the whole data and splits it into training and testing set."""
         # get whole dataset
-        self.loadDataModel.loadData()
         x, y, rawData = self.loadDataModel.data
 
         # split dataset
