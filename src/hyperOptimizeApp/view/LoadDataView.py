@@ -154,7 +154,13 @@ class LoadDataView(tk.Frame):
         answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to set Data?\n"
                                                             "This process can't be reversed!")
         if answer == 1:
-            print("Leave Window and disable Data load Button in Project View.")
+            # try:
+                self.dbInteraction.setDataForProject(self.project.projectId, self.loadDataModel)
+                self.project.dataIsSet = True
+                print("Data for Project set")
+                self.controlFrame.setProjectFrame(False, self.project)
+            # except:
+            #     print("Something went wrong!")
         else:
             print("Nothing done")
 

@@ -24,7 +24,47 @@ class ModelView(tk.Frame):
         titleLabel = tk.Label(titleFrame, text="Modelname: " + str(self.topText), width=50, font=("Helvetica", 12))
         titleLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
+        # Optimize button row
+        optimizeButtonFrame = tk.Frame(self)
+        optimizeButtonFrame.pack(fill=tk.X)
+        optimizeBtn = tk.Button(optimizeButtonFrame, text='Get model hyperparams by optimization',
+                                command=lambda: self.controlFrame.setOptimizeModelFrame(self.model, self.project))
+        optimizeBtn.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.optimizeInformation = tk.Label(optimizeButtonFrame, text="")
+        self.optimizeInformation.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+        ### Enable / disable / train - button row
+        disableEnableTrainFrame = tk.Frame(self)
+        disableEnableTrainFrame.pack(fill=tk.X)
+        # Enable manual hyperparameter setting
+        enableManuallyBtn = tk.Button(disableEnableTrainFrame, text='Enable manual hyperparams setting',
+                                      command=lambda: self.enableManualHyperParams())
+        enableManuallyBtn.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.enableManuallyInformation = tk.Label(disableEnableTrainFrame, text="")
+        self.enableManuallyInformation.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+        # Disable manual hyperparameter setting
+        disableManuallyBtn = tk.Button(disableEnableTrainFrame, text='Disable manual hyperparams setting',
+                                       command=lambda: self.disableManualHyperParams())
+        disableManuallyBtn.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.disableManuallyInformation = tk.Label(disableEnableTrainFrame, text="")
+        self.disableManuallyInformation.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+        # Train model with manual hyperparams
+        trainBtn = tk.Button(disableEnableTrainFrame, text='Train model with manually set hyperparams',
+                             command=lambda: self.trainModel())
+        trainBtn.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.trainInformation = tk.Label(disableEnableTrainFrame, text="")
+        self.trainInformation.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+        #############################################################
+        # Hyperparam fields
+        #############################################################
+        # initialize dict with input / display fields to disable / enable all of them
+        self.inputFieldList = list()
+
         # Number of Layers and Nodes
+        # Layers
         nbrLayersNodesFrame = tk.Frame(self)
         nbrLayersNodesFrame.pack(fill=tk.X)
         nbrLayersLabel = tk.Label(nbrLayersNodesFrame, text="Input number of Layers:")
@@ -33,13 +73,15 @@ class ModelView(tk.Frame):
         self.entryNbrLayers = tk.Entry(nbrLayersNodesFrame, width=10, validate="key",
                                        validatecommand=(nbrLayersValidation, '%S'))
         self.entryNbrLayers.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
-
+        self.inputFieldList.append(self.entryNbrLayers)
+        # Nodes
         nbrNodesLabel = tk.Label(nbrLayersNodesFrame, text="Input number of Nodes:")
         nbrNodesLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         nbrNodesValidation = self.register(ValidationFunctions.isPositiveNumber)
         self.entryNbrNodes = tk.Entry(nbrLayersNodesFrame, width=10, validate="key",
                                       validatecommand=(nbrNodesValidation, '%S'))
         self.entryNbrNodes.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.entryNbrNodes)
 
         # Dropout
         dropoutFrame = tk.Frame(self)
@@ -48,6 +90,7 @@ class ModelView(tk.Frame):
         dropoutLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.dropoutSlider = tk.Scale(dropoutFrame, from_=0, to=1, orient=tk.HORIZONTAL, resolution=0.01)
         self.dropoutSlider.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.dropoutSlider)
 
         # Frame with picking of different activation Functions
         self.activationCheckBtnDict = dict()
@@ -60,34 +103,28 @@ class ModelView(tk.Frame):
         self.sigmoidVar = tk.IntVar(0)
         sigmoidBox = tk.Checkbutton(activationFrame, text=sigmoidBoxName, variable=self.sigmoidVar)
         sigmoidBox.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.activationCheckBtnDict['sigmoid'] = sigmoidBox
+        self.inputFieldList.append(sigmoidBox)
+
         ## Linear
         linearBoxName = "Linear Function"
         self.linearVar = tk.IntVar(0)
         linearBox = tk.Checkbutton(activationFrame, text=linearBoxName, variable=self.linearVar)
         linearBox.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.activationCheckBtnDict['linear'] = linearBox
+        self.inputFieldList.append(linearBox)
+
         ## Tanh
         tanhBoxName = "Tanh Function"
         self.tanhVar = tk.IntVar(0)
         tanhBox = tk.Checkbutton(activationFrame, text=tanhBoxName, variable=self.tanhVar)
         tanhBox.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.activationCheckBtnDict['tanh'] = tanhBox
+        self.inputFieldList.append(tanhBox)
+
         ## Relu
         reluBoxName = "ReLu Function"
         self.reluVar = tk.IntVar(0)
         reluBox = tk.Checkbutton(activationFrame, text=reluBoxName, variable=self.reluVar)
         reluBox.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.activationCheckBtnDict['relu'] = reluBox
-
-        # Optimize btn
-        optimizeBtnFrame = tk.Frame(self)
-        optimizeBtnFrame.pack(fill=tk.X)
-        optimizeBtn = tk.Button(optimizeBtnFrame, text='Optimize Model',
-                                         command=lambda: self.controlFrame.setOptimizeModelFrame(self.model, self.project))
-        optimizeBtn.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.optimizeInformation = tk.Label(optimizeBtnFrame, text="")
-        self.optimizeInformation.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(reluBox)
 
         # # ROW 2
         # trainModelButton = tk.Button(self, text='Optimize Model',
@@ -106,3 +143,14 @@ class ModelView(tk.Frame):
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
+
+    def enableManualHyperParams(self):
+        for element in self.inputFieldList:
+            element.config(state = "normal")
+
+    def disableManualHyperParams(self):
+        for element in self.inputFieldList:
+            element.config(state="disabled")
+
+    def trainModel(self):
+        pass

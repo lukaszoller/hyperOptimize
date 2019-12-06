@@ -3,12 +3,12 @@ from src.hyperOptimizeApp.persistence.FileSystemRepository import FileSystemRepo
 
 
 class LoadDataModel:
-    #
-    # firstRowIsTitle = None
-    # firstColIsRowNbr = None
-    # nbrOfFeatures = None
-    # trainRowNumber = None
-    # pathToDataSet = None
+    pathToDataSet = None
+    firstRowIsTitle = None
+    firstColIsRowNbr = None
+    trainRowNumber = None
+    nbrOfCategories = None
+    dataIsForTraining = None
 
     def __init__(self, firstRowIsTitle=None, firstColIsRowNbr=None, trainRowNumber=None, nbrOfCategories=None,
                  pathToDataSet=None, dataIsForTraining=None):

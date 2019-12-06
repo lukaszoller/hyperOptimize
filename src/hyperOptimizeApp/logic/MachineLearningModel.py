@@ -23,8 +23,6 @@ class MachineLearningModel:
         learningRate = self.hyperParamsObj.learningRate
         decay = self.hyperParamsObj.learningRateDecay
 
-
-
         nbrFeatures = nbrOfNodesArray[0]
         nbrCategories = nbrOfNodesArray[len(nbrOfNodesArray)-1]
         # Create unitsArray (Units are the connections to the next layer, i.e. nbrOfUnits for Layer X are nbr of nodes
@@ -80,7 +78,3 @@ class MachineLearningModel:
 
     def to_json(self):
         return self.model.to_json()
-
-a = [1,2,3,3,4]
-b = np.append(a, 10)
-print(b[-1])
