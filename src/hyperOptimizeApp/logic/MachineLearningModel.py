@@ -78,3 +78,4 @@ class MachineLearningModel:
 
     def to_json(self):
         return self.model.to_json()
+
