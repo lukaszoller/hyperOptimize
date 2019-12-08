@@ -6,13 +6,15 @@ from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import Databa
 from src.hyperOptimizeApp.view import LayoutConstants
 from src.hyperOptimizeApp.view import ValidationFunctions
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
-
+from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
 
 
 class ModelView(tk.Frame):
     model = MachineLearningModel
     controlFrame = None
     project = DatabaseProjectModel()
+    dataInteraction = DataInteractionModel()
+    loadDataModel = None
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
@@ -140,6 +142,9 @@ class ModelView(tk.Frame):
 
     def setProject(self, project=DatabaseProjectModel):
         self.project = project
+        self.loadDataModel = self.dataInteraction.getLoadDataModel(self.project.projectId)
+        self.loadDataModel.dataIsForTraining = True
+        self.loadDataModel.loadData()
 
     def setModel(self, model=MachineLearningModel):
         self.model = model
@@ -183,5 +188,18 @@ class ModelView(tk.Frame):
         self.model.train(self.getTrainData())
 
     def getTrainData(self):
-        pass
+        """Get the whole data and splits it into training and testing set."""
+        # get whole dataset
+        x, y, rawData = self.loadDataModel.data
+
+        # split dataset
+        l = len(x[:, 0])  # rownumber of whole dataset
+        trainRowNumber = self.loadDataModel.trainRowNumber
+
+        x_train = x[0:trainRowNumber, :]
+        y_train = y[0:trainRowNumber, :]
+        x_test = x[trainRowNumber:l, :]
+        y_test = y[trainRowNumber:l, :]
+
+        return x_train, y_train, x_test, y_test
 
