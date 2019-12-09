@@ -17,6 +17,7 @@ class OptimizeModelView(tk.Frame):
     controlFrame = None
     model = None
     rangeForHyperParamsObj = None
+    optimizeParamsModel = None
     project = None
     loadDataModel = None
 
@@ -243,8 +244,8 @@ class OptimizeModelView(tk.Frame):
     def getActivationCheckBtnValues(self):
         """Gets values from checkbuttons for activation functions and returns an array in the form the optimizing
         function requires."""
-        l = len(self.activationCheckBtnDict)
-        activationFunctionArray = np.array((1, l))
+        numberOfActivationFunctions = len(self.activationCheckBtnDict)
+        activationFunctionArray = np.array((1, numberOfActivationFunctions))
 
         i = 0  # Index for loop
         for key, boxObject in self.activationCheckBtnDict:
@@ -258,11 +259,11 @@ class OptimizeModelView(tk.Frame):
         """The creation of the optimizeParamsModel is placed in a separate function because this object is needed from
         two functions (self.estimateTime and self.checkAndOptimize). But it is not clear, which function will be
         executed first."""
-        if self.rangeForHyperParamsObj == None:
-            rangeForHyperParamsObj = self.createOptimizeParamsModel()
+        if self.rangeForHyperParamsObj is None:
+            self.createRangeForHyperParamsObj()
             nbrOfModels = self.nbrOfModelsSlider.get()
             x_train, y_train, x_test, y_test = self.getTrainTestData()
-            self.optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, rangeForHyperParamsObj,
+            self.optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, self.rangeForHyperParamsObj,
                                                            nbrOfModels)
 
     # def getHyperParamsObject(self):
