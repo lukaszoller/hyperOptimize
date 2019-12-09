@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.messagebox
 import math
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
+from src.hyperOptimizeApp.view import LayoutConstants
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel

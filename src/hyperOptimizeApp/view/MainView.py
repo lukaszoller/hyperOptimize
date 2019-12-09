@@ -15,6 +15,7 @@ from src.hyperOptimizeApp.logic.viewInteraction.ModelModel import ModelModel
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandas import DataFrame
+from src.hyperOptimizeApp.view import LayoutConstants
 
 
 class ControlFrame(tk.Frame):

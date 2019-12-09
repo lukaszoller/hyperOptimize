@@ -1,5 +1,6 @@
 import tkinter as tk
 from src.hyperOptimizeApp.logic.viewInteraction.HomeModel import HomeModel
+from src.hyperOptimizeApp.view import LayoutConstants
 
 
 class HomeView(tk.Frame):
@@ -13,13 +14,23 @@ class HomeView(tk.Frame):
         self.config(bg="yellow")
         self.place(relx=0, rely=0, height=height, width=width)
 
-        # Welcome text on Startup
-        welcomeText = tk.Label(self, text='Welcome to the Neuronal Network optimizing tool! \n'
-                                          'You can start with a new Project or load an existing one by clicking on'
-                                          'it in the list below.').grid(row=1, column=3)
+
+        # Title
+        titleFrame = tk.Frame(self)
+        titleFrame.pack(fill=tk.X)
+        titleLabel = tk.Label(titleFrame, text="HyperOptimize" + str(self.topText), width=50, font=("Helvetica", 12))
+        titleLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+
+        # # Welcome text on Startup
+        # welcomeText = tk.Label(self, text='Welcome to the Neuronal Network optimizing tool! \n'
+        #                                   'You can start with a new Project or load an existing one by clicking on'
+        #                                   'it in the list below.').grid(row=1, column=3)
 
         # Generate a list of all Projects and show it.
-        self.projectListbox = tk.Listbox(self)
+        projectFrame = tk.Frame(self)
+        projectFrame.pack(fill=tk.X)
+        self.projectListbox = tk.Listbox(projectFrame)
         self.fillProjectList()
 
         # Generate the Buttons and show them.

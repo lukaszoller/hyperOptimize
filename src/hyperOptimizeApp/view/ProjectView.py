@@ -7,6 +7,7 @@ from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
+from src.hyperOptimizeApp.view import LayoutConstants
 
 
 class ProjectView(tk.Frame):

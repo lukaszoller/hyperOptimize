@@ -48,11 +48,11 @@ class test_RangeSlider:
 
     def slider_changeState(self, e):
         if (self.focus_displayof() != self.lowerBoundEntry):
-            self.lowerBoundEntry.delete(0, END)
+            self.lowerBoundEntry.delete(0, tk.END)
             self.lowerBoundEntry.insert(0, self.rangeSlider.getLowerBound())
 
         if (self.focus_displayof() != self.upperBoundEntry):
-            self.upperBoundEntry.delete(0, END)
+            self.upperBoundEntry.delete(0, tk.END)
             self.upperBoundEntry.insert(0, self.rangeSlider.getUpperBound())
 
 

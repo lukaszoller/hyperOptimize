@@ -24,61 +24,6 @@ class OptimizeParamsModel:
         self.nbrOfModels = nbrOfModels
         self.hyperParamsObjList = createHyperParamsListRandom(self.rangeForHyperparamsObj, self.nbrOfModels)
 
-
-    def estimateTime(self):
-        return EstimateTimeModel.estimateTime(hyperParams=self.hyperParamsObjList)
-
-
-        # nbrOfModel times: create a HyperParamsObj (for each model one)
-        for i in range(0, self.nbrOfModels):
-            # Initialize HyperParamsObj
-            tmpHyperParamsObj = HyperParamsObj()
-            # Get nbrOfLayers
-            tmpNbrOfLayers = nbrOfLayersArray[i]
-
-            ###################################################
-            # Store values in tmpHyperParamsObj
-            ###################################################
-            # nbrOfFeatures
-            nbrOfFeatures = self.rangeForHyperparamsObj.nbrOfFeatures
-            # nbrOfCategories
-            nbrOfCategories = self.rangeForHyperparamsObj.nbrOfCategories
-            # nbr of nodes in hidden layers  Create Array with length nbrOfLayersArray[i] and all values = nbrOfNodesArray[i] <<<--- This results in the same number of nodes per Layer for each model
-            if tmpNbrOfLayers < 3:
-                tmpHyperParamsObj.nbrOfNodesArray = [nbrOfFeatures, nbrOfCategories]
-            else:
-                hiddenNodesArray = np.full(tmpNbrOfLayers - 2, nbrOfNodesArray[i])
-                nbrOfFeaturesAsArray = [nbrOfFeatures]
-                nbrOfCategoriesAsArray = [nbrOfCategories]
-                tmpHyperParamsObj.nbrOfNodesArray = np.concatenate(
-                    [nbrOfFeaturesAsArray, hiddenNodesArray, nbrOfCategoriesAsArray])
-
-            # nbr of Features
-            tmpHyperParamsObj.nbrOfFeatures = self.rangeForHyperparamsObj.nbrOfFeatures
-            # learning rate
-            tmpHyperParamsObj.learningRate = learningRateArray[i]
-            # model optimizer
-            tmpHyperParamsObj.modelOptimizer = modelOptimizerArray[i]
-            # Activation function: Choose from the range of activation functions with the above randomly created indexes the activation Function for this model
-            tmpHyperParamsObj.activationFunction = self.rangeForHyperparamsObj.activationArray[
-                indexForActivationArray[i]]
-            # Activation function for all layers of one model
-            tmpHyperParamsObj.activationFunction = self.rangeForHyperparamsObj.activationArray[
-                indexForActivationArray[i]]
-            # Drop out rate for all layers of one model
-            tmpHyperParamsObj.dropOutRate = dropOutArray[i]
-            # Loss function
-            tmpHyperParamsObj.lossFunction = lossFunctionArray[i]
-            # learning rate decay
-            tmpHyperParamsObj.learningRateDecay = learningRateDecayArray[i]
-            ######################################################################
-            # Add tmpHyperParamsObj to list (one tmpHyperParamsObj for each model)
-            ######################################################################
-            hyperParamsList.append(tmpHyperParamsObj)
-
-        # Return the list of dicts, each with hyperparams for each model
-        return hyperParamsList
-
     def evaluateModels(self):
         """This method takes as input a list of HyperParamsObj (a HyperParamsObj for every model to create). It creates,
         trains and evaluates models basing on this list of HyperParamsObj and stores the time measurements for later
@@ -144,11 +89,11 @@ class OptimizeParamsModel:
         #####################################################################################
         # get running time accuracy
         etm = EstimateTimeModel()
-        estimate = etm.estimateTime(self.hyperParamsObjList)
+        stringEstimate, numberEstimate = etm.estimateTime(self.hyperParamsObjList)
         actualRunningTime = sum(self.runningTimeList)
         # Accuracy: Difference between estimate in relation to actual time and 1
 
-        accuracy = abs(1-estimate/actualRunningTime)
+        accuracy = abs(1-numberEstimate/actualRunningTime)
         # store accuracy
         sl = SaverLoader()
         sl.storeEstimateTimeAccuracy(accuracy)
@@ -174,7 +119,7 @@ class OptimizeParamsModel:
         for h in self.hyperParamsObjList:
             print(h.learningRate)
 
-        print("Estimated time: ", estimate, " actual time: ", actualRunningTime)
+        print("Estimated time: ", stringEstimate, " actual time: ", actualRunningTime)
 
     def getResultData(self):
         """Creates a table with all results. Columns: nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction,
