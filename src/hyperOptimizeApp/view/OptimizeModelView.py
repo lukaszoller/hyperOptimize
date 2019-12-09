@@ -244,13 +244,12 @@ class OptimizeModelView(tk.Frame):
     def getActivationCheckBtnValues(self):
         """Gets values from checkbuttons for activation functions and returns an array in the form the optimizing
         function requires."""
-        numberOfActivationFunctions = len(self.activationCheckBtnDict)
-        activationFunctionArray = np.array((1, numberOfActivationFunctions))
+        activationFunctionArray = np.array()
 
         i = 0  # Index for loop
         for key, boxObject in self.activationCheckBtnDict:
             if boxObject.getboolean() == True:
-                np.insert(activationFunctionArray[1, i], key)
+                np.append(activationFunctionArray, key)
             i += 1
 
         return activationFunctionArray
