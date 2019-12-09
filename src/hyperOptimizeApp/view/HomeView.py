@@ -17,8 +17,8 @@ class HomeView(tk.Frame):
 
         # Title
         titleFrame = tk.Frame(self)
-        titleFrame.pack(fill=tk.X)
-        titleLabel = tk.Label(titleFrame, text="HyperOptimize" + str(self.topText), width=50, font=("Helvetica", 12))
+        titleFrame.grid(row=1, column=2)
+        titleLabel = tk.Label(titleFrame, text="HyperOptimize", width=50, font=("Helvetica", 12))
         titleLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
 
@@ -29,7 +29,7 @@ class HomeView(tk.Frame):
 
         # Generate a list of all Projects and show it.
         projectFrame = tk.Frame(self)
-        projectFrame.pack(fill=tk.X)
+        projectFrame.grid(row=2, column=2)
         self.projectListbox = tk.Listbox(projectFrame)
         self.fillProjectList()
 

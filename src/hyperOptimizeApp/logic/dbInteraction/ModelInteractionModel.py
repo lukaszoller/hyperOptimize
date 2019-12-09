@@ -24,6 +24,3 @@ class ModelInteractionModel:
 
     def updateModelById(self, modelId, model):
         self.projectDB.updateModelById(modelId, model)
-
-    def getMachineLearningModelData(self):
-        pass

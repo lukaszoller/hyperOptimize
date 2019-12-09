@@ -95,7 +95,7 @@ class DatabaseConnector:
             colRowNbr = 1
         sql = "UPDATE project SET dataPath = '{}', firstRowIsTitle = {}, firstColIsRowNbr = {}, nbrOfFeatures = {}, " \
               "dataIsSet=1, trainRowNbr={} WHERE id = {}".format(dataPath, rowHeader, colRowNbr, nbrOfFeatures,
-                                                                 projectId, trainRowNumber)
+                                                                 trainRowNumber, projectId)
         self.writeDB(sql)
 
     def getProjectDataInformation(self, projectId):

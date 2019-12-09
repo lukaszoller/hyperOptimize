@@ -76,47 +76,47 @@ class OptimizeModelView(tk.Frame):
 
         # Row with slider für Dropout
         dropoutText = tk.Label(self, text='Percentage of nodes weights set to 0').grid(row=rowCount, column=1)
-        self.dropoutSlider = tk.Scale(self, from_=0, to=1, orient=tk.HORIZONTAL, resolution=0.1)
+        self.dropoutSlider = tk.Scale(self, from_=0.01, to=1, orient=tk.HORIZONTAL, resolution=0.01)
         self.dropoutSlider.grid(row=rowCount, column=2, padx=5, pady=3)
         dropoutHelp = tk.Label(self, text='?')
         dropoutHelp.grid(row=rowCount, column=4)
         rowCount += 1
 
         # Row with picking of different activation Functions
-        self.activationCheckBtnDict = dict()
+        self.activationCheckBtnVarDict = dict()
         ## Sigmoid
         sigmoidBoxName = "Sigmoid Function"
         activationText = tk.Label(self, text='Activation functions to choose').grid(row=rowCount, column=1)
         self.sigmoidVar = tk.IntVar(0)
         sigmoidBox = tk.Checkbutton(self, text=sigmoidBoxName, variable=self.sigmoidVar)
         sigmoidBox.grid(row=rowCount, column=2)
-        self.activationCheckBtnDict['sigmoid'] = sigmoidBox
+        self.activationCheckBtnVarDict['sigmoid'] = self.sigmoidVar
         ## Linear
         linearBoxName = "Linear Function"
         self.linearVar = tk.IntVar(0)
         linearBox = tk.Checkbutton(self, text=linearBoxName, variable=self.linearVar)
         linearBox.grid(row=rowCount, column=3)
-        self.activationCheckBtnDict['linear'] = linearBox
+        self.activationCheckBtnVarDict['linear'] = self.linearVar
         rowCount += 1
         ## Tanh
         tanhBoxName = "Tanh Function"
         self.tanhVar = tk.IntVar(0)
         tanhBox = tk.Checkbutton(self, text=tanhBoxName, variable=self.tanhVar)
         tanhBox.grid(row=rowCount, column=2)
-        self.activationCheckBtnDict['tanh'] = tanhBox
+        self.activationCheckBtnVarDict['tanh'] = self.tanhVar
         ## Relu
         reluBoxName = "ReLu Function"
         self.reluVar = tk.IntVar(0)
         reluBox = tk.Checkbutton(self, text=reluBoxName, variable=self.reluVar)
         reluBox.grid(row=rowCount, column=3)
-        self.activationCheckBtnDict['relu'] = reluBox
+        self.activationCheckBtnVarDict['relu'] = self.reluVar
         activationHelp = tk.Label(self, text='?')
         activationHelp.grid(row=rowCount, column=4)
         rowCount += 1
 
         # Row with slider für nbrOfModels
         nbrOfModelsText = tk.Label(self, text='Number of models').grid(row=rowCount, column=1)
-        self.nbrOfModelsSlider = tk.Scale(self, from_=0, to=1, orient=tk.HORIZONTAL, resolution=0.01)
+        self.nbrOfModelsSlider = tk.Scale(self, from_=0, to=50, orient=tk.HORIZONTAL, resolution=1)
         self.nbrOfModelsSlider.grid(row=rowCount, column=2, padx=5, pady=3)
         nbrOfModelsHelp = tk.Label(self, text='?')
         nbrOfModelsHelp.grid(row=rowCount, column=4)
@@ -218,8 +218,8 @@ class OptimizeModelView(tk.Frame):
         maxNbrOfNodes = self.nodeSlider.getUpper()
         minNbrOfLayers = self.layerSlider.getLower()
         maxNbrOfLayers = self.layerSlider.getUpper()
-        minDropout = self.dropoutSlider.get()
-        maxDropout = self.dropoutSlider.get()
+        minDropout = int(self.dropoutSlider.get() * 100)
+        maxDropout = int(self.dropoutSlider.get() * 100)
         activationArray = self.getActivationCheckBtnValues()
         print("Min Number of Nodes: " + str(minNbrOfNodes))
         print("Max Number of Nodes: " + str(maxNbrOfNodes))
@@ -227,7 +227,7 @@ class OptimizeModelView(tk.Frame):
         print("Max Number of Layers: " + str(maxNbrOfLayers))
         print("Min Number of Dropout: " + str(minDropout))
         print("Max Number of Dropout: " + str(maxDropout))
-        print("Activation Array: " + str(activationArray.tostring()))
+        print("Activation Array: " + str(activationArray))
         # activationArray = np.array(['sigmoid', 'elu', 'softmax'])
 
         self.rangeForHyperParamsObj = RangeForHyperParamsObj()
@@ -245,13 +245,11 @@ class OptimizeModelView(tk.Frame):
     def getActivationCheckBtnValues(self):
         """Gets values from checkbuttons for activation functions and returns an array in the form the optimizing
         function requires."""
-        activationFunctionArray = np.array()
+        activationFunctionArray = []
 
-        i = 0  # Index for loop
-        for key, boxObject in self.activationCheckBtnDict:
-            if boxObject.getboolean() == True:
-                np.append(activationFunctionArray, key)
-            i += 1
+        for key, var in self.activationCheckBtnVarDict.items():
+            if var.get() == 1:
+                activationFunctionArray.append(key)
 
         return activationFunctionArray
 
@@ -259,9 +257,9 @@ class OptimizeModelView(tk.Frame):
         """The creation of the optimizeParamsModel is placed in a separate function because this object is needed from
         two functions (self.estimateTime and self.checkAndOptimize). But it is not clear, which function will be
         executed first."""
-        if self.rangeForHyperParamsObj is None:
+        if self.optimizeParamsModel is None:
             self.createRangeForHyperParamsObj()
-            nbrOfModels = self.nbrOfModelsSlider.get()
+            nbrOfModels = int(self.nbrOfModelsSlider.get())
             x_train, y_train, x_test, y_test = self.getTrainTestData()
             self.optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, self.rangeForHyperParamsObj,
                                                            nbrOfModels)
