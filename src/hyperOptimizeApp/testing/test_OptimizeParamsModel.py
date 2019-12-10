@@ -15,6 +15,9 @@ import pydot
 
 
 class TestOptimizeParamsModel():
+    """Checks if the core of the application (choose random params from range, build models, train and test models) runs."""
+
+
 
     def test_createHyperParamsListRandom(self):
         rangeForHyperParamsObj = RangeForHyperParamsObj()

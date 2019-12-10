@@ -2,7 +2,7 @@ import tkinter as tk
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
-from hyperOptimizeApp.view.tools import LayoutConstants
+from src.hyperOptimizeApp.view.tools import LayoutConstants
 from src.hyperOptimizeApp.view import ValidationFunctions
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
 from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel

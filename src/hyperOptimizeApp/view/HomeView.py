@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.messagebox
 
 from src.hyperOptimizeApp.logic.viewInteraction.HomeModel import HomeModel
-from hyperOptimizeApp.view.tools import LayoutConstants
+from src.hyperOptimizeApp.view.tools import LayoutConstants
 from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 
 

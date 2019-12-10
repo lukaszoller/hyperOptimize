@@ -5,7 +5,7 @@ from tkinter import simpledialog
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
-from hyperOptimizeApp.view.tools import LayoutConstants
+from src.hyperOptimizeApp.view.tools import LayoutConstants
 
 
 class ProjectView(tk.Frame):

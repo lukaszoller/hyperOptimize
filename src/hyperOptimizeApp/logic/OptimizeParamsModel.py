@@ -121,6 +121,8 @@ class OptimizeParamsModel:
 
         print("Estimated time: ", stringEstimate, " actual time: ", actualRunningTime)
 
+        self.getResultData()
+
     def getResultData(self):
         """Creates a table with all results. Columns: nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction,
         dropOutRate, lossFunction, modelOptimizer, learningRate, learningRateDecay, successRate, Rows: values for each
@@ -165,11 +167,11 @@ class OptimizeParamsModel:
         """Checks if self.modelList is empty (that means if Optimization was executed). If not empty, it returns the
         model with the max success rate."""
         # Get best model is only possible if self.model list is not empty
-        if not self.modelList:
+        if not self.modelList:  # if list is empty
+            raise Exception("OptimizeParamsModel.modelList is empty")
+        else:
             maxSuccessIndex = np.argmax(self.successRate)
             return self.modelList[maxSuccessIndex]
-        else:
-            raise Exception("OptimizeParamsModel.modelList is empty")
 
     def visualizeHyperparamsPerformance(self):
         t = self.resultData

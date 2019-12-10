@@ -9,23 +9,9 @@ from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParam
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
 
-
-
-rangeForHyperParamsObj = RangeForHyperParamsObj()
-rangeForHyperParamsObj.dropOutDict = {'min': 0, 'max': 1}
-rangeForHyperParamsObj.activationArray = np.array(['sigmoid', 'elu', 'softmax'])
-rangeForHyperParamsObj.lossFunctionArray = np.array(['binary_crossentropy'])
-rangeForHyperParamsObj.modelOptimizerArray = np.array(['Adam'])
-rangeForHyperParamsObj.nbrOfFeatures = 784
-rangeForHyperParamsObj.learningRateDecayDict = {'min': 1e-7, 'max': 1e-5}
-rangeForHyperParamsObj.learningRateDict = {'min': 1e-5, 'max': 1e-1}
-rangeForHyperParamsObj.learningRateLogBool = True
-rangeForHyperParamsObj.nbrOfHiddenLayersDict = {'min': 1, 'max': 50}
-rangeForHyperParamsObj.nbrOfHiddenUnitsDict = {'min': 5, 'max': 100}
-rangeForHyperParamsObj.nbrOfCategories = 10
-
-nbrOfModels = 2
-
-hyperParamsObjList = createHyperParamsListRandom(rangeForHyperParamsObj, nbrOfModels)
-
-print("Hoi")
+la = list([1, 2,3])
+la = list()
+if not la:
+    print("not la")
+else:
+    print("else")

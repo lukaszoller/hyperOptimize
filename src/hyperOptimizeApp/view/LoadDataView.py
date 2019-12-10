@@ -2,7 +2,7 @@ import tkinter as tk  # python 3
 import tkinter.messagebox
 import numpy as np
 from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
-from hyperOptimizeApp.view.tools import LayoutConstants
+from src.hyperOptimizeApp.view.tools import LayoutConstants
 from src.hyperOptimizeApp.view import ValidationFunctions
 
 

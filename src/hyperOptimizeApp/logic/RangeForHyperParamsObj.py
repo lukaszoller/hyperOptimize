@@ -7,16 +7,18 @@ class RangeForHyperParamsObj:
     MAX_NUMBER_OF_HIDDEN_LAYERS = 100
 
     def __init__(self):
+        """Creates a object with the ranges from which the hyperparams for each model will be randomly picked. Default
+        settings for lossFunction, modelOptimizer, learningRate, learningRateDecay, """
         self.nbrOfFeatures = 0                                      #abgeleitet von Datensatz
         self.nbrOfHiddenLayersDict = dict({'min': 0, 'max': 0})     #wichtig
         self.nbrOfHiddenUnitsDict = dict({'min': 0, 'max': 0})      #wichtig von Nodes abgeleitet (Nodes pro Layer)
         self.activationArray = 0 #= np.array()                      #mal noch nicht
         self.dropOutDict = 0#= np.array()                           #irgendwas zwischen 0 und 1
-        self.lossFunctionArray = 0  #= np.array()                   #verschiedene auswahlen
-        self.modelOptimizerArray = 0 #= np.array()                  #
-        self.learningRateDict = dict({'lrMin': 0, 'lrMax': 0})
+        self.lossFunctionArray = np.array(['mean_squared_error'])   # default setting from keras
+        self.modelOptimizerArray = np.array(['SGD'])                # default setting from keras
+        self.learningRateDict = dict({'min': 1e-7, 'max': 1e-5}) # default setting from keras
         self.learningRateLogBool = True
-        self.learningRateDecayDict = dict({'lrMin': 0, 'lrMax': 0})
+        self.learningRateDecayDict = dict({'min': 1e-6, 'max': 1e-2}) # default setting from keras
         self.nbrOfCategories = 0
 
 
@@ -57,11 +59,12 @@ def createHyperParamsListRandom(rangeForHyperparamsObj, nbrOfModels):
     # modelOptimizer
     modelOptimizerArray = np.random.choice(rangeForHyperparamsObj.modelOptimizerArray, nbrOfModels,
                                            replace=True)
-    # Learning Rate (code from: https://www.coursera.org/learn/deep-neural-network/lecture/3rdqN/using-an-appropriate-scale-to-pick-hyperparameters Video: 02min55s)
+    # Learning Rate (logarithmic distribution)                                   (code from: https://www.coursera.org/learn/deep-neural-network/lecture/3rdqN/using-an-appropriate-scale-to-pick-hyperparameters Video: 02min55s)
+    print(rangeForHyperparamsObj.learningRateDict.get('min'))
     minLog = np.log10(rangeForHyperparamsObj.learningRateDict.get('min'))
     maxLog = np.log10(rangeForHyperparamsObj.learningRateDict.get('max'))
     exponents = (maxLog - minLog) * np.random.random_sample(
-        nbrOfModels) + minLog  # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
+        nbrOfModels) + minLog                                       # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
     learningRateArray = np.power(10, exponents)
     # learningRateDecay
     minLrd = rangeForHyperparamsObj.learningRateDecayDict.get('min')

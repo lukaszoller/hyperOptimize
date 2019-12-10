@@ -6,6 +6,9 @@ from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
 from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
 from src.hyperOptimizeApp.view.tools.RangeSlider import *
+import numpy as np
+from src.hyperOptimizeApp.view.tools import LayoutConstants
+
 
 
 class OptimizeModelView(tk.Frame):
@@ -113,7 +116,7 @@ class OptimizeModelView(tk.Frame):
 
         # Row with slider für nbrOfModels
         nbrOfModelsText = tk.Label(self, text='Number of models').grid(row=rowCount, column=1)
-        self.nbrOfModelsSlider = tk.Scale(self, from_=0, to=50, orient=tk.HORIZONTAL, resolution=1)
+        self.nbrOfModelsSlider = tk.Scale(self, from_=2, to=200, orient=tk.HORIZONTAL, resolution=1)
         self.nbrOfModelsSlider.grid(row=rowCount, column=2, padx=5, pady=3)
         nbrOfModelsHelp = tk.Label(self, text='?')
         nbrOfModelsHelp.grid(row=rowCount, column=4)
@@ -122,7 +125,7 @@ class OptimizeModelView(tk.Frame):
         # Final Row (Train Model)
         trainModelButton = tk.Button(self, text='Optimize', command=lambda: self.checkAndOptimize()).grid(
             row=rowCount, column=3)
-        estTimeButton = tk.Button(self, text='Estimate running time', command=lambda: self.estimateTime()).grid(
+        estTimeButton = tk.Button(self, text='Estimate running time', command=lambda: self.showTimeEstimateInformation()).grid(
             row=rowCount, column=4)
 
         rowCount += 1
@@ -136,6 +139,13 @@ class OptimizeModelView(tk.Frame):
         rowCount += 1
 
         # TOOLTIPS ---------------
+
+        # Optimization process information
+        # Todo: change layout with frames and enable the following code.
+        # optimizationInfoFrame = tk.Frame(self)
+        # optimizationInfoFrame.pack(fill=tk.X)
+        # self. optimizationInfoLabel = tk.Label(optimizationInfoFrame, text="", width=50)
+        # self. optimizationInfoLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
     def setModel(self, model):
         self.model = model
@@ -162,7 +172,7 @@ class OptimizeModelView(tk.Frame):
 
             # Check running time estimation
             stringTime, timeInSeconds = self.estimateTime()
-            if timeInSeconds > 36000:
+            if timeInSeconds > 3600:
                 answer = self.showTimeEstimateWarning()
                 if answer:  # User clicks on "Yes continue with evaluation"
                     self.optimizeParamsModel.evaluateModels()
@@ -170,6 +180,12 @@ class OptimizeModelView(tk.Frame):
                     return  # Stop execution if User clicks on "No"
 
             self.optimizeParamsModel.evaluateModels()
+
+            # self.optimizationMessageSuccess()
+
+            # ToDo: When best model is computed change back to model view and display modelparams in corresponding fields.
+            bestModel = self.optimizeParamsModel.getBestModel()
+            print("Best Model evaluated:", bestModel)
 
     def setMaxNodeValue(self, number):
         self.maxNodeSliderValue.set(number)
@@ -184,7 +200,7 @@ class OptimizeModelView(tk.Frame):
 
     def estimateTime(self):
         """Creates the OptimizeParamsModel-Object, if not already existent (because some information from this object
-        is needed for the estimation. Return the time estimate (stringTime, timeInSeconds)."""
+        is needed for the estimation. Returns the time estimate (stringTime, timeInSeconds)."""
         # if not existent, create optimizeParamsModel (this has to be optional because self.checkAndOptimize() needs it too
         # and its not clear if this function or self.estimateTime is executed first.
         self.createOptimizeParamsModel()  # this line exists two times, second one in self.checkAndOptimize. It runs
@@ -208,6 +224,12 @@ class OptimizeModelView(tk.Frame):
         else:
             return False
 
+    def optimizationMessageSuccess(self):
+        self.optimizationInfoLabel.config(text="Optimization successfull!", fg="green")
+
+    def optimizationMessageFailure(self):
+        self.optimizationInfoLabel.config(text="Warning! Optimization failed!", fg="red")
+
     def createRangeForHyperParamsObj(self):
         """Takes information from GUI and creates a RangeForHyperParamsobj."""
         # Get hyperparam ranges
@@ -218,6 +240,9 @@ class OptimizeModelView(tk.Frame):
         minDropout = int(self.dropoutSlider.get() * 100)
         maxDropout = int(self.dropoutSlider.get() * 100)
         activationArray = self.getActivationCheckBtnValues()
+        nbrOfCategories = self.loadDataModel.nbrOfCategories
+        # explanation of next line: shape of 3rd dataset (=[2]) of loadDataModel (=rawData), [1]=colnumbers)
+        nbrOfFeatures = np.shape(self.loadDataModel.data[2])[1]-nbrOfCategories
         print("Min Number of Nodes: " + str(minNbrOfNodes))
         print("Max Number of Nodes: " + str(maxNbrOfNodes))
         print("Min Number of Layers: " + str(minNbrOfLayers))
@@ -232,6 +257,8 @@ class OptimizeModelView(tk.Frame):
         self.rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': minNbrOfNodes, 'max': maxNbrOfNodes})
         self.rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
         self.rangeForHyperParamsObj.activationArray = activationArray
+        self.rangeForHyperParamsObj.nbrOfCategories = nbrOfCategories
+        self.rangeForHyperParamsObj.nbrOfFeatures = nbrOfFeatures
 
     def setProject(self, project):
         self.project = project
@@ -254,11 +281,11 @@ class OptimizeModelView(tk.Frame):
         """The creation of the optimizeParamsModel is placed in a separate function because this object is needed from
         two functions (self.estimateTime and self.checkAndOptimize). But it is not clear, which function will be
         executed first."""
-        if self.optimizeParamsModel is None:
-            self.createRangeForHyperParamsObj()
-            nbrOfModels = int(self.nbrOfModelsSlider.get())
-            x_train, y_train, x_test, y_test = self.getTrainTestData()
-            self.optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, self.rangeForHyperParamsObj,
+        # if self.optimizeParamsModel is None:          todo: most probably not needed. delete if everything works
+        self.createRangeForHyperParamsObj()
+        nbrOfModels = int(self.nbrOfModelsSlider.get())
+        x_train, y_train, x_test, y_test = self.getTrainTestData()
+        self.optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, self.rangeForHyperParamsObj,
                                                            nbrOfModels)
 
     # def getHyperParamsObject(self):
