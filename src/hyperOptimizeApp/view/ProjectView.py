@@ -120,19 +120,20 @@ class ProjectView(tk.Frame):
         self.passModel()
 
     def confirmAndDeleteModel(self):
-        answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Model\n"
+        if not self.modelListbox.curselection() is ():
+            answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Model\n"
                                                             "AND all associated training progress?")
-        if answer == 1:
-            if not self.modelListbox.curselection() is ():
+            if answer == 1:
                 modelNumber = self.modelListbox.curselection()[0]
                 model = self.modelList.__getitem__(modelNumber)
                 self.modelInteract.deleteModelById(model.modelId)
                 self.fillListBox()
                 print("Model deleted")
             else:
-                print("no model selected")
+                print("Nothing done.")
         else:
-            print("nothing done.")
+            print("No Model selected")
+
 
     def addNewModel(self):
         if not self.project.dataIsSet:
@@ -150,9 +151,12 @@ class ProjectView(tk.Frame):
                     print("Model creation failed")
 
     def passModel(self):
-        modelNumber = self.modelListbox.curselection()[0]
-        model = self.modelList.__getitem__(modelNumber)
-        self.controlFrame.setModelFrame(model, self.project)
+        if not self.modelListbox.curselection() is ():
+            modelNumber = self.modelListbox.curselection()[0]
+            model = self.modelList.__getitem__(modelNumber)
+            self.controlFrame.setModelFrame(model, self.project)
+        else:
+            print("No Model selected")
 
     def fillListBox(self):
         self.modelListbox.delete(0, tk.END)

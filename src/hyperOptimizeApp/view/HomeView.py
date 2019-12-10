@@ -51,10 +51,11 @@ class HomeView(tk.Frame):
         deleteProjectButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
     def confirmAndDeleteProject(self):
-        answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Project\n"
+        if not self.projectListbox.curselection() is ():
+            answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Project\n"
                                                             "AND all associated Models?")
-        if answer == 1:
-            if not self.projectListbox.curselection() is ():
+            if answer == 1:
+
                 projectNumber = self.projectListbox.curselection()[0]
                 project = self.projects.__getitem__(projectNumber)
                 self.projectInteract.deleteProjectById(project.projectId)
@@ -62,17 +63,20 @@ class HomeView(tk.Frame):
                 print("Project deleted")
                 self.fillProjectList()
             else:
-                print("no project selected")
+                print("Nothing done.")
         else:
-            print("nothing done.")
+            print("No Project selected")
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
 
     def passProject(self):
-        projectNumber = self.projectListbox.curselection()[0]
-        project = self.projects.__getitem__(projectNumber)
-        self.controlFrame.setProjectFrame(False, project)
+        if not self.projectListbox.curselection() is ():
+            projectNumber = self.projectListbox.curselection()[0]
+            project = self.projects.__getitem__(projectNumber)
+            self.controlFrame.setProjectFrame(False, project)
+        else:
+            print("No Project selected")
 
     def fillProjectList(self):
         self.projects = []
