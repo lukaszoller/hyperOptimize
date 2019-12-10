@@ -211,10 +211,10 @@ class OptimizeModelView(tk.Frame):
     def createRangeForHyperParamsObj(self):
         """Takes information from GUI and creates a RangeForHyperParamsobj."""
         # Get hyperparam ranges
-        minNbrOfNodes = self.nodeSlider.getLower()
-        maxNbrOfNodes = self.nodeSlider.getUpper()
-        minNbrOfLayers = self.layerSlider.getLower()
-        maxNbrOfLayers = self.layerSlider.getUpper()
+        minNbrOfNodes = int(self.nodeSlider.getLower())
+        maxNbrOfNodes = int(self.nodeSlider.getUpper())
+        minNbrOfLayers = int(self.layerSlider.getLower())
+        maxNbrOfLayers = int(self.layerSlider.getUpper())
         minDropout = int(self.dropoutSlider.get() * 100)
         maxDropout = int(self.dropoutSlider.get() * 100)
         activationArray = self.getActivationCheckBtnValues()
