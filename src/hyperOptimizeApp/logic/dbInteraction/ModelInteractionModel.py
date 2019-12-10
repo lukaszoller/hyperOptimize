@@ -13,8 +13,8 @@ class ModelInteractionModel:
     def getModelsByProjectId(self, projectId):
         return self.projectDB.getAllModelsByProjectId(projectId)
 
-    def deleteModelsByProjectId(self, projectId):
-        self.projectDB.deleteModelsByProjectId(projectId)
+    def deleteModelById(self, modelId):
+        self.projectDB.deleteModelById(modelId)
 
     def addModelByProjectId(self, modelName, projectId):
         hyperParams = HyperParamsObj()
@@ -24,3 +24,6 @@ class ModelInteractionModel:
 
     def updateModelById(self, modelId, model):
         self.projectDB.updateModelById(modelId, model)
+
+    def deleteModelsByProjectId(self, projectId):
+        self.projectDB.deleteModelsByProjectId(projectId)

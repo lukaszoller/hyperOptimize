@@ -10,12 +10,8 @@ from src.hyperOptimizeApp.view.ModelView import ModelView
 from src.hyperOptimizeApp.view.OptimizeModelView import OptimizeModelView
 from src.hyperOptimizeApp.view.LoadDataView import LoadDataView
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
-from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
-from src.hyperOptimizeApp.logic.viewInteraction.ModelModel import ModelModel
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseModelModel import DatabaseModelModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandas import DataFrame
-from src.hyperOptimizeApp.view import LayoutConstants
 
 
 class ControlFrame(tk.Frame):
@@ -25,8 +21,8 @@ class ControlFrame(tk.Frame):
     optimizeModelView = None
     loadDataView = None
 
-    def __init__(self, mainView, main, width, homeView=HomeView, projectView=ProjectView, modelView=ModelView,
-                 optimizeModelView=OptimizeModelView, loadDataView=LoadDataView):
+    def __init__(self, mainView, main, width, homeView, projectView, modelView,
+                 optimizeModelView, loadDataView):
         tk.Frame.__init__(self, main)
         self.projectView = projectView
         self.homeView = homeView
@@ -108,7 +104,6 @@ class ControlFrame(tk.Frame):
         showFrame(self.projectView)
 
     def setModelFrame(self, model, project):
-        self.modelView.setTopText(model.modelName)
         self.modelView.setModel(model)
         self.modelView.setProject(project)
         showFrame(self.modelView)

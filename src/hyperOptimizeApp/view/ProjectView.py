@@ -1,13 +1,11 @@
 import tkinter as tk
 import tkinter.messagebox
-from tkinter.filedialog import askopenfile
 from tkinter import simpledialog
 
-from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
-from src.hyperOptimizeApp.view import LayoutConstants
+from hyperOptimizeApp.view.tools import LayoutConstants
 
 
 class ProjectView(tk.Frame):
@@ -16,56 +14,55 @@ class ProjectView(tk.Frame):
     projectInteract = ProjectInteractionModel()
     modelInteract = ModelInteractionModel()
     modelList = []
-    modelRow = 0
-    nameLabelRow = 0
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
         self.topText = tk.StringVar()
         self.topText.set("Project")
 
-        rowCount = 0
+        # ROW 1 - Top Label
+        topTextFrame = tk.Frame(self)
+        topTextFrame.pack(fill=tk.X)
+        topLabel = tk.Label(topTextFrame, textvariable=self.topText)
+        topLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
-        # ROW 1
-        topLabel = tk.Label(self, textvariable=self.topText).grid(row=rowCount, column=3)
-        rowCount += 1
+        # ROW 2 - Project Name
+        projectNameFrame = tk.Frame(self)
+        projectNameFrame.pack(fill=tk.X)
+        nameLabel = tk.Label(projectNameFrame, text="Project Name:")
+        nameLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.nameEntry = tk.Entry(projectNameFrame)
+        self.fillNameLabel()
 
-        # ROW 2
-        nameLabel = tk.Label(self, text="Project Name").grid(row=rowCount, column=2)
-        self.nameEntry = tk.Entry(self)
-        self.fillNameLabel(rowCount)
-        self.nameLabelRow = rowCount
-        rowCount += 1
+        # ROW 3 - File Handling
+        fileSelectionFrame = tk.Frame(self)
+        fileSelectionFrame.pack(fill=tk.X)
+        fileLabel = tk.Label(fileSelectionFrame, text="Data CSV")
+        fileLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.fileSetLabel = tk.Label(fileSelectionFrame, text='Select Data:')
+        self.fileSetLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.loadDataButton = tk.Button(fileSelectionFrame, text="Load data",
+                                        command=lambda: self.saveProjectAndLoadData())
+        self.loadDataButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
-        # ROW 3
-        fileLabel = tk.Label(self, text="Data CSV").grid(row=rowCount, column=2)
-        self.fileSetLabel = tk.Label(self, text='Select Data')
-        self.fileSetLabel.grid(row=rowCount, column=3, pady=10)
+        # ROW 4 - List of Models
+        modelListFrame = tk.Frame(self)
+        modelListFrame.pack(fill=tk.X)
+        self.modelListbox = tk.Listbox(modelListFrame)
+        self.fillListBox()
 
-        self.loadDataButton = tk.Button(self, text="Load data",
-                                   command=lambda: self.controlFrame.setLoadDataFrame(self.project))
-        self.loadDataButton.grid(row=rowCount, column=4)
-
-        rowCount += 1
-
-        # ROW 4
-        self.modelListbox = tk.Listbox(self)
-        self.fillListBox(rowCount)
-        self.modelRow = rowCount
-        rowCount += 1
-
-        # ROW 5
-        loadModelButton = tk.Button(self, text="Load Model", command=lambda: self.passModel()) \
-            .grid(row=rowCount, column=1)
-        newModelButton = tk.Button(self, text="New Model",
-                                   command=lambda: self.addNewModel()) \
-            .grid(row=rowCount, column=2)
-        rowCount += 1
-
-        # ROW 6
-        saveButton = tk.Button(self, text="Save Project", command=lambda: self.saveProject()).grid(row=rowCount, padx=5)
-        deleteButton = tk.Button(self, text="Delete Project",
-                                 command=lambda: self.confirmationBox()).grid(row=rowCount, column=5, padx=5)
+        # ROW 5 - Model Buttons
+        modelButtonFrame = tk.Frame(self)
+        modelButtonFrame.pack(fill=tk.X)
+        newModelButton = tk.Button(modelButtonFrame, text="New Model",
+                                   command=lambda: self.saveAndAddNewModel())
+        newModelButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        loadModelButton = tk.Button(modelButtonFrame, text="Load Model",
+                                    command=lambda: self.saveAndPassModel())
+        loadModelButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        deleteModelButton = tk.Button(modelButtonFrame, text="Delete Model",
+                                      command=lambda: self.saveConfirmAndDeleteModel())
+        deleteModelButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
         self.config(bg="grey")
         self.place(relx=0, rely=0, height=height, width=width)
@@ -76,16 +73,16 @@ class ProjectView(tk.Frame):
         if self.project.projectId != 0:
             self.modelList = self.modelInteract.getModelsByProjectId(self.project.projectId)
             if self.project.dataIsSet:
-                self.loadDataButton.grid_remove()
+                self.loadDataButton.pack_forget()
                 self.fileSetLabel.config(text="Data is Set.")
             else:
-                self.loadDataButton.grid()
+                self.loadDataButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
                 self.fileSetLabel.config(text="Select Data")
         else:
-            self.loadDataButton.grid_remove()
+            self.loadDataButton.pack_forget()
             self.fileSetLabel.config(text="Please save Project first.")
-        self.fillListBox(self.modelRow)
-        self.fillNameLabel(self.nameLabelRow)
+        self.fillListBox()
+        self.fillNameLabel()
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
@@ -101,22 +98,39 @@ class ProjectView(tk.Frame):
             print("Project saved")
         else:
             self.project = self.projectInteract.saveProject(self.project)
-            self.loadDataButton.grid()
+            self.loadDataButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
             self.fileSetLabel.config(text="Select Data")
             print("Project created")
         self.setTopText(projectName)
 
-    def confirmationBox(self):
-        answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Project\n"
-                                                            "AND all associated Models?")
+    def saveConfirmAndDeleteModel(self):
+        self.saveProject()
+        self.confirmAndDeleteModel()
+
+    def saveProjectAndLoadData(self):
+        self.saveProject()
+        self.controlFrame.setLoadDataFrame(self.project)
+
+    def saveAndAddNewModel(self):
+        self.saveProject()
+        self.addNewModel()
+
+    def saveAndPassModel(self):
+        self.saveProject()
+        self.passModel()
+
+    def confirmAndDeleteModel(self):
+        answer = tk.messagebox.askyesno("Confirm deletion", "Are you sure to delete this Model\n"
+                                                            "AND all associated training progress?")
         if answer == 1:
-            if self.project is not None:
-                self.projectInteract.deleteProjectById(self.project.projectId)
-                self.modelInteract.deleteModelsByProjectId(self.project.projectId)
-                print("Project deleted")
-                self.controlFrame.setHomeFrame()
+            if not self.modelListbox.curselection() is ():
+                modelNumber = self.modelListbox.curselection()[0]
+                model = self.modelList.__getitem__(modelNumber)
+                self.modelInteract.deleteModelById(model.modelId)
+                self.fillListBox()
+                print("Model deleted")
             else:
-                print("no project selected")
+                print("no model selected")
         else:
             print("nothing done.")
 
@@ -140,13 +154,14 @@ class ProjectView(tk.Frame):
         model = self.modelList.__getitem__(modelNumber)
         self.controlFrame.setModelFrame(model, self.project)
 
-    def fillListBox(self, rowCount):
+    def fillListBox(self):
         self.modelListbox.delete(0, tk.END)
+        self.modelList = self.modelInteract.getModelsByProjectId(self.project.projectId)
         for model in self.modelList:
             self.modelListbox.insert(tk.END, model.modelName)
-        self.modelListbox.grid(row=rowCount, column=1)
+        self.modelListbox.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
-    def fillNameLabel(self, rowCount):
+    def fillNameLabel(self):
         self.nameEntry.delete(0, tk.END)
         self.nameEntry.insert(tk.END, self.project.projectName)
-        self.nameEntry.grid(row=rowCount, column=3)
+        self.nameEntry.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)

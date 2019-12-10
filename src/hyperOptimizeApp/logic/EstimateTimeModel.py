@@ -11,7 +11,7 @@ class EstimateTimeModel:
     def __init__(self):
         """The constructor loads already the estimate time dataset for the different functions."""
         saverLoader = SaverLoader()
-        (x,y) = saverLoader.getEstTimeData()
+        (x, y) = saverLoader.getEstTimeData()
         self.x = x
         self.y = y
 

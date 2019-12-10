@@ -178,7 +178,9 @@ class DatabaseConnector:
         sql = "DELETE FROM model WHERE projectId = {}".format(projectId)
         self.writeDB(sql)
 
-
+    def deleteModelById(self, modelId):
+        sql = "DELETE FROM model where id = {}".format(modelId)
+        self.writeDB(sql)
 
 #Probably not needed (get last project ID)
     # def getMaxId(self):

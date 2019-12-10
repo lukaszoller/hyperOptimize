@@ -23,3 +23,6 @@ class ProjectInteractionModel:
 
     def saveProjectById(self, project=DatabaseProjectModel):
         self.projectDB.updateProject(project)
+
+    def deleteModelsByProjectId(self, projectId):
+        self.projectDB.deleteModelsByProjectId(projectId)

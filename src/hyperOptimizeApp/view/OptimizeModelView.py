@@ -1,14 +1,11 @@
 import tkinter as tk
 import tkinter.messagebox
-import math
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
-from src.hyperOptimizeApp.view import LayoutConstants
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
 from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
 from src.hyperOptimizeApp.view.tools.RangeSlider import *
-import numpy as np
 
 
 class OptimizeModelView(tk.Frame):

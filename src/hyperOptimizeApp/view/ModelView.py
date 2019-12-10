@@ -1,18 +1,17 @@
 import tkinter as tk
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
-from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
-from src.hyperOptimizeApp.view import LayoutConstants
+from hyperOptimizeApp.view.tools import LayoutConstants
 from src.hyperOptimizeApp.view import ValidationFunctions
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
 from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
 
 
 class ModelView(tk.Frame):
-    model = MachineLearningModel
+    model = None
     controlFrame = None
-    project = DatabaseProjectModel()
+    project = None
     dataInteraction = DataInteractionModel()
     loadDataModel = None
 
@@ -22,13 +21,13 @@ class ModelView(tk.Frame):
         self.config(bg="white")
         self.place(relx=0, rely=0, height=height, width=width)
         self.topText = tk.StringVar()
-        self.topText.set("Model")
+        self.topText.set("Model Name: ")
 
         # Title of subwindow
         titleFrame = tk.Frame(self)
         titleFrame.pack(fill=tk.X)
-        titleLabel = tk.Label(titleFrame, text="Modelname: " + str(self.topText), width=50, font=("Helvetica", 12))
-        titleLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.titleLabel = tk.Label(titleFrame, textvariable=self.topText, width=50, font=("Helvetica", 12))
+        self.titleLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
         # Optimize button row
         optimizeButtonFrame = tk.Frame(self)
@@ -140,17 +139,19 @@ class ModelView(tk.Frame):
         # Initially disable input fields
         self.disableManualHyperParams()
 
-    def setProject(self, project=DatabaseProjectModel):
+    def setProject(self, project):
         self.project = project
         self.loadDataModel = self.dataInteraction.getLoadDataModel(self.project.projectId)
         self.loadDataModel.dataIsForTraining = True
         self.loadDataModel.loadData()
 
-    def setModel(self, model=MachineLearningModel):
+    def setModel(self, model):
         self.model = model
+        self.setTopText()
 
-    def setTopText(self, text):
-        self.topText.set(text)
+    def setTopText(self):
+        self.topText.set("Model Name: " + self.model.modelName)
+        self.titleLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
     def addControlFrame(self, frame):
         self.controlFrame = frame
