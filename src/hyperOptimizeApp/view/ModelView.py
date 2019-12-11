@@ -74,17 +74,17 @@ class ModelView(tk.Frame):
         nbrLayersNodesFrame.pack(fill=tk.X)
         nbrLayersLabel = tk.Label(nbrLayersNodesFrame, text="Input number of Layers:")
         nbrLayersLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        nbrLayersValidation = self.register(ValidationFunctions.isPositiveNumber)
+        self.nbrLayersValidation = self.register(ValidationFunctions.isPositiveNumber)
         self.entryNbrLayers = tk.Entry(nbrLayersNodesFrame, width=10, validate="key",
-                                       validatecommand=(nbrLayersValidation, '%S'))
+                                       validatecommand=(self.nbrLayersValidation, '%S'))
         self.entryNbrLayers.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
         self.inputFieldList.append(self.entryNbrLayers)
         # Nodes
         nbrNodesLabel = tk.Label(nbrLayersNodesFrame, text="Input number of Nodes:")
         nbrNodesLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        nbrNodesValidation = self.register(ValidationFunctions.isPositiveNumber)
+        self.nbrNodesValidation = self.register(ValidationFunctions.isPositiveNumber)
         self.entryNbrNodes = tk.Entry(nbrLayersNodesFrame, width=10, validate="key",
-                                      validatecommand=(nbrNodesValidation, '%S'))
+                                      validatecommand=(self.nbrNodesValidation, '%S'))
         self.entryNbrNodes.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
         self.inputFieldList.append(self.entryNbrNodes)
 
@@ -152,12 +152,18 @@ class ModelView(tk.Frame):
     def setParameters(self):
         self.enableManualHyperParams()
 
+        self.entryNbrLayers.configure(validatecommand=())
         self.entryNbrLayers.delete(0, tk.END)
         self.entryNbrLayers.insert(tk.END, len(self.model.hyperParamsObj.nbrOfNodesArray))
+        print(len(self.model.hyperParamsObj.nbrOfNodesArray))
+        self.entryNbrLayers.configure(validatecommand=(self.nbrLayersValidation, '%S'))
         self.entryNbrLayers.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
+        self.entryNbrNodes.configure(validatecommand=())
         self.entryNbrNodes.delete(0, tk.END)
         self.entryNbrNodes.insert(tk.END, self.model.hyperParamsObj.nbrOfNodesArray[1])
+        print(self.model.hyperParamsObj.nbrOfNodesArray[1])
+        self.entryNbrNodes.configure(validatecommand=(self.nbrNodesValidation, '%S'))
         self.entryNbrNodes.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         self.dropoutSlider.set(self.model.hyperParamsObj.dropOutRate)
