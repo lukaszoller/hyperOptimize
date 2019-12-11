@@ -8,6 +8,9 @@ from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import Model
 from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
 from src.hyperOptimizeApp.view.tools.RangeSlider import *
 import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.view.tools import LayoutConstants
 
 
@@ -183,29 +186,42 @@ class OptimizeModelView(tk.Frame):
 
             self.optimizeParamsModel.evaluateModels()
 
-            # self.optimizationMessageSuccess()
-
-            # ToDo: When best model is computed change back to model view and display modelparams in corresponding fields.
+            # ToDo: after best model is computed change back to model view and display modelparams in corresponding fields.
             bestModel = self.optimizeParamsModel.getBestModel()
             print("Best Model evaluated:", bestModel)
 
+            # Update model with optimized params
             self.modelInteraction.updateModelParams(self.model, bestModel)
             self.model = self.modelInteraction.getModelById(self.model.modelId)
 
+            # Pop up asking for results to show
             self.askShowResults()
 
     def askShowResults(self):
         answer = tk.messagebox.askyesno("Show Results?", "Optimal Model found.\n"
                                                          "Do you want to see the result graph?")
         if answer == 1:
-            # ToDo: Show result graph here
+            self.showResultsPlot()
             self.controlFrame.setModelFrameWithParameters(self.model, self.project)
         else:
             self.controlFrame.setModelFrameWithParameters(self.model, self.project)
 
+    def showResultsPlot(self):
+        newWindow = tk.Toplevel(self)
+
+        # plot
+        # figure = plt.Figure(figsize=(6, 5), dpi=100)
+        figure = self.optimizeParamsModel.getFigureTest()
+        plot = FigureCanvasTkAgg(figure, newWindow)
+        plot.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+
+        newWindow.mainloop()
+
+
     def setMaxNodeValue(self, number):
         self.maxNodeSliderValue.set(number)
         self.nodeSlider.configure(to=self.maxNodeSliderValue.get())
+
 
     def checkActivation(self):
         # Check if an activation function is set

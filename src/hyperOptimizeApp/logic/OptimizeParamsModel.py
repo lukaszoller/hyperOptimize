@@ -174,6 +174,7 @@ class OptimizeParamsModel:
             return self.modelList[maxSuccessIndex]
 
     def visualizeHyperparamsPerformance(self):
+        """Creates a figure which can be displayed in a gui-window. Shows plot also in dev environment if not disabled."""
         t = self.resultData
         t.sort('nbrOfLayers')
 
@@ -224,7 +225,59 @@ class OptimizeParamsModel:
         plt.scatter(t['learningRateDecay'], t['successRate'])
         plt.xlabel('Learning rate decay')
         plt.ylabel('Success Rate')
+
         plt.show()
+
+    def getFigureTest(self):
+        """Creates a figure which can be displayed in a gui-window. Shows plot also in dev environment if not disabled."""
+        t = self.resultData
+        t.sort('nbrOfLayers')
+
+        figure = plt.figure(figsize=(15,7))
+        ax1 = figure.add_subplot(241)
+        ax1.scatter(t['nbrOfLayers'], t['successRate'])
+        plt.xlabel('Number of layers')
+        plt.ylabel('Success Rate')
+
+        ax2 = figure.add_subplot(242)
+        ax2.scatter(t['nbrOfNodesPerHiddenLayer'], t['successRate'])
+        plt.xlabel('Number of hidden nodes per layer')
+        plt.ylabel('Success Rate')
+
+        ax3 = figure.add_subplot(243)
+        ax3.scatter(t['activationFunction'], t['successRate'])
+        plt.xlabel('Activation function')
+        plt.ylabel('Success Rate')
+
+        ax4 = figure.add_subplot(244)
+        ax4.scatter(t['dropOutRate'], t['successRate'])
+        plt.xlabel('Drop out rate')
+        plt.ylabel('Success Rate')
+
+        ax5 = figure.add_subplot(245)
+        ax5.scatter(t['lossFunction'], t['successRate'])
+        plt.xlabel('Loss function')
+        plt.ylabel('Success Rate')
+
+        ax6 = figure.add_subplot(246)
+        ax6.scatter(t['modelOptimizer'], t['successRate'])
+        plt.xlabel('Model optimizer')
+        plt.ylabel('Success Rate')
+
+        ax7 = figure.add_subplot(247)
+        ax7.scatter(t['learningRate'], t['successRate'])
+        plt.xlabel('Learning rate')
+        plt.ylabel('Success Rate')
+
+        ax8 = figure.add_subplot(248)
+        ax8.scatter(t['learningRateDecay'], t['successRate'])
+        plt.xlabel('Learning rate decay')
+        plt.ylabel('Success Rate')
+
+        figure.tight_layout()
+
+        # return figure
+        return figure
 
     def visualizeBestModel(self):
         t = self.resultData
