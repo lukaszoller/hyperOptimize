@@ -108,6 +108,12 @@ class ControlFrame(tk.Frame):
         self.modelView.setProject(project)
         showFrame(self.modelView)
 
+    def setModelFrameWithParameters(self, model, project):
+        self.modelView.setModel(model)
+        self.modelView.setProject(project)
+        self.modelView.setParameters()
+        showFrame(self.modelView)
+
     def setOptimizeModelFrame(self, model, project):
         self.optimizeModelView.setModel(model)
         self.optimizeModelView.setProject(project)

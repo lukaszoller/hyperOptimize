@@ -182,6 +182,13 @@ class DatabaseConnector:
         sql = "DELETE FROM model where id = {}".format(modelId)
         self.writeDB(sql)
 
+    def updateModelParamsById(self, existingModel, bestModel):
+        serializedModel = bestModel.to_json()
+        hyperParams = jsonpickle.encode(bestModel.hyperParamsObj)
+        sql = "UPDATE model SET serializedModel = '{}', hyperParams = '{}' WHERE id = {}".\
+            format(serializedModel, hyperParams, existingModel.modelId)
+        self.writeDB(sql)
+
 #Probably not needed (get last project ID)
     # def getMaxId(self):
     #     connector = sqlite3.connect(self.DATABASE_NAME)

@@ -107,34 +107,34 @@ class ModelView(tk.Frame):
         ## Sigmoid
         sigmoidRadioName = "Sigmoid Function"
         # self.sigmoidVar = tk.IntVar(0)
-        sigmoidRadio = tk.Radiobutton(activationFrame, text=sigmoidRadioName, variable=self.activationVar,
+        self.sigmoidRadio = tk.Radiobutton(activationFrame, text=sigmoidRadioName, variable=self.activationVar,
                                       value="sigmoid")
-        sigmoidRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.inputFieldList.append(sigmoidRadio)
+        self.sigmoidRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.sigmoidRadio)
 
         ## Linear
         linearRadioName = "Linear Function"
         # self.linearVar = tk.IntVar(0)
-        linearRadio = tk.Radiobutton(activationFrame, text=linearRadioName, variable=self.activationVar,
+        self.linearRadio = tk.Radiobutton(activationFrame, text=linearRadioName, variable=self.activationVar,
                                       value="linear")
-        linearRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.inputFieldList.append(linearRadio)
+        self.linearRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.linearRadio)
 
         ## Tanh
         tanhRadioName = "Tanh Function"
         # self.tanhVar = tk.IntVar(0)
-        tanhRadio = tk.Radiobutton(activationFrame, text=tanhRadioName, variable=self.activationVar,
+        self.tanhRadio = tk.Radiobutton(activationFrame, text=tanhRadioName, variable=self.activationVar,
                                       value="tanh")
-        tanhRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.inputFieldList.append(tanhRadio)
+        self.tanhRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.tanhRadio)
 
         ## Relu
         reluRadioName = "ReLu Function"
         # self.reluVar = tk.IntVar(0)
-        reluRadio = tk.Radiobutton(activationFrame, text=reluRadioName, variable=self.activationVar,
+        self.reluRadio = tk.Radiobutton(activationFrame, text=reluRadioName, variable=self.activationVar,
                                       value="relu")
-        reluRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.inputFieldList.append(reluRadio)
+        self.reluRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.reluRadio)
 
         # Initially disable input fields
         self.disableManualHyperParams()
@@ -149,6 +149,44 @@ class ModelView(tk.Frame):
         self.model = model
         self.setTopText()
 
+    def setParameters(self):
+        self.enableManualHyperParams()
+
+        self.entryNbrLayers.delete(0, tk.END)
+        self.entryNbrLayers.insert(tk.END, len(self.model.hyperParamsObj.nbrOfNodesArray))
+        self.entryNbrLayers.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
+
+        self.entryNbrNodes.delete(0, tk.END)
+        self.entryNbrNodes.insert(tk.END, self.model.hyperParamsObj.nbrOfNodesArray[1])
+        self.entryNbrNodes.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
+
+        self.dropoutSlider.set(self.model.hyperParamsObj.dropOutRate)
+        self.dropoutSlider.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+        activationFunction = self.model.hyperParamsObj.activationFunction
+        if activationFunction == 'sigmoid':
+            self.sigmoidRadio.select()
+            self.tanhRadio.deselect()
+            self.linearRadio.deselect()
+            self.reluRadio.deselect()
+        elif activationFunction == 'tanh':
+            self.sigmoidRadio.deselect()
+            self.tanhRadio.select()
+            self.linearRadio.deselect()
+            self.reluRadio.deselect()
+        elif activationFunction == 'linear':
+            self.sigmoidRadio.deselect()
+            self.tanhRadio.deselect()
+            self.linearRadio.select()
+            self.reluRadio.deselect()
+        elif activationFunction == 'relu':
+            self.sigmoidRadio.deselect()
+            self.tanhRadio.deselect()
+            self.linearRadio.deselect()
+            self.reluRadio.select()
+
+        self.disableManualHyperParams()
+
     def setTopText(self):
         self.topText.set("Model Name: " + self.model.modelName)
         self.titleLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
@@ -158,7 +196,7 @@ class ModelView(tk.Frame):
 
     def enableManualHyperParams(self):
         for element in self.inputFieldList:
-            element.config(state = "normal")
+            element.config(state="normal")
 
     def disableManualHyperParams(self):
         for element in self.inputFieldList:

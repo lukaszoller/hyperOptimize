@@ -27,3 +27,9 @@ class ModelInteractionModel:
 
     def deleteModelsByProjectId(self, projectId):
         self.projectDB.deleteModelsByProjectId(projectId)
+
+    def updateModelParams(self, existingModel, bestModel):
+        self.projectDB.updateModelParamsById(existingModel, bestModel)
+
+    def getModelById(self, modelId):
+        return self.projectDB.getModelByID(modelId)

@@ -4,6 +4,7 @@ from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
+from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
 from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
 from src.hyperOptimizeApp.view.tools.RangeSlider import *
 import numpy as np
@@ -15,6 +16,7 @@ class OptimizeModelView(tk.Frame):
     estimateTimeAlreadyShowed = False  # needed to decide if optimize button should execute optimize function
     # without showing running time estimation warning
     dataInteraction = DataInteractionModel()
+    modelInteraction = ModelInteractionModel()
     controlFrame = None
     model = None
     rangeForHyperParamsObj = None
@@ -186,6 +188,20 @@ class OptimizeModelView(tk.Frame):
             # ToDo: When best model is computed change back to model view and display modelparams in corresponding fields.
             bestModel = self.optimizeParamsModel.getBestModel()
             print("Best Model evaluated:", bestModel)
+
+            self.modelInteraction.updateModelParams(self.model, bestModel)
+            self.model = self.modelInteraction.getModelById(self.model.modelId)
+
+            self.askShowResults()
+
+    def askShowResults(self):
+        answer = tk.messagebox.askyesno("Show Results?", "Optimal Model found.\n"
+                                                         "Do you want to see the result graph?")
+        if answer == 1:
+            # ToDo: Show result graph here
+            self.controlFrame.setModelFrameWithParameters(self.model, self.project)
+        else:
+            self.controlFrame.setModelFrameWithParameters(self.model, self.project)
 
     def setMaxNodeValue(self, number):
         self.maxNodeSliderValue.set(number)
