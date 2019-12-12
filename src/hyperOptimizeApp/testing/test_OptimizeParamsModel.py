@@ -73,11 +73,8 @@ class TestOptimizeParamsModel():
         for i in range(0, len(hyperParamsObjList)):
             print("################################## Model", i+1, "##################################")
             print("Running time: ", optimizeParamsModel.runningTimeList[i])
-            print("Success rate: ", optimizeParamsModel.successRate[i])
+            print("Success rate: ", optimizeParamsModel.successRateList[i])
             print("Estimated time: ", )
-
-        #  Create result data in optimizeParamsModel
-        optimizeParamsModel.getResultData()
 
         # Visualize nbrOfLayersError
         optimizeParamsModel.visualizeHyperparamsPerformance()

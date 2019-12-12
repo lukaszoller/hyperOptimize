@@ -12,8 +12,8 @@ from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsL
 class OptimizeParamsModel:
 
     def __init__(self, xTrain, yTrain, xTest, yTest, rangeForHyperParamsObj, nbrOfModels):
-        self.modelList = list()
-        self.successRate = list()
+        self.bestModel = None
+        self.successRateList = list()
         self.resultData = None
         self.runningTimeList = list()
         self.xTrain = xTrain
@@ -62,15 +62,22 @@ class OptimizeParamsModel:
             comparisonArray = y_PredictOneCol != y_TestOneCol
             errorSum = np.sum(comparisonArray)
 
-
-            #####################################################################################
-            # Store data from this loop
-            #####################################################################################
-            # store model
-            self.modelList.append(model)
-
             # store success Rate (Percentage of correct predictions)
-            self.successRate.append(1-errorSum/len(comparisonArray))
+            tmpSuccess = 1-errorSum/len(comparisonArray)
+            self.successRateList.append(tmpSuccess)
+
+            #####################################################################################
+            # Save model if better than last, else drop
+            #####################################################################################
+            # get successRate of last model
+            # if successRateList is empty, last successRate = 0
+            if len(self.successRateList) == 1:
+                lastSuccess = 0
+            else: # get success of second last item
+                lastSuccess = self.successRateList.__getitem__(len(self.successRateList) - 2)
+            # Save model if tmpSuccess (of this loop) is higher than success of last model
+            if tmpSuccess > lastSuccess:
+                self.bestModel = model
 
             # Store running time measurement
             runningTime = time.clock() - startTime
@@ -99,13 +106,6 @@ class OptimizeParamsModel:
         sl.storeEstimateTimeAccuracy(accuracy)
 
         #####################################################################################
-        # Save model to filesystem
-        #####################################################################################
-        # pd = DatabaseConnector()
-        # projectID = 666                                # delete after implementation of projectID   <-----------------------------------------------------------------
-        # pd.saveModel(projectID, model)                 # <----------------- Create model table in database first --------------------------------------------------------
-
-        #####################################################################################
         # Print stuff for debugging
         #####################################################################################
         print("######################### Stats from OptimizeModel.evaluateModels ############################")
@@ -121,47 +121,85 @@ class OptimizeParamsModel:
 
         print("Estimated time: ", stringEstimate, " actual time: ", actualRunningTime)
 
-        self.getResultData()
+        self.createResultData()
 
-    def getResultData(self):
-        """Creates a table with all results. Columns: nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction,
-        dropOutRate, lossFunction, modelOptimizer, learningRate, learningRateDecay, successRate, Rows: values for each
-        model. The table will be stored in self.resultData."""
-
+    def createResultData(self):
         # fill result table with data
-        l = len(self.modelList)
-        rows = []                       # code for table construction from https://docs.astropy.org/en/stable/table/#construct-table
+        l = len(self.hyperParamsObjList)
+        rows = []  # code for table construction from https://docs.astropy.org/en/stable/table/#construct-table
         # Create array with cols = hyperParams & error; rows = values per model
-        for i in range(0, l):
-            # get model
-            model = self.modelList[i]
-            h = model.hyperParamsObj
-
+        for h in self.hyperParamsObjList:
             # get data for each model
             nbrOfLayers = len(h.nbrOfNodesArray)
             if nbrOfLayers < 3:
                 nbrOfNodesPerHiddenLayer = 0
-            else: nbrOfNodesPerHiddenLayer = h.nbrOfNodesArray[1]
+            else:
+                nbrOfNodesPerHiddenLayer = h.nbrOfNodesArray[1]
             activationFunction = h.activationFunction
             dropOutRate = h.dropOutRate
             lossFunction = h.lossFunction
             modelOptimizer = h.modelOptimizer
             learningRate = h.learningRate
             learningRateDecay = h.learningRateDecay
-            successRate = self.successRate[i]
 
             # create new row
             row = (nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction, dropOutRate, lossFunction, modelOptimizer,
-                   learningRate, learningRateDecay, successRate)
+                   learningRate, learningRateDecay)
 
             # add row to row object
             rows.append(row)
 
         # Create table
         t = Table(rows=rows, names=['nbrOfLayers', 'nbrOfNodesPerHiddenLayer', 'activationFunction', 'dropOutRate',
-                                    'lossFunction', 'modelOptimizer', 'learningRate', 'learningRateDecay', 'successRate'])
+                                    'lossFunction', 'modelOptimizer', 'learningRate', 'learningRateDecay'])
+
+        # add column with successRate
+        col = Column(data=self.successRateList, name='successRate')
+        t.add_column(col)
+
         # Store table in self
         self.resultData = t
+
+
+    # def getResultData(self):
+    #     """Creates a table with all results. Columns: nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction,
+    #     dropOutRate, lossFunction, modelOptimizer, learningRate, learningRateDecay, successRate, Rows: values for each
+    #     model. The table will be stored in self.resultData."""
+    #
+    #     # fill result table with data
+    #     l = len(self.successRateList)
+    #     rows = []                       # code for table construction from https://docs.astropy.org/en/stable/table/#construct-table
+    #     # Create array with cols = hyperParams & error; rows = values per model
+    #     for i in range(0, l):
+    #         # get model
+    #         model = self.modelList[i]
+    #         h = model.hyperParamsObj
+    #
+    #         # get data for each model
+    #         nbrOfLayers = len(h.nbrOfNodesArray)
+    #         if nbrOfLayers < 3:
+    #             nbrOfNodesPerHiddenLayer = 0
+    #         else: nbrOfNodesPerHiddenLayer = h.nbrOfNodesArray[1]
+    #         activationFunction = h.activationFunction
+    #         dropOutRate = h.dropOutRate
+    #         lossFunction = h.lossFunction
+    #         modelOptimizer = h.modelOptimizer
+    #         learningRate = h.learningRate
+    #         learningRateDecay = h.learningRateDecay
+    #         successRate = self.successRateList[i]
+    #
+    #         # create new row
+    #         row = (nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction, dropOutRate, lossFunction, modelOptimizer,
+    #                learningRate, learningRateDecay, successRate)
+    #
+    #         # add row to row object
+    #         rows.append(row)
+    #
+    #     # Create table
+    #     t = Table(rows=rows, names=['nbrOfLayers', 'nbrOfNodesPerHiddenLayer', 'activationFunction', 'dropOutRate',
+    #                                 'lossFunction', 'modelOptimizer', 'learningRate', 'learningRateDecay', 'successRate'])
+    #     # Store table in self
+    #     self.resultData = t
 
     def getBestModel(self):
         """Checks if self.modelList is empty (that means if Optimization was executed). If not empty, it returns the
@@ -170,7 +208,7 @@ class OptimizeParamsModel:
         if not self.modelList:  # if list is empty
             raise Exception("OptimizeParamsModel.modelList is empty")
         else:
-            maxSuccessIndex = np.argmax(self.successRate)
+            maxSuccessIndex = np.argmax(self.successRateList)
             return self.modelList[maxSuccessIndex]
 
     def visualizeHyperparamsPerformance(self):
@@ -228,7 +266,7 @@ class OptimizeParamsModel:
 
         plt.show()
 
-    def getFigureTest(self):
+    def getResultsPlot(self):
         """Creates a figure which can be displayed in a gui-window. Shows plot also in dev environment if not disabled."""
         t = self.resultData
         t.sort('nbrOfLayers')

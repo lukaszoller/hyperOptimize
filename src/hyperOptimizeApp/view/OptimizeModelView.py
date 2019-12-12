@@ -194,8 +194,13 @@ class OptimizeModelView(tk.Frame):
             self.modelInteraction.updateModelParams(self.model, bestModel)
             self.model = self.modelInteraction.getModelById(self.model.modelId)
 
+            ## todo: delete after debugging
+            self.optimizeParamsModel.visualizeHyperparamsPerformance()
+
+
             # Pop up asking for results to show
             self.askShowResults()
+
 
     def askShowResults(self):
         answer = tk.messagebox.askyesno("Show Results?", "Optimal Model found.\n"
@@ -209,7 +214,7 @@ class OptimizeModelView(tk.Frame):
 
         # plot
         # figure = plt.Figure(figsize=(6, 5), dpi=100)
-        figure = self.optimizeParamsModel.getFigureTest()
+        figure = self.optimizeParamsModel.getResultsPlot()
         plot = FigureCanvasTkAgg(figure, newWindow)
         plot.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
 
@@ -241,7 +246,7 @@ class OptimizeModelView(tk.Frame):
 
     def showTimeEstimateInformation(self):
         stringTime, timeInSeconds = self.estimateTime()
-        message = "The optimization will take approximately " + stringTime + "[hh:mm:ss]."
+        message = "The optimization will take approximately " + stringTime + " [hh:mm:ss]."
         tk.messagebox.showinfo("Running time estimation", message)
 
     def showTimeEstimateWarning(self):

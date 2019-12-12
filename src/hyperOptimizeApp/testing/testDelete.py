@@ -10,8 +10,11 @@ from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
 
 la = list([1, 2,3])
-la = list()
-if not la:
-    print("not la")
-else:
-    print("else")
+
+print(la)
+
+print(la.__getitem__(len(la)-1))
+
+lb = list()
+
+print(not lb)

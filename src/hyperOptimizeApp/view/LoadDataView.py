@@ -11,7 +11,7 @@ class LoadDataView(tk.Frame):
     project = None
     dbInteraction = DataInteractionModel()
 
-    def __init__(self, main, width, height, loadDataModel):
+    def __init__(self, main, width, height, loadDataModel, forTraining=True):
         self.loadDataModel = loadDataModel
         tk.Frame.__init__(self, main)
 
@@ -39,17 +39,22 @@ class LoadDataView(tk.Frame):
         firstColIsRowNbrCheckBtn = tk.Checkbutton(checkBtnFrame, text="First column is row number", variable=self.checkVarCol)
         firstColIsRowNbrCheckBtn.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
-        # nbr of categories
+        # nbr of categories --> Braucht es nur, wenn daten für training sind
+        # if forTraining:
         nbrCategoriesFrame = tk.Frame(self)
         nbrCategoriesFrame.pack(fill=tk.X)
-        nbrCategoriesLabel = tk.Label(nbrCategoriesFrame, text="Input number of categories (only positive numbers allowed)",
-                                    width=50)
+        nbrCategoriesLabel = tk.Label(nbrCategoriesFrame,
+                                      text="Input number of categories (only positive numbers allowed)",
+                                      width=50)
         nbrCategoriesLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         nbrCategoriesValidation = self.register(ValidationFunctions.isPositiveNumber)
-        self.entryNbrCategories = tk.Entry(nbrCategoriesFrame, width=10, validate="key", validatecommand=(nbrCategoriesValidation, '%S'))
+        self.entryNbrCategories = tk.Entry(nbrCategoriesFrame, width=10, validate="key",
+                                           validatecommand=(nbrCategoriesValidation, '%S'))
         self.entryNbrCategories.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
         self.nbrCategoriesWarning = tk.Label(nbrCategoriesFrame, text="")
         self.nbrCategoriesWarning.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+
 
         # training data starts at linenbr
         trainRowNbrFrame = tk.Frame(self)

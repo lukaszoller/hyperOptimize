@@ -20,21 +20,24 @@ class ControlFrame(tk.Frame):
     modelView = None
     optimizeModelView = None
     loadDataView = None
+    loadClassifyDataView = None
 
     def __init__(self, mainView, main, width, homeView, projectView, modelView,
-                 optimizeModelView, loadDataView):
+                 optimizeModelView, loadDataView, loadClassifyDataView):
         tk.Frame.__init__(self, main)
         self.projectView = projectView
         self.homeView = homeView
         self.modelView = modelView
         self.optimizeModelView = optimizeModelView
         self.loadDataView = loadDataView
+        self.loadClassifyDataView = loadClassifyDataView
 
         self.projectView.addControlFrame(self)
         self.homeView.addControlFrame(self)
         self.modelView.addControlFrame(self)
         self.optimizeModelView.addControlFrame(self)
         self.loadDataView.addControlFrame(self)
+        self.loadClassifyDataView.addControlFrame(self)
 
         self.changeStyle("black")
         self.place(x=0, y=450, height=50, width=width)
@@ -123,6 +126,10 @@ class ControlFrame(tk.Frame):
         self.loadDataView.setProject(project)
         showFrame(self.loadDataView)
 
+    def setLoadClassificationDataFrame(self, project):
+        self.loadClassifyDataView.setProject(project)
+        showFrame(self.loadClassifyDataView)
+
     # ########################################## Lukas Code #########################################
 
     def showWindowWithPlot(self):
@@ -172,9 +179,11 @@ class MainView:
         projectView = ProjectView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         modelView = ModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         optimizeModelView = OptimizeModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
-        loadDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50, LoadDataModel())       # <-------------------------------------------------- this is initialized here just for mockup. change for correct implementation!!!!
+        loadDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50, LoadDataModel(), forTraining=True)
+        loadClassifyDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50, LoadDataModel(), forTraining=False)
 
-        ControlFrame(self, self.main, WM_WIDTH, homeView, projectView, modelView, optimizeModelView, loadDataView)
+        ControlFrame(self, self.main, WM_WIDTH, homeView, projectView, modelView, optimizeModelView, loadDataView,
+                     loadClassifyDataView)
 
         self.main.mainloop()
 

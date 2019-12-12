@@ -6,6 +6,8 @@ from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import Databa
 from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
 from src.hyperOptimizeApp.view.tools import LayoutConstants
+import re
+import numpy as np
 
 
 class ProjectView(tk.Frame):
@@ -34,7 +36,7 @@ class ProjectView(tk.Frame):
         self.nameEntry = tk.Entry(projectNameFrame)
         self.fillNameLabel()
 
-        # ROW 3 - File Handling
+        # ROW 3 - File Handling for training and test data
         fileSelectionFrame = tk.Frame(self)
         fileSelectionFrame.pack(fill=tk.X)
         fileLabel = tk.Label(fileSelectionFrame, text="Data CSV")
@@ -66,6 +68,48 @@ class ProjectView(tk.Frame):
 
         self.config(bg="grey")
         self.place(relx=0, rely=0, height=height, width=width)
+
+        # ROW 6 - File Handling for classifying data
+        fileSelectionClassifyFrame = tk.Frame(self)
+        fileSelectionClassifyFrame.pack(fill=tk.X)
+        fileClassifyLabel = tk.Label(fileSelectionClassifyFrame, text="Data CSV")
+        fileClassifyLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.fileClassifySetLabel = tk.Label(fileSelectionClassifyFrame, text='Select Data for classification:')
+        self.fileClassifySetLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.loadClassifyDataButton = tk.Button(fileSelectionClassifyFrame, text="Load classification data",
+                                        command=lambda: self.loadClassificationData())
+        self.loadClassifyDataButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+        # ROW 7 - Classify data button
+        classifyButtonFrame = tk.Frame(self)
+        classifyButtonFrame.pack(fill=tk.X)
+        classifyButton = tk.Button(classifyButtonFrame, text="New Model",
+                                   command=lambda: self.saveAndAddNewModel())
+        classifyButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+    def classifyData(self):
+        """Classifies a dataset. That means it adds some columns to the dataset with categories and writes it to the
+        filesyste. Checks execuded first: model is selected, data is loaded."""
+        # check if model is selected in modellist
+        if not self.modelListbox.curselection():
+            tk.messagebox.showwarning("Error", "Please select one model before classifying.")
+        # check if data for classification is loaded
+
+        # Get model
+        from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
+        model = MachineLearningModel()      # todo: get model from list selection
+        # Get data
+        data = [1,2,3,4,5]                  # todo: get data from loadDataView (loadDataforClassification)
+        pathToFile = "abc.csv"              # todo: get datapath from loadDataView
+
+        # classify data
+        classifiedData = model.predict(data)
+        # write data to filesystem
+        try:
+            pathToWrite = re.sub('.csv$', '_classified.csv', pathToFile)
+            np.savetxt(pathToWrite, classifiedData)
+        except:
+            tk.messagebox.showwarning("Error", "Could not write data to file.")
 
     def setProject(self, project=DatabaseProjectModel()):
         self.project = project
@@ -109,6 +153,9 @@ class ProjectView(tk.Frame):
 
     def saveProjectAndLoadData(self):
         self.saveProject()
+        self.controlFrame.setLoadDataFrame(self.project)
+
+    def loadClassificationData(self):
         self.controlFrame.setLoadDataFrame(self.project)
 
     def saveAndAddNewModel(self):
