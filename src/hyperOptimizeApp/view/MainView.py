@@ -40,7 +40,7 @@ class ControlFrame(tk.Frame):
         self.loadClassifyDataView.addControlFrame(self)
 
         self.changeStyle("black")
-        self.place(x=0, y=450, height=50, width=width)
+        self.place(x=0, y=750, height=50, width=width)
 
         # Fenster Zeichen
         tk.Button(self, text="Home", command=lambda: self.setHomeFrame()).pack(side=tk.LEFT, padx=5)
@@ -166,8 +166,8 @@ class MainView:
 
     def __init__(self):
         # Konstanten
-        WM_HEIGHT = 500
-        WM_WIDTH = 800
+        WM_HEIGHT = 800
+        WM_WIDTH = 1000
 
         # Hauptfenster
         self.main.title("Test")
