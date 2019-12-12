@@ -16,7 +16,7 @@ class RangeForHyperParamsObj:
         self.dropOutDict = 0#= np.array()                           #irgendwas zwischen 0 und 1
         self.lossFunctionArray = np.array(['mean_squared_error'])   # default setting from keras
         self.modelOptimizerArray = np.array(['SGD'])                # default setting from keras
-        self.learningRateDict = dict({'min': 1e-7, 'max': 1e-5}) # default setting from keras
+        self.learningRateDict = dict({'min': 1e-7, 'max': 1e-5})    # default setting from keras
         self.learningRateLogBool = True
         self.learningRateDecayDict = dict({'min': 1e-6, 'max': 1e-2}) # default setting from keras
         self.nbrOfCategories = 0
