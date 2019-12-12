@@ -1,2 +1,4 @@
 /.idea/hyperOptimize.iml
 /.idea/misc.xml
+/.idea/*.xml
+/py37env/*

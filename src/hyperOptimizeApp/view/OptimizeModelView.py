@@ -202,9 +202,7 @@ class OptimizeModelView(tk.Frame):
                                                          "Do you want to see the result graph?")
         if answer == 1:
             self.showResultsPlot()
-            self.controlFrame.setModelFrameWithParameters(self.model, self.project)
-        else:
-            self.controlFrame.setModelFrameWithParameters(self.model, self.project)
+        self.controlFrame.setModelFrameWithParameters(self.model, self.project)
 
     def showResultsPlot(self):
         newWindow = tk.Toplevel(self)

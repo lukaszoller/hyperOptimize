@@ -79,8 +79,8 @@ class ProjectView(tk.Frame):
                 self.loadDataButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
                 self.fileSetLabel.config(text="Select Data")
         else:
-            self.loadDataButton.pack_forget()
-            self.fileSetLabel.config(text="Please save Project first.")
+            self.loadDataButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+            self.fileSetLabel.config(text="Please add Project Name and Set your Data")
         self.fillListBox()
         self.fillNameLabel()
 
