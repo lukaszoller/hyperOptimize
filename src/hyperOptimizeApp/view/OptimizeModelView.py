@@ -26,9 +26,11 @@ class OptimizeModelView(tk.Frame):
     optimizeParamsModel = None
     project = None
     loadDataModel = None
+    errorString = ""
 
     # Constants:
     MAX_LAYERS = RangeForHyperParamsObj.MAX_NUMBER_OF_HIDDEN_LAYERS
+    MAX_NODES = RangeForHyperParamsObj.MAX_NUMBER_OF_HIDDEN_LAYERS
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
@@ -49,13 +51,13 @@ class OptimizeModelView(tk.Frame):
         layerText = tk.Label(layerFrame, text='Range of Layers to test')
         layerText.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
-        self.nbrLayersValidation = self.register(ValidationFunctions.isPositiveNumber)
+        self.nbrLayersValidation = (self.register(ValidationFunctions.isPositiveNumber), '%S')
         self.entryNbrMinLayers = tk.Entry(layerFrame, width=10, validate="key",
-                                          validatecommand=(self.nbrLayersValidation, '%S'))
+                                          validatecommand=self.nbrLayersValidation)
         self.entryNbrMinLayers.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         self.entryNbrMaxLayers = tk.Entry(layerFrame, width=10, validate="key",
-                                          validatecommand=(self.nbrLayersValidation, '%S'))
+                                          validatecommand=self.nbrLayersValidation)
         self.entryNbrMaxLayers.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         layerHelp = tk.Label(layerFrame, text='?')
@@ -128,8 +130,8 @@ class OptimizeModelView(tk.Frame):
         # Row for picking Learning rate:
         learningFrame = tk.Frame(self)
         learningFrame.pack(fill=tk.X)
-        learningText = tk.Label(learningFrame, text='Percentage of learning rate\n'
-                                                    'min: 1, max 99')
+        learningText = tk.Label(learningFrame, text='Negative Log of Learning rate\n'
+                                                    'min 7 for 1e-7, max 0 for 1e-0')
         learningText.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         self.nbrLearningValidation = self.register(ValidationFunctions.isPositiveNumber)
@@ -148,8 +150,8 @@ class OptimizeModelView(tk.Frame):
         # Row for picking Learning rate decay:
         learningDecayFrame = tk.Frame(self)
         learningDecayFrame.pack(fill=tk.X)
-        learningDecayText = tk.Label(learningDecayFrame, text='Percentage of learning rate\n'
-                                                              'min: 1, max 99')
+        learningDecayText = tk.Label(learningDecayFrame, text='Negative Log of Learning rate decay\n'
+                                                              'min 10 for 1e-10, max 1 for 1e-1')
         learningDecayText.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         self.nbrLearningDecayValidation = self.register(ValidationFunctions.isPositiveNumber)
@@ -229,8 +231,8 @@ class OptimizeModelView(tk.Frame):
         layerTooltip = tt(layerHelp, 'Tooltip for Layers')
         nodeTooltip = tt(nodeHelp, 'Tooltip for Nodes')
         dropoutTooltip = tt(dropoutHelp, 'Tooltip for dropout percentage')
-        learningTooltip = tt(learningHelp, 'Tooltip for Learning Rate')
-        learningDecayTooltip = tt(learningDecayHelp, 'Tooltip for Learning Rate Decay')
+        learningTooltip = tt(learningHelp, 'Normally Values between 1e-3 and 1e-1 seem to be valuable')
+        learningDecayTooltip = tt(learningDecayHelp, 'Learning Rate *= (1. / (1. + self.decay * self.iterations))')
         activationTooltip = tt(activationHelp, 'Tooltip for activation function')
         nbrOfModelsTooltip = tt(nbrOfModelsHelp, 'Number of models which are picked randomly from specified range.')
 
@@ -257,8 +259,11 @@ class OptimizeModelView(tk.Frame):
         # Check if at least one activation function has been chosen
         if not self.checkActivation():
             tk.messagebox.showwarning("Activation Error", "Please select at least one activation function!")
+        if not self.checkInputs():
+            tk.messagebox.showwarning("Input Error", self.errorString)
         # Check if data has been loaded
-        elif self.loadDataModel.data == None:
+        self.loadDataModel.loadData()
+        if self.loadDataModel.data is None:
             tk.messagebox.showwarning("Data Error", "No data has been loaded to project. Load data before optimizing.")
         else:
             # if not existent, create optimizeParamsModel (this has to be optional because self.estimateTime needs it too
@@ -292,6 +297,67 @@ class OptimizeModelView(tk.Frame):
             # Pop up asking for results to show
             self.askShowResults()
 
+    def checkInputs(self):
+        self.errorString = ""
+        minLayers = self.entryNbrMinLayers.get()
+        maxLayers = self.entryNbrMaxLayers.get()
+        if (minLayers == "") or (maxLayers == ""):
+            self.errorString += "Insufficient entries in Layers\n"
+            return False
+        if int(minLayers) > int(maxLayers):
+            self.errorString += "Min Layers must be smaller than Max Layers\n"
+        if (int(minLayers) < 1) or (int(maxLayers) < 1):
+            self.errorString += "Min Number of Layers are: 1\n"
+        if (int(minLayers) > self.MAX_LAYERS) or (int(maxLayers) > self.MAX_LAYERS):
+            self.errorString += "Max Number of Layers is: {}\n".format(self.MAX_LAYERS)
+
+        minNodes = self.entryNbrMinNodes.get()
+        maxNodes = self.entryNbrMaxNodes.get()
+        if (minNodes == "") or (maxNodes == ""):
+            self.errorString += "Insufficient entries in Nodes\n"
+            return False
+        if int(minNodes) > int(maxNodes):
+            self.errorString += "Min Nodes must be smaller than Max Nodes\n"
+        if (int(minNodes) < 1) or (int(maxNodes) < 1):
+            self.errorString += "Min Number of Nodes are: 1\n"
+        if (int(minNodes) > self.MAX_NODES) or (int(maxNodes) > self.MAX_NODES):
+            self.errorString += "Max Number of nodes per layer is: {}\n".format(self.MAX_NODES)
+
+        minDropout = self.entryNbrMinDropout.get()
+        maxDropout = self.entryNbrMaxDropout.get()
+        if (minDropout == "") or (maxDropout == ""):
+            self.errorString += "Insufficient entries in Dropout\n"
+            return False
+        if int(minDropout) > int(maxDropout):
+            self.errorString += "Min Dropout must be smaller than Max Dropout\n"
+        if (int(minDropout) < 1) or (int(maxDropout) < 1):
+            self.errorString += "Min Number of Dropout is: 1(%)\n"
+        if (int(minDropout) > 99) or (int(maxNodes) > 99):
+            self.errorString += "Max Number of Dropout is: 99(%)\n"
+
+        minLearning = self.entryNbrMinLearning.get()
+        maxLearning = self.entryNbrMaxLearning.get()
+        if (minLearning == "") or (maxLearning == ""):
+            self.errorString += "Insufficient entries in Learning rate\n"
+            return False
+        if int(minLearning) < int(maxLearning):
+            self.errorString += "Number of min Learning has to be greater than max Learning (negative Number)\n"
+        if (int(minLearning) > 7) or (int(minLearning) < 0) or (int(maxLearning) > 7) or (int(maxLearning < 0)):
+            self.errorString += "Learning rate has to be between 7 and 0\n"
+
+        minLearningDecay = self.entryNbrMinLearningDecay.get()
+        maxLearningDecay = self.entryNbrMaxLearningDecay.get()
+        if (minLearningDecay == "") or (maxLearningDecay == ""):
+            self.errorString += "Insufficient entries in Learning rate\n"
+        if int(minLearningDecay) < int(maxLearningDecay):
+            self.errorString += "Number of min Learning has to be greater than max Learning (negative Number)\n"
+        if (int(minLearning) > 10) or (int(minLearning) < 1) or (int(maxLearning) > 10) or (int(maxLearning) < 1):
+            self.errorString += "Learning rate has to be between 10 and 1\n"
+
+        print(self.errorString)
+        if self.errorString == "":
+            return True
+        return False
 
     def askShowResults(self):
         answer = tk.messagebox.askyesno("Show Results?", "Optimal Model found.\n"
@@ -363,10 +429,10 @@ class OptimizeModelView(tk.Frame):
         maxNbrOfLayers = int(self.entryNbrMaxLayers.get())
         minDropout = int(self.entryNbrMinDropout.get())
         maxDropout = int(self.entryNbrMaxDropout.get())
-        minLearning = int(self.entryNbrMinLearning.get())
-        maxLearning = int(self.entryNbrMaxLearning.get())
-        minLearningDecay = int(self.entryNbrMinLearningDecay.get())
-        maxLearningDecay = int(self.entryNbrMaxLearningDecay.get())
+        minLearning = 10 ** -int(self.entryNbrMinLearning.get())
+        maxLearning = 10 ** -int(self.entryNbrMaxLearning.get())
+        minLearningDecay = 10 ** -int(self.entryNbrMinLearningDecay.get())
+        maxLearningDecay = 10 ** -int(self.entryNbrMaxLearningDecay.get())
         activationArray = self.getActivationCheckBtnValues()
         nbrOfCategories = self.loadDataModel.nbrOfCategories
         # explanation of next line: shape of 3rd dataset (=[2]) of loadDataModel (=rawData), [1]=colnumbers)
@@ -377,10 +443,10 @@ class OptimizeModelView(tk.Frame):
         print("Max Number of Layers: " + str(maxNbrOfLayers))
         print("Min Number of Dropout: " + str(minDropout))
         print("Max Number of Dropout: " + str(maxDropout))
-        print("Min Number of Learning:" + str(minLearning))
-        print("Max Number of Learning:" + str(maxLearning))
-        print("Min Number of Learning Decay:" + str(minLearningDecay))
-        print("Max Number of Learning Decay:" + str(maxLearningDecay))
+        print("Min Number of Learning: " + str(minLearning))
+        print("Max Number of Learning: " + str(maxLearning))
+        print("Min Number of Learning Decay: " + str(minLearningDecay))
+        print("Max Number of Learning Decay: " + str(maxLearningDecay))
         print("Activation Array: " + str(activationArray))
         # activationArray = np.array(['sigmoid', 'elu', 'softmax'])
 
@@ -388,8 +454,8 @@ class OptimizeModelView(tk.Frame):
         self.rangeForHyperParamsObj.nbrOfHiddenLayersDict = dict({'min': minNbrOfLayers, 'max': maxNbrOfLayers})
         self.rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': minNbrOfNodes, 'max': maxNbrOfNodes})
         self.rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
-        self.rangeForHyperParamsObj.learningRateDict = dict({'min': minLearning, 'max:': maxLearning})
-        self.rangeForHyperParamsObj.learningRateDecayDictDict = dict({'min': minLearningDecay, 'max:': maxLearningDecay})
+        self.rangeForHyperParamsObj.learningRateDict = dict({'min': minLearning, 'max': maxLearning})
+        self.rangeForHyperParamsObj.learningRateDecayDictDict = dict({'min': minLearningDecay, 'max': maxLearningDecay})
         self.rangeForHyperParamsObj.activationArray = activationArray
         self.rangeForHyperParamsObj.nbrOfCategories = nbrOfCategories
         self.rangeForHyperParamsObj.nbrOfFeatures = nbrOfFeatures
@@ -398,7 +464,6 @@ class OptimizeModelView(tk.Frame):
         self.project = project
         self.loadDataModel = self.dataInteraction.getLoadDataModel(self.project.projectId)
         self.loadDataModel.dataIsForTraining = True
-        self.loadDataModel.loadData()
 
     def getActivationCheckBtnValues(self):
         """Gets values from checkbuttons for activation functions and returns an array in the form the optimizing

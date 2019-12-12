@@ -143,7 +143,6 @@ class ModelView(tk.Frame):
         self.project = project
         self.loadDataModel = self.dataInteraction.getLoadDataModel(self.project.projectId)
         self.loadDataModel.dataIsForTraining = True
-        self.loadDataModel.loadData()
 
     def setModel(self, model):
         self.model = model
@@ -209,6 +208,7 @@ class ModelView(tk.Frame):
             element.config(state="disabled")
 
     def trainModel(self):
+        self.loadDataModel.loadData()
         # get parameters
         rangeForHyperparamsObj = RangeForHyperParamsObj()
         minNbrOfNodes = self.entryNbrNodes.get()

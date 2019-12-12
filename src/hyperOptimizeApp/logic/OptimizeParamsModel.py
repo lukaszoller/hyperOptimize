@@ -205,11 +205,14 @@ class OptimizeParamsModel:
         """Checks if self.modelList is empty (that means if Optimization was executed). If not empty, it returns the
         model with the max success rate."""
         # Get best model is only possible if self.model list is not empty
-        if not self.modelList:  # if list is empty
-            raise Exception("OptimizeParamsModel.modelList is empty")
-        else:
-            maxSuccessIndex = np.argmax(self.successRateList)
-            return self.modelList[maxSuccessIndex]
+        # if not self.modelList:  # if list is empty
+        #     raise Exception("OptimizeParamsModel.modelList is empty")
+        # else:
+        #     maxSuccessIndex = np.argmax(self.successRateList)
+        #     return self.modelList[maxSuccessIndex]
+        if self.bestModel is None:
+            raise Exception("No best model found")
+        return self.bestModel
 
     def visualizeHyperparamsPerformance(self):
         """Creates a figure which can be displayed in a gui-window. Shows plot also in dev environment if not disabled."""
