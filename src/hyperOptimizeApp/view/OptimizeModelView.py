@@ -342,7 +342,7 @@ class OptimizeModelView(tk.Frame):
             return False
         if int(minLearning) < int(maxLearning):
             self.errorString += "Number of min Learning has to be greater than max Learning (negative Number)\n"
-        if (int(minLearning) > 7) or (int(minLearning) < 0) or (int(maxLearning) > 7) or (int(maxLearning < 0)):
+        if (int(minLearning) > 7) or (int(minLearning) < 0) or (int(maxLearning) > 7) or (int(maxLearning) < 0):
             self.errorString += "Learning rate has to be between 7 and 0\n"
 
         minLearningDecay = self.entryNbrMinLearningDecay.get()

@@ -106,6 +106,12 @@ class ControlFrame(tk.Frame):
             self.projectView.setProject(project)
         showFrame(self.projectView)
 
+    def setProjectFrameWithClassificationData(self, project, loadDataModel):
+        self.projectView.setTopText(project.getProjectName())
+        self.projectView.setProject(project)
+        self.projectView.setClassificationLoadDataModel(loadDataModel)
+        showFrame(self.projectView)
+
     def setModelFrame(self, model, project):
         self.modelView.setModel(model)
         self.modelView.setProject(project)

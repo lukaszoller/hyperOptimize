@@ -40,35 +40,33 @@ class LoadDataView(tk.Frame):
         firstColIsRowNbrCheckBtn.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
         # nbr of categories --> Braucht es nur, wenn daten für training sind
-        # if forTraining:
-        nbrCategoriesFrame = tk.Frame(self)
-        nbrCategoriesFrame.pack(fill=tk.X)
-        nbrCategoriesLabel = tk.Label(nbrCategoriesFrame,
-                                      text="Input number of categories (only positive numbers allowed)",
-                                      width=50)
-        nbrCategoriesLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        nbrCategoriesValidation = self.register(ValidationFunctions.isPositiveNumber)
-        self.entryNbrCategories = tk.Entry(nbrCategoriesFrame, width=10, validate="key",
-                                           validatecommand=(nbrCategoriesValidation, '%S'))
-        self.entryNbrCategories.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
-        self.nbrCategoriesWarning = tk.Label(nbrCategoriesFrame, text="")
-        self.nbrCategoriesWarning.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        if forTraining:
+            nbrCategoriesFrame = tk.Frame(self)
+            nbrCategoriesFrame.pack(fill=tk.X)
+            nbrCategoriesLabel = tk.Label(nbrCategoriesFrame,
+                                          text="Input number of categories (only positive numbers allowed)",
+                                          width=50)
+            nbrCategoriesLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+            nbrCategoriesValidation = self.register(ValidationFunctions.isPositiveNumber)
+            self.entryNbrCategories = tk.Entry(nbrCategoriesFrame, width=10, validate="key",
+                                               validatecommand=(nbrCategoriesValidation, '%S'))
+            self.entryNbrCategories.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
+            self.nbrCategoriesWarning = tk.Label(nbrCategoriesFrame, text="")
+            self.nbrCategoriesWarning.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
-
-
-        # training data starts at linenbr
-        trainRowNbrFrame = tk.Frame(self)
-        trainRowNbrFrame.pack(fill=tk.X)
-        trainRowNbrLabel = tk.Label(trainRowNbrFrame,
-                                      text="Input row number where training data starts",
-                                      width=50)
-        trainRowNbrLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        trainRowNbrValidation = self.register(ValidationFunctions.isPositiveNumber)
-        self.entrytrainRowNbr = tk.Entry(trainRowNbrFrame, width=10, validate="key",
-                                           validatecommand=(trainRowNbrValidation, '%S'))
-        self.entrytrainRowNbr.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
-        self.trainRowNbrWarning = tk.Label(trainRowNbrFrame, text="")
-        self.trainRowNbrWarning.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+            # training data starts at linenbr
+            trainRowNbrFrame = tk.Frame(self)
+            trainRowNbrFrame.pack(fill=tk.X)
+            trainRowNbrLabel = tk.Label(trainRowNbrFrame,
+                                          text="Input row number where training data starts",
+                                          width=50)
+            trainRowNbrLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+            trainRowNbrValidation = self.register(ValidationFunctions.isPositiveNumber)
+            self.entrytrainRowNbr = tk.Entry(trainRowNbrFrame, width=10, validate="key",
+                                               validatecommand=(trainRowNbrValidation, '%S'))
+            self.entrytrainRowNbr.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
+            self.trainRowNbrWarning = tk.Label(trainRowNbrFrame, text="")
+            self.trainRowNbrWarning.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
         # Load data btn
         dataBtnFrame = tk.Frame(self)
@@ -78,9 +76,15 @@ class LoadDataView(tk.Frame):
         self.loadDataInformation = tk.Label(dataBtnFrame, text="")
         self.loadDataInformation.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
+        if not forTraining:
+            loadDataBtn.config(command=lambda: self.loadPreviewDataforClassification())
+
         # Set data btn
         setDataBtn = tk.Button(dataBtnFrame, text="Set data", command=lambda: self.setData())
         setDataBtn.pack(side=tk.LEFT)
+
+        if not forTraining:
+            setDataBtn.config(command=lambda: self.setClassificationData())
 
 
         # Preview data table
@@ -134,6 +138,51 @@ class LoadDataView(tk.Frame):
         else:  # if data load worked do the following
             self.loadDataInformation.config(text="Data has been successfully loaded and stored.", fg="green")
             self.previewData()
+
+    def loadPreviewDataforClassification(self):
+        """Runs loadData from LoadDataModel. Runs also previewData from this class. Shows error warning in GUI if data
+        load does not work."""
+        # parameters for data load from GUI
+        self.loadDataModel.pathToDataSet = self.entryPath.get()
+        self.loadDataModel.firstRowIsTitle = bool(self.checkVarRow.get())
+        self.loadDataModel.firstColIsRowNbr = bool(self.checkVarCol.get())
+        # if entry field is empty, set nbrOfCategories to 0
+        self.loadDataModel.dataIsForTraining = False
+
+        # Load data
+        try:
+            self.loadDataModel.loadData()
+            print("LoadDataView: self.loadDataModel.data: ", self.loadDataModel.data)
+        except FileNotFoundError:
+            tk.messagebox.showerror("Error", " File not found.")
+        except ValueError:
+            tk.messagebox.showerror("Error", "The number of categories entered is incorrect. Enter number > 0 and smaller"
+                                             " the number of columns in the dataset.")
+        except:
+            print("Load data failed because of something different than nbrOfCategories entered or file not found.")
+        else:  # if data load worked do the following
+            self.loadDataInformation.config(text="Data has been successfully loaded and stored.", fg="green")
+            self.previewData()
+
+    def setClassificationData(self):
+        # Check if load Data model has been set
+        msg = ""
+        if self.loadDataModel.pathToDataSet == None:
+            msg = msg + "pathToDataSet parameter not correctly stored.\n"
+        if self.loadDataModel.firstRowIsTitle == None:
+            msg = msg + "firstRowIsTitle not correctly stored.\n"
+        if self.loadDataModel.firstColIsRowNbr == None:
+            msg = msg + "firstColIsRowNbr parameter not correctly stored.\n"
+        if self.loadDataModel.dataIsForTraining == None:
+            msg = msg + "dataIsForTraining not correctly stored.\n"
+        # Give Warning if
+        if msg != "":
+            msg = msg + "\nData has to be loaded correctly before leaving this window."
+            tk.messagebox.showwarning("Data not correctly stored", msg)
+            return
+
+        # try:
+        self.controlFrame.setProjectFrameWithClassificationData(self.project, self.loadDataModel)
 
     def setData(self):
         # Check if load Data model has been set

@@ -23,8 +23,8 @@ class TestOptimizeParamsModel():
         rangeForHyperParamsObj = RangeForHyperParamsObj()
         rangeForHyperParamsObj.dropOutDict = {'min': 0, 'max': 1}
         rangeForHyperParamsObj.activationArray = np.array(['sigmoid', 'elu', 'softmax'])
-        rangeForHyperParamsObj.lossFunctionArray = np.array(['binary_crossentropy'])
-        rangeForHyperParamsObj.modelOptimizerArray = np.array(['Adam'])
+        rangeForHyperParamsObj.lossFunctionArray = np.array(['binary_crossentropy', 'mean_squared_error', 'mean_squared_logarithmic_error', 'hinge'])
+        rangeForHyperParamsObj.modelOptimizerArray = np.array(['Adam', 'SGD', 'Adagrad', 'Adadelta'])
         rangeForHyperParamsObj.nbrOfFeatures = 784
         rangeForHyperParamsObj.learningRateDecayDict = {'min': 1e-7, 'max': 1e-5}
         rangeForHyperParamsObj.learningRateDict = {'min': 1e-5, 'max': 1e-1}
@@ -33,7 +33,7 @@ class TestOptimizeParamsModel():
         rangeForHyperParamsObj.nbrOfHiddenUnitsDict = {'min': 5, 'max': 100}
         rangeForHyperParamsObj.nbrOfCategories = 10
 
-        nbrOfModels = 2
+        nbrOfModels = 40
 
         hyperParamsObjList = createHyperParamsListRandom(rangeForHyperParamsObj, nbrOfModels)
 

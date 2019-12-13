@@ -16,6 +16,7 @@ class ProjectView(tk.Frame):
     projectInteract = ProjectInteractionModel()
     modelInteract = ModelInteractionModel()
     modelList = []
+    loadDataModelForClassification = None
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
@@ -90,14 +91,15 @@ class ProjectView(tk.Frame):
     def classifyData(self):
         """Classifies a dataset. That means it adds some columns to the dataset with categories and writes it to the
         filesyste. Checks execuded first: model is selected, data is loaded."""
-        # check if model is selected in modellist
-        if not self.modelListbox.curselection():
-            tk.messagebox.showwarning("Error", "Please select one model before classifying.")
+
         # check if data for classification is loaded
 
         # Get model
-        from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
-        model = MachineLearningModel()      # todo: get model from list selection
+        if not self.modelListbox.curselection() is ():
+            modelNumber = self.modelListbox.curselection()[0]
+            model = self.modelList.__getitem__(modelNumber)
+        else:
+            print("No Model selected")
         # Get data
         data = [1,2,3,4,5]                  # todo: get data from loadDataView (loadDataforClassification)
         pathToFile = "abc.csv"              # todo: get datapath from loadDataView
@@ -156,7 +158,10 @@ class ProjectView(tk.Frame):
         self.controlFrame.setLoadDataFrame(self.project)
 
     def loadClassificationData(self):
-        self.controlFrame.setLoadDataFrame(self.project)
+        self.controlFrame.setLoadClassificationDataFrame(self.project)
+
+    def setClassificationLoadDataModel(self, loadDataModel):
+        self.loadDataModelForClassification =loadDataModel
 
     def saveAndAddNewModel(self):
         self.saveProject()
