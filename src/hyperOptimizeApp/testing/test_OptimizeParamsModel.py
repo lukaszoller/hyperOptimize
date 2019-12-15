@@ -33,7 +33,7 @@ class TestOptimizeParamsModel():
         rangeForHyperParamsObj.nbrOfHiddenUnitsDict = {'min': 5, 'max': 100}
         rangeForHyperParamsObj.nbrOfCategories = 10
 
-        nbrOfModels = 40
+        nbrOfModels = 20
 
         hyperParamsObjList = createHyperParamsListRandom(rangeForHyperParamsObj, nbrOfModels)
 

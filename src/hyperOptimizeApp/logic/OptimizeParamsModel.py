@@ -70,7 +70,7 @@ class OptimizeParamsModel:
             # Save model if better than last, else drop
             #####################################################################################
             # get successRate of last model
-            # if successRateList is empty, last successRate = 0
+            # if this is first loop, last successRate = 0
             if len(self.successRateList) == 1:
                 lastSuccess = 0
             else: # get success of second last item
@@ -84,6 +84,9 @@ class OptimizeParamsModel:
             self.runningTimeList.append(runningTime)
             # print progress of loop
             print("************ Model", i+1, "from", l, "built. *************")
+            print("len(model.layers: ", len(model.model.layers))
+            print("model.layers: ", model.model.layers)
+
 
         #####################################################################################
         # Save running time measurements

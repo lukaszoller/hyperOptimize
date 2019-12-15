@@ -7,6 +7,7 @@ class MachineLearningModel:
     def __init__(self, hyperParamsObj, modelName='', modelId=0, model=tf.keras.models.Sequential()):
         self.modelName = modelName
         self.model = model
+        print("len(MachineLearningModel.model.layers): ", len(self.model.layers))
         self.hyperParamsObj = hyperParamsObj
         self.modelId = modelId
         print("MachineLearningModel: MachineLearningModel-constructor executed: ", self.model)
@@ -53,6 +54,7 @@ class MachineLearningModel:
 
         self.model.compile(optimizer=modelOptimizerObj, loss=lossFunction)
         print("MachineLearningModel.createNetwork: model compiled")
+        print("len(MachineLearningModel.model.layers): ", len(self.model.layers))
         self.model.summary()
 
     def trainNetwork(self, x, y, epochs):
