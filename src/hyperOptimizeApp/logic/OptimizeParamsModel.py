@@ -7,6 +7,7 @@ import time
 import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
+import tensorflow as tf
 
 
 class OptimizeParamsModel:
@@ -38,7 +39,7 @@ class OptimizeParamsModel:
             #####################################################################################
             # create model
             #####################################################################################
-            model = MachineLearningModel(hyperParamsObj, "unnamed Model")
+            model = MachineLearningModel(hyperParamsObj, "unnamed Model", modelId=0, model = tf.keras.models.Sequential())
             model.createNetwork()
             print("OptimizeParamsModel.evaluateModels: Model created.", model)
 
