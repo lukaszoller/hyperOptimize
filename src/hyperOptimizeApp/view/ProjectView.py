@@ -80,39 +80,44 @@ class ProjectView(tk.Frame):
         self.loadClassifyDataButton = tk.Button(fileSelectionClassifyFrame, text="Load classification data",
                                         command=lambda: self.loadClassificationData())
         self.loadClassifyDataButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.classifyDataPathLabel = tk.Label(fileSelectionClassifyFrame, text="No data for classification selected")
+        self.classifyDataPathLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
 
         # ROW 7 - Classify data button
         classifyButtonFrame = tk.Frame(self)
         classifyButtonFrame.pack(fill=tk.X)
         classifyButton = tk.Button(classifyButtonFrame, text="Classify data",
-                                   command=lambda: self.saveAndAddNewModel())
+                                   command=lambda: self.classifyData())
         classifyButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
     def classifyData(self):
         """Classifies a dataset. That means it adds some columns to the dataset with categories and writes it to the
         filesyste. Checks execuded first: model is selected, data is loaded."""
 
-        # Check if data is loaded
-        try:
-            xData, yData, rawData = self.loadDataModelForClassification.data
-            pathToFile = self.loadDataModelForClassification.pathToData
-        except:
-            tk.messagebox.showwarning("Error", "No data is loaded")
-            return
-
-        # Check if data for classification has correct shape
-        if not (np.shape(xData) == np.shape(xData)):          # Todo: get shape of training data for this project. Probably this check is easier to handle in loadDataView
-            tk.messagebox.showwarning("Error", "Data for classification has not same shape as Training data. Expected: ",
-                                      np.shape(xData), "Actual shape of classification data: ", np.shape(xData))        # todo: replace xData with trainingData at correct places
-            return
 
         # Get model
         if not self.modelListbox.curselection() is ():
             modelNumber = self.modelListbox.curselection()[0]
             model = self.modelList.__getitem__(modelNumber)
         else:
-            print("No Model selected")
-        # Get data
+            tk.messagebox.showwarning("Error", "Select model before classifying data.")
+
+        # Check if data is loaded
+        xData, yData, rawData = self.loadDataModelForClassification.data
+        pathToFile = self.loadDataModelForClassification.pathToDataSet
+        if self.loadDataModelForClassification == None:
+            tk.messagebox.showwarning("Error", "No data is loaded")
+            return
+
+
+        # Check if data for classification has correct shape
+        if not (np.shape(xData)[1] == model.getNbrOfFeatures()):
+            tk.messagebox.showwarning("Error",
+                                      "Data for classification has not same nbr of colums as features in training data. "
+                                      "Expected: ", np.shape(xData)[0], "Actual shape of classification data: ",
+                                      model.getNbrOfFeatures())
+            return
 
         # classify data
         classifiedData = model.predict(xData)
@@ -169,6 +174,8 @@ class ProjectView(tk.Frame):
 
     def loadClassificationData(self):
         self.controlFrame.setLoadClassificationDataFrame(self.project)
+        if not self.loadDataModelForClassification == None:
+            self.classifyDataPathLabel.config(text="Classification data available.", bg="green")
 
     def setClassificationLoadDataModel(self, loadDataModel):
         self.loadDataModelForClassification =loadDataModel
