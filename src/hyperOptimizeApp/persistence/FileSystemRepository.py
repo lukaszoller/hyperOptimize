@@ -64,4 +64,4 @@ class FileSystemRepository:
             y = data[:, nbrOfFeatures:nbrOfCols]
             return x, y, rawData
         else:
-            return x, rawData
+            return x, 0, rawData

@@ -84,7 +84,7 @@ class ProjectView(tk.Frame):
         # ROW 7 - Classify data button
         classifyButtonFrame = tk.Frame(self)
         classifyButtonFrame.pack(fill=tk.X)
-        classifyButton = tk.Button(classifyButtonFrame, text="New Model",
+        classifyButton = tk.Button(classifyButtonFrame, text="Classify data",
                                    command=lambda: self.saveAndAddNewModel())
         classifyButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
@@ -92,7 +92,19 @@ class ProjectView(tk.Frame):
         """Classifies a dataset. That means it adds some columns to the dataset with categories and writes it to the
         filesyste. Checks execuded first: model is selected, data is loaded."""
 
-        # check if data for classification is loaded
+        # Check if data is loaded
+        try:
+            xData, yData, rawData = self.loadDataModelForClassification.data
+            pathToFile = self.loadDataModelForClassification.pathToData
+        except:
+            tk.messagebox.showwarning("Error", "No data is loaded")
+            return
+
+        # Check if data for classification has correct shape
+        if not (np.shape(xData) == np.shape(xData)):          # Todo: get shape of training data for this project. Probably this check is easier to handle in loadDataView
+            tk.messagebox.showwarning("Error", "Data for classification has not same shape as Training data. Expected: ",
+                                      np.shape(xData), "Actual shape of classification data: ", np.shape(xData))        # todo: replace xData with trainingData at correct places
+            return
 
         # Get model
         if not self.modelListbox.curselection() is ():
@@ -101,11 +113,9 @@ class ProjectView(tk.Frame):
         else:
             print("No Model selected")
         # Get data
-        data = [1,2,3,4,5]                  # todo: get data from loadDataView (loadDataforClassification)
-        pathToFile = "abc.csv"              # todo: get datapath from loadDataView
 
         # classify data
-        classifiedData = model.predict(data)
+        classifiedData = model.predict(xData)
         # write data to filesystem
         try:
             pathToWrite = re.sub('.csv$', '_classified.csv', pathToFile)

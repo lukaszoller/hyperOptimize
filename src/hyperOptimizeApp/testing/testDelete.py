@@ -9,5 +9,8 @@ from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParam
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
 
+trainData = np.zeros((100, 10))
+np.savetxt('zerosTraining.csv', trainData, delimiter=',')
 
-my_data = np.genfromtxt('E:/mnist_train.csv', delimiter=',')
+testData = np.zeros((100, 9))
+np.savetxt('zerosTest.csv', testData, delimiter=',')
