@@ -32,11 +32,12 @@ class OptimizeModelView(tk.Frame):
 
     def __init__(self, main, width, height):
         tk.Frame.__init__(self, main)
+        self.width = width
 
         self.place(relx=0, rely=0, height=height, width=width)
 
         # Text on opening window
-        welcomeFrame = tk.Frame(self)
+        welcomeFrame = tk.Frame(self, width=self.width-100)
         welcomeFrame.pack(fill=tk.X)
         welcomeText = tk.Label(welcomeFrame, text='Here you can optimize a Model \n'
                                                   'Please consider checking the time to execute')
@@ -44,21 +45,23 @@ class OptimizeModelView(tk.Frame):
 
         # Row with sliders for choosing number of Layers
         # Todo: validation functions for correct number handling
-        layerFrame = tk.Frame(self)
+        layerFrame = tk.Frame(self, width=self.width-100)
         layerFrame.pack(fill=tk.X)
+        innerLayerFrame = tk.Frame(layerFrame, width=self.width - 110)
+        innerLayerFrame.pack(fill=tk.X, side=tk.RIGHT)
         layerText = tk.Label(layerFrame, text='Range of Layers to test')
         layerText.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
         self.nbrLayersValidation = (self.register(ValidationFunctions.isPositiveNumber), '%S')
-        self.entryNbrMinLayers = tk.Entry(layerFrame, width=10, validate="key",
+        self.entryNbrMinLayers = tk.Entry(innerLayerFrame, width=10, validate="key",
                                           validatecommand=self.nbrLayersValidation)
         self.entryNbrMinLayers.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        self.entryNbrMaxLayers = tk.Entry(layerFrame, width=10, validate="key",
+        self.entryNbrMaxLayers = tk.Entry(innerLayerFrame, width=10, validate="key",
                                           validatecommand=self.nbrLayersValidation)
         self.entryNbrMaxLayers.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        layerHelp = tk.Label(layerFrame, text='?')
+        layerHelp = tk.Label(innerLayerFrame, text='?')
         layerHelp.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         # self.layerSlider = RangeSlider(self, text='minmax', lowerBound=2, upperBound=self.MAX_LAYERS,
@@ -74,22 +77,24 @@ class OptimizeModelView(tk.Frame):
         # self.layerSlider.setSnapToTicks(True)
 
         # Row with sliders for choosing number of Nodes per Layer
-        nodeFrame = tk.Frame(self)
+        nodeFrame = tk.Frame(self, width=self.width-100)
         nodeFrame.pack(fill=tk.X)
+        innerNodeFrame = tk.Frame(nodeFrame, width=self.width - 110)
+        innerNodeFrame.pack(side=tk.RIGHT, fill=tk.X)
         nodeText = tk.Label(nodeFrame, text='Range of Nodes\nper layer to test')
         nodeText.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
         self.nbrNodesValidation = self.register(ValidationFunctions.isPositiveNumber)
 
-        self.entryNbrMinNodes = tk.Entry(nodeFrame, width=10, validate="key",
+        self.entryNbrMinNodes = tk.Entry(innerNodeFrame, width=10, validate="key",
                                          validatecommand=(self.nbrNodesValidation, '%S'))
         self.entryNbrMinNodes.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        self.entryNbrMaxNodes = tk.Entry(nodeFrame, width=10, validate="key",
+        self.entryNbrMaxNodes = tk.Entry(innerNodeFrame, width=10, validate="key",
                                          validatecommand=(self.nbrNodesValidation, '%S'))
         self.entryNbrMaxNodes.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        nodeHelp = tk.Label(nodeFrame, text='?')
+        nodeHelp = tk.Label(innerNodeFrame, text='?')
         nodeHelp.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         # self.nodeSlider = RangeSlider(self, text='minmax', lowerBound=2, upperBound=self.MAX_LAYERS,
@@ -103,71 +108,79 @@ class OptimizeModelView(tk.Frame):
         # self.nodeSlider.setSnapToTicks(True)
 
         # Row with slider für Dropout
-        dropoutFrame = tk.Frame(self)
+        dropoutFrame = tk.Frame(self, width=self.width-100)
         dropoutFrame.pack(fill=tk.X)
+        innerDropoutFrame = tk.Frame(dropoutFrame, width=self.width - 110)
+        innerDropoutFrame.pack(side=tk.RIGHT, fill=tk.X)
         dropoutText = tk.Label(dropoutFrame, text='Percentage of nodes weights set to 0\n'
                                                   'min: 1, max 99')
         dropoutText.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         self.nbrDropoutValidation = self.register(ValidationFunctions.isPositiveNumber)
 
-        self.entryNbrMinDropout = tk.Entry(dropoutFrame, width=10, validate="key",
+        self.entryNbrMinDropout = tk.Entry(innerDropoutFrame, width=10, validate="key",
                                            validatecommand=(self.nbrDropoutValidation, '%S'))
         self.entryNbrMinDropout.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        self.entryNbrMaxDropout = tk.Entry(dropoutFrame, width=10, validate="key",
+        self.entryNbrMaxDropout = tk.Entry(innerDropoutFrame, width=10, validate="key",
                                            validatecommand=(self.nbrDropoutValidation, '%S'))
         self.entryNbrMaxDropout.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        dropoutHelp = tk.Label(dropoutFrame, text='?')
+        dropoutHelp = tk.Label(innerDropoutFrame, text='?')
         dropoutHelp.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         # self.dropoutSlider = tk.Scale(self, from_=0.01, to=1, orient=tk.HORIZONTAL, resolution=0.01)
         # self.dropoutSlider.grid(row=rowCount, column=2, padx=5, pady=3)
 
         # Row for picking Learning rate:
-        learningFrame = tk.Frame(self)
+        learningFrame = tk.Frame(self, width=self.width-100)
         learningFrame.pack(fill=tk.X)
+        innerLearningFrame = tk.Frame(learningFrame, width=self.width - 110)
+        innerLearningFrame.pack(side=tk.RIGHT, fill=tk.X)
         learningText = tk.Label(learningFrame, text='Negative Log of Learning rate\n'
                                                     'min 7 for 1e-7, max 0 for 1e-0')
         learningText.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         self.nbrLearningValidation = self.register(ValidationFunctions.isPositiveNumber)
 
-        self.entryNbrMinLearning = tk.Entry(learningFrame, width=10, validate="key",
+        self.entryNbrMinLearning = tk.Entry(innerLearningFrame, width=10, validate="key",
                                             validatecommand=(self.nbrLearningValidation, '%S'))
         self.entryNbrMinLearning.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        self.entryNbrMaxLearning = tk.Entry(learningFrame, width=10, validate="key",
+        self.entryNbrMaxLearning = tk.Entry(innerLearningFrame, width=10, validate="key",
                                             validatecommand=(self.nbrLearningValidation, '%S'))
         self.entryNbrMaxLearning.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        learningHelp = tk.Label(learningFrame, text='?')
+        learningHelp = tk.Label(innerLearningFrame, text='?')
         learningHelp.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         # Row for picking Learning rate decay:
-        learningDecayFrame = tk.Frame(self)
+        learningDecayFrame = tk.Frame(self, width=self.width-100)
         learningDecayFrame.pack(fill=tk.X)
+        innerLearningDecayFrame = tk.Frame(learningDecayFrame, width=self.width - 110)
+        innerLearningDecayFrame.pack(side=tk.RIGHT, fill=tk.X)
         learningDecayText = tk.Label(learningDecayFrame, text='Negative Log of Learning rate decay\n'
                                                               'min 10 for 1e-10, max 1 for 1e-1')
         learningDecayText.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         self.nbrLearningDecayValidation = self.register(ValidationFunctions.isPositiveNumber)
 
-        self.entryNbrMinLearningDecay = tk.Entry(learningDecayFrame, width=10, validate="key",
+        self.entryNbrMinLearningDecay = tk.Entry(innerLearningDecayFrame, width=10, validate="key",
                                                  validatecommand=(self.nbrLearningDecayValidation, '%S'))
         self.entryNbrMinLearningDecay.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        self.entryNbrMaxLearningDecay = tk.Entry(learningDecayFrame, width=10, validate="key",
+        self.entryNbrMaxLearningDecay = tk.Entry(innerLearningDecayFrame, width=10, validate="key",
                                                  validatecommand=(self.nbrLearningDecayValidation, '%S'))
         self.entryNbrMaxLearningDecay.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        learningDecayHelp = tk.Label(learningDecayFrame, text='?')
+        learningDecayHelp = tk.Label(innerLearningDecayFrame, text='?')
         learningDecayHelp.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         # Row with picking of different activation Functions
-        activationFrame = tk.Frame(self)
+        activationFrame = tk.Frame(self, width=self.width-100)
         activationFrame.pack(fill=tk.X)
+        innerActivationFrame = tk.Frame(activationFrame, width=self.width - 110)
+        innerActivationFrame.pack(side=tk.RIGHT, fill=tk.X)
         self.activationCheckBtnVarDict = dict()
 
         activationText = tk.Label(activationFrame, text='Activation functions to choose')
@@ -176,48 +189,50 @@ class OptimizeModelView(tk.Frame):
         ## Sigmoid
         sigmoidBoxName = "Sigmoid Function"
         self.sigmoidVar = tk.IntVar(0)
-        sigmoidBox = tk.Checkbutton(activationFrame, text=sigmoidBoxName, variable=self.sigmoidVar)
+        sigmoidBox = tk.Checkbutton(innerActivationFrame, text=sigmoidBoxName, variable=self.sigmoidVar)
         sigmoidBox.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
         self.activationCheckBtnVarDict['sigmoid'] = self.sigmoidVar
 
         ## Linear
         linearBoxName = "Linear Function"
         self.linearVar = tk.IntVar(0)
-        linearBox = tk.Checkbutton(activationFrame, text=linearBoxName, variable=self.linearVar)
+        linearBox = tk.Checkbutton(innerActivationFrame, text=linearBoxName, variable=self.linearVar)
         linearBox.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
         self.activationCheckBtnVarDict['linear'] = self.linearVar
 
         ## Tanh
         tanhBoxName = "Tanh Function"
         self.tanhVar = tk.IntVar(0)
-        tanhBox = tk.Checkbutton(activationFrame, text=tanhBoxName, variable=self.tanhVar)
+        tanhBox = tk.Checkbutton(innerActivationFrame, text=tanhBoxName, variable=self.tanhVar)
         tanhBox.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
         self.activationCheckBtnVarDict['tanh'] = self.tanhVar
 
         ## Relu
         reluBoxName = "ReLu Function"
         self.reluVar = tk.IntVar(0)
-        reluBox = tk.Checkbutton(activationFrame, text=reluBoxName, variable=self.reluVar)
+        reluBox = tk.Checkbutton(innerActivationFrame, text=reluBoxName, variable=self.reluVar)
         reluBox.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
         self.activationCheckBtnVarDict['relu'] = self.reluVar
 
-        activationHelp = tk.Label(activationFrame, text='?')
+        activationHelp = tk.Label(innerActivationFrame, text='?')
         activationHelp.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         # Row with slider für nbrOfModels
-        nbrOfModelsFrame = tk.Frame(self)
+        nbrOfModelsFrame = tk.Frame(self, width=self.width-100)
         nbrOfModelsFrame.pack(fill=tk.X)
+        innerNbrOfModelsFrame = tk.Frame(nbrOfModelsFrame, width=self.width - 110)
+        innerNbrOfModelsFrame.pack(side=tk.RIGHT, fill=tk.X)
         nbrOfModelsText = tk.Label(nbrOfModelsFrame, text='Number of models')
         nbrOfModelsText.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        self.nbrOfModelsSlider = tk.Scale(nbrOfModelsFrame, from_=2, to=100, orient=tk.HORIZONTAL, resolution=1)
+        self.nbrOfModelsSlider = tk.Scale(innerNbrOfModelsFrame, from_=2, to=100, orient=tk.HORIZONTAL, resolution=1)
         self.nbrOfModelsSlider.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        nbrOfModelsHelp = tk.Label(nbrOfModelsFrame, text='?')
+        nbrOfModelsHelp = tk.Label(innerNbrOfModelsFrame, text='?')
         nbrOfModelsHelp.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         # Final Row (Train Model)
-        trainFrame = tk.Frame(self)
+        trainFrame = tk.Frame(self, width=self.width-100)
         trainFrame.pack(fill=tk.X)
         trainModelButton = tk.Button(trainFrame, text='Optimize', command=lambda: self.checkAndOptimize())
         trainModelButton.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
@@ -258,6 +273,7 @@ class OptimizeModelView(tk.Frame):
         if not self.checkActivation():
             tk.messagebox.showwarning("Activation Error", "Please select at least one activation function!")
             return
+        # Check the other parameters
         if not self.checkInputs():
             tk.messagebox.showwarning("Input Error", self.errorString)
             return
@@ -289,8 +305,10 @@ class OptimizeModelView(tk.Frame):
 
             # Update model with optimized params
             self.modelInteraction.updateModelParams(self.model, bestModel)
-            self.model.modelName = self.model.modelName + " [Trained]"
-            self.modelInteraction.setModelByIdAsTrained(self.model, self.model.modelId)
+            # Indicate visually that the model has been trained (again).
+            if "[Trained]" not in self.model.modelName:
+                self.model.modelName = self.model.modelName + " [Trained]"
+                self.modelInteraction.setModelByIdAsTrained(self.model, self.model.modelId)
             self.model = self.modelInteraction.getModelById(self.model.modelId)
 
             ## todo: delete after debugging
@@ -343,7 +361,7 @@ class OptimizeModelView(tk.Frame):
             self.errorString += "Min Dropout must be smaller than Max Dropout\n"
         if (int(minDropout) < 1) or (int(maxDropout) < 1):
             self.errorString += "Min Number of Dropout is: 1(%)\n"
-        if (int(minDropout) > 99) or (int(maxNodes) > 99):
+        if (int(minDropout) > 99) or (int(maxDropout) > 99):
             self.errorString += "Max Number of Dropout is: 99(%)\n"
 
         minLearning = self.entryNbrMinLearning.get()
@@ -362,7 +380,7 @@ class OptimizeModelView(tk.Frame):
             self.errorString += "Insufficient entries in Learning rate\n"
         if int(minLearningDecay) < int(maxLearningDecay):
             self.errorString += "Number of min Learning has to be greater than max Learning (negative Number)\n"
-        if (int(minLearning) > 10) or (int(minLearning) < 1) or (int(maxLearning) > 10) or (int(maxLearning) < 1):
+        if (int(minLearningDecay) > 10) or (int(minLearningDecay) < 1) or (int(maxLearningDecay) > 10) or (int(maxLearningDecay) < 1):
             self.errorString += "Learning rate has to be between 10 and 1\n"
 
         print(self.errorString)
@@ -397,10 +415,6 @@ class OptimizeModelView(tk.Frame):
         is needed for the estimation. Returns the time estimate (stringTime, timeInSeconds)."""
         # if not existent, create optimizeParamsModel (this has to be optional because self.checkAndOptimize() needs it too
         # and its not clear if this function or self.estimateTime is executed first.
-        if self.loadDataModel.data is None:
-            self.loadDataModel.loadData()
-        if self.loadDataModel.data is None:
-            tk.messagebox.showwarning("Data Error", "No data has been loaded to project. Load data before optimizing.")
         self.createOptimizeParamsModel()  # this line exists two times, second one in self.checkAndOptimize. It runs
         # optionally.
         etm = EstimateTimeModel()
@@ -408,6 +422,19 @@ class OptimizeModelView(tk.Frame):
         return timeEstimate
 
     def showTimeEstimateInformation(self):
+        # Check if at least one activation function has been chosen
+        if not self.checkActivation():
+            tk.messagebox.showwarning("Activation Error", "Please select at least one activation function!")
+            return
+        # Check the other parameters
+        if not self.checkInputs():
+            tk.messagebox.showwarning("Input Error", self.errorString)
+            return
+        # Check if data is loaded:
+        if self.loadDataModel.data is None:
+            self.loadDataModel.loadData()
+        if self.loadDataModel.data is None:
+            tk.messagebox.showwarning("Data Error", "No data has been loaded to project. Load data before optimizing.")
         stringTime, timeInSeconds = self.estimateTime()
         message = "The optimization will take approximately " + stringTime + " [hh:mm:ss]."
         tk.messagebox.showinfo("Running time estimation", message)
@@ -463,7 +490,7 @@ class OptimizeModelView(tk.Frame):
         self.rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': minNbrOfNodes, 'max': maxNbrOfNodes})
         self.rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
         self.rangeForHyperParamsObj.learningRateDict = dict({'min': minLearning, 'max': maxLearning})
-        self.rangeForHyperParamsObj.learningRateDecayDictDict = dict({'min': minLearningDecay, 'max': maxLearningDecay})
+        self.rangeForHyperParamsObj.learningRateDecayDict = dict({'min': minLearningDecay, 'max': maxLearningDecay})
         self.rangeForHyperParamsObj.activationArray = activationArray
         self.rangeForHyperParamsObj.nbrOfCategories = nbrOfCategories
         self.rangeForHyperParamsObj.nbrOfFeatures = nbrOfFeatures

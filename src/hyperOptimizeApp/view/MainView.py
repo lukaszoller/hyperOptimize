@@ -6,7 +6,7 @@ from src.hyperOptimizeApp.view.ProjectView import ProjectView
 from src.hyperOptimizeApp.view.ModelView import ModelView
 from src.hyperOptimizeApp.view.OptimizeModelView import OptimizeModelView
 from src.hyperOptimizeApp.view.LoadDataView import LoadDataView
-from src.hyperOptimizeApp.persistence.dbInteraction import DatabaseProjectModel
+from src.hyperOptimizeApp.persistence.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandas import DataFrame
 

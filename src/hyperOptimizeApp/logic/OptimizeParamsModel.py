@@ -34,6 +34,15 @@ class OptimizeParamsModel:
         l = len(self.hyperParamsObjList)
         for i in range(0, l):
             hyperParamsObj = self.hyperParamsObjList[i]
+            print("################################ HyperParameters of model", i+1, "of", l, ":. ###############################")
+            print("Number of Hidden Layers: " + str(len(hyperParamsObj.nbrOfNodesArray)))
+            print("Number of Nodes per Layer: " + str(hyperParamsObj.nbrOfNodesArray[1]))
+            print("Activation Function: " + str(hyperParamsObj.activationFunction))
+            print("Dropout Rate: " + str(hyperParamsObj.dropOutRate))
+            print("Learning Rate: " + str(hyperParamsObj.learningRate))
+            print("Learning Rate Decay: " + str(hyperParamsObj.learningRateDecay))
+            print("Loss Function: " + str(hyperParamsObj.lossFunction))
+            print("Model Optimizer: " + str(hyperParamsObj.modelOptimizer))
             startTime = time.clock()
             print("################################ Building of model", i+1, "of", l, "started. ################################")
             #####################################################################################

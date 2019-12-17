@@ -13,12 +13,13 @@ class RangeForHyperParamsObj:
         self.nbrOfHiddenLayersDict = dict({'min': 0, 'max': 0})     #wichtig
         self.nbrOfHiddenUnitsDict = dict({'min': 0, 'max': 0})      #wichtig von Nodes abgeleitet (Nodes pro Layer)
         self.activationArray = 0 #= np.array()                      #mal noch nicht
-        self.dropOutDict = 0#= np.array()                           #irgendwas zwischen 0 und 1
+        self.dropOutDict = dict({'min': 0, 'max': 0})               #irgendwas zwischen 0 und 100
         self.lossFunctionArray = np.array(['mean_squared_error'])   # default setting from keras
         self.modelOptimizerArray = np.array(['SGD'])                # default setting from keras
+        #self.modelOptimizerArray = np.array(['Adam'])
         self.learningRateDict = dict({'min': 1e-7, 'max': 1e-5})    # default setting from keras
         self.learningRateLogBool = True
-        self.learningRateDecayDict = dict({'min': 1e-6, 'max': 1e-2}) # default setting from keras
+        self.learningRateDecayDict = dict({'min': 1e-10, 'max': 1e-10}) # default setting from keras
         self.nbrOfCategories = 0
 
 
@@ -52,7 +53,10 @@ def createHyperParamsListRandom(rangeForHyperparamsObj, nbrOfModels):
     indexForActivationArray = np.random.random_integers(0, len(rangeForHyperparamsObj.activationArray) - 1,
                                                         nbrOfModels)
     # dropOutArray: The dropout rate for each model
-    dropOutArray = np.random.random_sample(nbrOfModels)
+    nbrOfDropoutMin = rangeForHyperparamsObj.dropOutDict.get('min')
+    nbrOfDropoutMax = rangeForHyperparamsObj.dropOutDict.get('max')
+    dropOutArray = np.random.random_integers(nbrOfDropoutMin, nbrOfDropoutMax, nbrOfModels)
+
     # lossFunction
     lossFunctionArray = np.random.choice(rangeForHyperparamsObj.lossFunctionArray, nbrOfModels,
                                          replace=True)
@@ -67,11 +71,11 @@ def createHyperParamsListRandom(rangeForHyperparamsObj, nbrOfModels):
         nbrOfModels) + minLog                                       # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
     learningRateArray = np.power(10, exponents)
     # learningRateDecay
-    minLrd = rangeForHyperparamsObj.learningRateDecayDict.get('min')
-    maxLrd = rangeForHyperparamsObj.learningRateDecayDict.get('max')
-    learningRateDecayArray = (maxLrd - minLrd) * np.random.random_sample(
+    minLrd = np.log10(rangeForHyperparamsObj.learningRateDecayDict.get('min'))
+    maxLrd = np.log10(rangeForHyperparamsObj.learningRateDecayDict.get('max'))
+    lrdExponents = (maxLrd - minLrd) * np.random.random_sample(
         nbrOfModels) + minLrd  # code from: https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.random_sample.html
-
+    learningRateDecayArray = np.power(10, lrdExponents)
     #############################################################
     # Construct a dict for each model with the above arrays
     #############################################################
@@ -115,7 +119,7 @@ def createHyperParamsListRandom(rangeForHyperparamsObj, nbrOfModels):
         tmpHyperParamsObj.activationFunction = rangeForHyperparamsObj.activationArray[
             indexForActivationArray[i]]
         # Drop out rate for all layers of one model
-        tmpHyperParamsObj.dropOutRate = dropOutArray[i]
+        tmpHyperParamsObj.dropOutRate = float(dropOutArray[i]) / 100
         # Loss function
         tmpHyperParamsObj.lossFunction = lossFunctionArray[i]
         # learning rate decay

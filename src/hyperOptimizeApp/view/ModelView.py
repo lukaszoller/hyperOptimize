@@ -234,8 +234,10 @@ class ModelView(tk.Frame):
 
         # save model to db
         self.modelInteraction.updateModelParams(self.model, self.model)
-        self.model.modelName = self.model.modelName + " [Trained]"
-        self.modelInteraction.setModelByIdAsTrained(self.model, self.model.modelId)
+        # Indicate visually that the model has been trained (again).
+        if "[Trained]" not in self.model.modelName:
+            self.model.modelName = self.model.modelName + " [Trained]"
+            self.modelInteraction.setModelByIdAsTrained(self.model, self.model.modelId)
         self.model = self.modelInteraction.getModelById(self.model.modelId)
 
     def getTrainData(self):
