@@ -259,10 +259,13 @@ class OptimizeModelView(tk.Frame):
         # Check if at least one activation function has been chosen
         if not self.checkActivation():
             tk.messagebox.showwarning("Activation Error", "Please select at least one activation function!")
+            return
         if not self.checkInputs():
             tk.messagebox.showwarning("Input Error", self.errorString)
+            return
         # Check if data has been loaded
-        self.loadDataModel.loadData()
+        if self.loadDataModel.data is None:
+            self.loadDataModel.loadData()
         if self.loadDataModel.data is None:
             tk.messagebox.showwarning("Data Error", "No data has been loaded to project. Load data before optimizing.")
         else:
@@ -393,6 +396,10 @@ class OptimizeModelView(tk.Frame):
         is needed for the estimation. Returns the time estimate (stringTime, timeInSeconds)."""
         # if not existent, create optimizeParamsModel (this has to be optional because self.checkAndOptimize() needs it too
         # and its not clear if this function or self.estimateTime is executed first.
+        if self.loadDataModel.data is None:
+            self.loadDataModel.loadData()
+        if self.loadDataModel.data is None:
+            tk.messagebox.showwarning("Data Error", "No data has been loaded to project. Load data before optimizing.")
         self.createOptimizeParamsModel()  # this line exists two times, second one in self.checkAndOptimize. It runs
         # optionally.
         etm = EstimateTimeModel()

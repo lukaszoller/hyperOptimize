@@ -39,7 +39,7 @@ class OptimizeParamsModel:
             #####################################################################################
             # create model
             #####################################################################################
-            model = MachineLearningModel(hyperParamsObj, "unnamed Model", modelId=0, model = tf.keras.models.Sequential())
+            model = MachineLearningModel(hyperParamsObj, "unnamed Model", modelId=0, model=tf.keras.models.Sequential())
             model.createNetwork()
             print("OptimizeParamsModel.evaluateModels: Model created.", model)
 
