@@ -4,10 +4,10 @@ import numpy as np
 from src.hyperOptimizeApp.persistence.FileSystemRepository import FileSystemRepository
 
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
-from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
+from src.hyperOptimizeApp.persistence.FileSystemRepository import FileSystemRepository
 
 
-class SaverLoaderTester():
+class FileSystemRepositoryTester():
 
     def test_hyperParamsListToData(self):
         # Create List with hyperParamsObj
@@ -19,8 +19,8 @@ class SaverLoaderTester():
             l.append(h)
 
         # Convert hyperParamsObjList to data
-        sl = SaverLoader()
-        x = sl.hyperParamsListToData(l)
+        fl = FileSystemRepository()
+        x = fl.hyperParamsListToData(l)
         print(
             "################################# Test 1: test_hyperParamsListToData() #################################")
         print(x)
@@ -31,8 +31,8 @@ class SaverLoaderTester():
 
     def test_getEstTimeData(self):
         print("################################# Test 2: test_getEstTimeData() #################################")
-        sl = SaverLoader()
-        (x, y) = sl.getEstTimeData()
+        fl = FileSystemRepository()
+        (x, y) = fl.getEstTimeData()
         print("X:", x)
         print("Y:", y)
 
@@ -52,8 +52,8 @@ class SaverLoaderTester():
         timeMeasurement = np.full(len(hyperParamsObjList), 999)
 
         # Write data to csv
-        sl = SaverLoader()
-        sl.saveTimeMeasurementData(hyperParamsObjList, timeMeasurement)
+        fl = FileSystemRepository()
+        fl.saveTimeMeasurementData(hyperParamsObjList, timeMeasurement)
         print(
             "################################# Test 3: test_saveTimeMeasurementData() #################################")
         print("Check manually if estTimeData.csv, has 10 new rows [1, 3, 5], [999]")

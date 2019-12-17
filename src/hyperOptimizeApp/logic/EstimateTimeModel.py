@@ -1,5 +1,5 @@
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
-from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
+from src.hyperOptimizeApp.persistence.FileSystemRepository import SaverLoader
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures

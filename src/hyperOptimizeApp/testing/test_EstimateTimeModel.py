@@ -3,7 +3,7 @@ from unittest import TestCase
 import numpy as np
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
-from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
+from src.hyperOptimizeApp.persistence.FileSystemRepository import SaverLoader
 
 
 class EstimateTimeModelTester():
