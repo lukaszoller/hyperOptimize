@@ -3,7 +3,7 @@ import sqlite3
 import datetime
 import tensorflow as tf
 import jsonpickle
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
+from src.hyperOptimizeApp.persistence.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 from src.hyperOptimizeApp.logic.LoadDataModel import LoadDataModel

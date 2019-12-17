@@ -1,7 +1,4 @@
 import tkinter as tk  # python 3
-import numpy as np
-from matplotlib.figure import Figure
-from tkinter import font as tkfont  # python 3
 import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.logic.LoadDataModel import LoadDataModel
 from src.hyperOptimizeApp.view.HomeView import HomeView
@@ -9,7 +6,7 @@ from src.hyperOptimizeApp.view.ProjectView import ProjectView
 from src.hyperOptimizeApp.view.ModelView import ModelView
 from src.hyperOptimizeApp.view.OptimizeModelView import OptimizeModelView
 from src.hyperOptimizeApp.view.LoadDataView import LoadDataView
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
+from src.hyperOptimizeApp.persistence.dbInteraction import DatabaseProjectModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandas import DataFrame
 

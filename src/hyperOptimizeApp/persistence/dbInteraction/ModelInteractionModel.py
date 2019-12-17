@@ -1,7 +1,6 @@
-from src.hyperOptimizeApp.persistence.DatabaseConnector import DatabaseConnector
+from hyperOptimizeApp.persistence.core.DatabaseConnector import DatabaseConnector
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
-import json
 
 
 class ModelInteractionModel:

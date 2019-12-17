@@ -2,9 +2,9 @@ import tkinter as tk
 import tkinter.messagebox
 from tkinter import simpledialog
 
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
-from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
-from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
+from src.hyperOptimizeApp.persistence.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
+from src.hyperOptimizeApp.persistence.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
+from src.hyperOptimizeApp.persistence.dbInteraction.ModelInteractionModel import ModelInteractionModel
 from src.hyperOptimizeApp.view.tools import LayoutConstants
 import re
 import numpy as np

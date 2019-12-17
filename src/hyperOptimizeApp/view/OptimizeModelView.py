@@ -3,15 +3,13 @@ import tkinter.messagebox
 from src.hyperOptimizeApp.logic.OptimizeParamsModel import OptimizeParamsModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
-from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
-from src.hyperOptimizeApp.logic.dbInteraction.ModelInteractionModel import ModelInteractionModel
+from src.hyperOptimizeApp.persistence.dbInteraction.DataInteractionModel import DataInteractionModel
+from src.hyperOptimizeApp.persistence.dbInteraction.ModelInteractionModel import ModelInteractionModel
 from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
-from src.hyperOptimizeApp.view.tools.RangeSlider import *
-from src.hyperOptimizeApp.view import ValidationFunctions
+from src.hyperOptimizeApp.view.tools import ValidationFunctions
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.view.tools import LayoutConstants
 
 

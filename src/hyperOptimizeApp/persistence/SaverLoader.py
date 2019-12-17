@@ -1,6 +1,5 @@
-from src.hyperOptimizeApp.persistence.DatabaseConnector import DatabaseConnector
+from hyperOptimizeApp.persistence.core.DatabaseConnector import DatabaseConnector
 import numpy as np
-import pandas as pd
 import cpuinfo
 
 

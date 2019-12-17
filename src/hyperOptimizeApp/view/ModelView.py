@@ -1,11 +1,10 @@
 import tkinter as tk
-from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
-from src.hyperOptimizeApp.logic.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 from src.hyperOptimizeApp.view.tools import LayoutConstants
-from src.hyperOptimizeApp.view import ValidationFunctions
+from src.hyperOptimizeApp.view.tools import ValidationFunctions
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
-from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
+from src.hyperOptimizeApp.persistence.dbInteraction.DataInteractionModel import DataInteractionModel
+from src.hyperOptimizeApp.persistence.dbInteraction.ModelInteractionModel import ModelInteractionModel
 
 
 class ModelView(tk.Frame):
@@ -13,6 +12,7 @@ class ModelView(tk.Frame):
     controlFrame = None
     project = None
     dataInteraction = DataInteractionModel()
+    modelInteraction = ModelInteractionModel()
     loadDataModel = None
 
     def __init__(self, main, width, height):
@@ -233,6 +233,10 @@ class ModelView(tk.Frame):
         self.model.train(self.getTrainData())
 
         # save model to db
+        self.modelInteraction.updateModelParams(self.model, self.model)
+        self.model.modelName = self.model.modelName + " [Trained]"
+        self.modelInteraction.setModelByIdAsTrained(self.model, self.model.modelId)
+        self.model = self.modelInteraction.getModelById(self.model.modelId)
 
     def getTrainData(self):
         """Get the whole data and splits it into training and testing set."""

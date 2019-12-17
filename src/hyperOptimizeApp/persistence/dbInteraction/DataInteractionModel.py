@@ -1,4 +1,4 @@
-from src.hyperOptimizeApp.persistence.DatabaseConnector import DatabaseConnector
+from hyperOptimizeApp.persistence.core.DatabaseConnector import DatabaseConnector
 from src.hyperOptimizeApp.logic.LoadDataModel import LoadDataModel
 
 

@@ -1,9 +1,9 @@
 import tkinter as tk  # python 3
 import tkinter.messagebox
 import numpy as np
-from src.hyperOptimizeApp.logic.dbInteraction.DataInteractionModel import DataInteractionModel
+from src.hyperOptimizeApp.persistence.dbInteraction.DataInteractionModel import DataInteractionModel
 from src.hyperOptimizeApp.view.tools import LayoutConstants
-from src.hyperOptimizeApp.view import ValidationFunctions
+from src.hyperOptimizeApp.view.tools import ValidationFunctions
 
 
 class LoadDataView(tk.Frame):

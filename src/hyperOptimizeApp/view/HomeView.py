@@ -3,7 +3,7 @@ import tkinter.messagebox
 
 from src.hyperOptimizeApp.logic.viewInteraction.HomeModel import HomeModel
 from src.hyperOptimizeApp.view.tools import LayoutConstants
-from src.hyperOptimizeApp.logic.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
+from src.hyperOptimizeApp.persistence.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 
 
 class HomeView(tk.Frame):
