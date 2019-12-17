@@ -1,5 +1,5 @@
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
-from src.hyperOptimizeApp.persistence.FileSystemRepository import SaverLoader
+from src.hyperOptimizeApp.persistence.FileSystemRepository import FileSystemRepository
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
@@ -10,7 +10,7 @@ import time
 class EstimateTimeModel:
     def __init__(self):
         """The constructor loads already the estimate time dataset for the different functions."""
-        saverLoader = SaverLoader()
+        saverLoader = FileSystemRepository()
         (x, y) = saverLoader.getEstTimeData()
         self.x = x
         self.y = y
@@ -29,7 +29,7 @@ class EstimateTimeModel:
         estTimeModel = LinearRegression(normalize=True).fit(xPoly, self.y)
 
         # Convert hyperParamsObjList to matrix
-        sl = SaverLoader()
+        sl = FileSystemRepository()
         hyperParamsData = sl.hyperParamsListToData(hyperParamsObjList)
         # Add cpu speed data to hyperParamsData
         cpuSpeed = cpuinfo.get_cpu_info()['hz_actual_raw'][0]
@@ -49,7 +49,7 @@ class EstimateTimeModel:
         """Returns an accuracy value for self.estimateTime.
         The computation of the accuracy is just the mean of the accuracy of the last X actual accuracies where X has to
         be inputted in the function."""
-        sl = SaverLoader()
+        sl = FileSystemRepository()
         accuracyList = sl.estimateTimeAccuracyList
         # If nbr of accuracy measurements is smaller than nbrOfValuesForMean, just get the mean of all the measurements
         if len(accuracyList)<nbrOfValuesForMean:

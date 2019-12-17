@@ -1,4 +1,3 @@
-from src.hyperOptimizeApp.persistence.core.DatabaseConnector import DatabaseConnector
 import numpy as np
 import pandas as pd
 import cpuinfo
@@ -7,7 +6,6 @@ import cpuinfo
 class FileSystemRepository:
 
     fileName = 'estTimeData.csv'
-    projectDb = DatabaseConnector()
 
     def loadDataForTrainingOrPrediction(self, pathToData, firstRowIsHeader, firstColIsRownbr, trainRowNumber,
                                         nbrOfCategories=0,
@@ -155,20 +153,8 @@ class FileSystemRepository:
 
         return hyperParamsDataList
 
-    def getProjectList(self):
-        projects = self.projectDb.getAllProjects()
-        # p1 = ProjectModel("FakeProject 1")
-        # p2 = ProjectModel("FakeProject 2")
-        # p3 = ProjectModel("FakeProject 3")
-        return projects
-
-    def saveProjectList(self):
-        print("Empty method: SaverLoader.saveProjectList")
-
 
     def storeEstimateTimeAccuracy(self, accuracyValue):
         self.estimateTimeAccuracyList.append(accuracyValue)
 
-    def saveModelToDatabase(self, model, projectId):
-        self.projectDb.saveModel(model, projectId)
 
