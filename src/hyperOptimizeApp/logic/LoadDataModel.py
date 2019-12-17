@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from src.hyperOptimizeApp.persistence.FileSystemRepository import FileSystemRepository
 
-
 class LoadDataModel:
     pathToDataSet = None
     firstRowIsTitle = None

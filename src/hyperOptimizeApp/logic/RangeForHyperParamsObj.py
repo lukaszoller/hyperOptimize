@@ -108,12 +108,11 @@ def createHyperParamsListRandom(rangeForHyperparamsObj, nbrOfModels):
         tmpHyperParamsObj.learningRate = learningRateArray[i]
         # model optimizer
         tmpHyperParamsObj.modelOptimizer = modelOptimizerArray[i]
-        # Activation function: Choose from the range of activation functions with the above randomly created indexes the activation Function for this model
-        tmpHyperParamsObj.activationFunction = rangeForHyperparamsObj.activationArray[
-            indexForActivationArray[i]]
         # Activation function for all layers of one model
         tmpHyperParamsObj.activationFunction = rangeForHyperparamsObj.activationArray[
             indexForActivationArray[i]]
+        if nbrOfModels == 1:
+            tmpHyperParamsObj.activationFunction = rangeForHyperparamsObj.activationArray
         # Drop out rate for all layers of one model
         tmpHyperParamsObj.dropOutRate = dropOutArray[i]
         # Loss function
@@ -126,7 +125,7 @@ def createHyperParamsListRandom(rangeForHyperparamsObj, nbrOfModels):
         hyperParamsList.append(tmpHyperParamsObj)
 
     # Return the list of dicts, each with hyperparams for each model
-    if len(hyperParamsList) == 1:
+    if nbrOfModels == 1:
         return hyperParamsList[0]
     else:
         return hyperParamsList

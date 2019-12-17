@@ -33,7 +33,7 @@ class TestOptimizeParamsModel():
         rangeForHyperParamsObj.nbrOfHiddenUnitsDict = {'min': 5, 'max': 100}
         rangeForHyperParamsObj.nbrOfCategories = 10
 
-        nbrOfModels = 200
+        nbrOfModels = 20
 
         hyperParamsObjList = createHyperParamsListRandom(rangeForHyperParamsObj, nbrOfModels)
 
@@ -66,6 +66,10 @@ class TestOptimizeParamsModel():
 
         # Rescale data 0 < data < 1
         x_train, x_test = x_train / 255.0, x_test / 255.0
+
+        # saveData = np.concatenate((x_train, y_train), axis=1)
+        # np.shape(saveData)
+        # np.savetxt("mnistTrainXtenY.csv", saveData, delimiter=',')
 
         optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, rangeForHyperParamsObj, nbrOfModels)
         optimizeParamsModel.evaluateModels()

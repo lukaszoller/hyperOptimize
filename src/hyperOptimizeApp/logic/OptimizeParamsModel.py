@@ -5,7 +5,7 @@ from astropy.table import Table, Column
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-from src.hyperOptimizeApp.persistence.SaverLoader import SaverLoader
+from src.hyperOptimizeApp.persistence.FileSystemRepository import FileSystemRepository
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import createHyperParamsListRandom
 import tensorflow as tf
 
@@ -92,8 +92,8 @@ class OptimizeParamsModel:
         #####################################################################################
         # Save running time measurements
         #####################################################################################
-        sl = SaverLoader()
-        sl.saveTimeMeasurementData(self.hyperParamsObjList, self.runningTimeList)
+        fl = FileSystemRepository()
+        fl.saveTimeMeasurementData(self.hyperParamsObjList, self.runningTimeList)
 
         #####################################################################################
         # Save running time accuracy
@@ -106,8 +106,7 @@ class OptimizeParamsModel:
 
         accuracy = abs(1-numberEstimate/actualRunningTime)
         # store accuracy
-        sl = SaverLoader()
-        sl.storeEstimateTimeAccuracy(accuracy)
+        fl.storeEstimateTimeAccuracy(accuracy)
 
         #####################################################################################
         # Print stuff for debugging
