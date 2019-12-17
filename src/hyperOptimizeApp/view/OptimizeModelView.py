@@ -291,6 +291,8 @@ class OptimizeModelView(tk.Frame):
 
             # Update model with optimized params
             self.modelInteraction.updateModelParams(self.model, bestModel)
+            self.model.modelName = self.model.modelName + " [Trained]"
+            self.modelInteraction.setModelByIdAsTrained(self.model, self.model.modelId)
             self.model = self.modelInteraction.getModelById(self.model.modelId)
 
             ## todo: delete after debugging
@@ -298,6 +300,15 @@ class OptimizeModelView(tk.Frame):
 
             # Pop up asking for results to show
             self.askShowResults()
+
+    def askShowResults(self):
+        answer = tk.messagebox.askyesno("Show Results?", "Optimal Model found.\n"
+                                                         "Do you want to see the result graph?")
+
+        self.controlFrame.setModelFrameWithParameters(self.model, self.project)
+
+        if answer == 1:
+            self.showResultsPlot()
 
     def checkInputs(self):
         self.errorString = ""
@@ -360,13 +371,6 @@ class OptimizeModelView(tk.Frame):
         if self.errorString == "":
             return True
         return False
-
-    def askShowResults(self):
-        answer = tk.messagebox.askyesno("Show Results?", "Optimal Model found.\n"
-                                                         "Do you want to see the result graph?")
-        if answer == 1:
-            self.showResultsPlot()
-        self.controlFrame.setModelFrameWithParameters(self.model, self.project)
 
     def showResultsPlot(self):
         newWindow = tk.Toplevel(self)

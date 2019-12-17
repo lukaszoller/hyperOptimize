@@ -19,8 +19,9 @@ class ModelInteractionModel:
     def addModelByProjectId(self, modelName, projectId):
         hyperParams = HyperParamsObj()
         model = MachineLearningModel(hyperParams, modelName)
-        self.projectDB.saveModel(modelName, model, projectId)
+        modelId = self.projectDB.saveModel(modelName, model, projectId)
         self.lastModel = model
+        self.lastModel.modelId = modelId
 
     def updateModelById(self, modelId, model):
         self.projectDB.updateModelById(modelId, model)
@@ -33,3 +34,6 @@ class ModelInteractionModel:
 
     def getModelById(self, modelId):
         return self.projectDB.getModelByID(modelId)
+
+    def setModelByIdAsTrained(self, model, modelId):
+        self.projectDB.setModelTrained(modelId, model.modelName)

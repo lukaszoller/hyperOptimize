@@ -125,13 +125,20 @@ class DatabaseConnector:
         connector.close()
 
     def saveModel(self, modelName, model, projectId):
+        connector = sqlite3.connect(self.DATABASE_NAME)
+        cursor = connector.cursor()
         model_json = model.to_json()
         print("saveModel: print model_json: ", model_json)
         date = datetime.date.today().strftime('%Y-%m-%d')
         projectId = str(projectId)
         sql = "INSERT INTO model(modelName, date, serializedModel, projectID) VALUES('" + modelName + "', " + date + \
               ", '" + model_json + "', '" + projectId + "')"
-        self.writeDB(sql)
+        cursor.execute(sql)
+        lastRowId = cursor.lastrowid
+        print(lastRowId)
+        connector.commit()
+        connector.close()
+        return lastRowId
 
     def getModelByID(self, modelId):
         connector = sqlite3.connect(self.DATABASE_NAME)
@@ -172,6 +179,10 @@ class DatabaseConnector:
         kerasModelJson = model.to_json()
         sql = "UPDATE model SET modelName = '{}', hyperParams = {}, serializedModel = {} " \
               "WHERE id = {}".format(model.modelName, hyperParamsJson, kerasModelJson, model.modelId)
+        self.writeDB(sql)
+
+    def setModelTrained(self, modelId, modelName):
+        sql = "UPDATE model SET modelName = '{}' WHERE id = {}".format(modelName, modelId)
         self.writeDB(sql)
 
     def deleteModelsByProjectId(self, projectId):

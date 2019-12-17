@@ -232,6 +232,8 @@ class ModelView(tk.Frame):
         self.model.hyperParamsObj = hyperParamsObj
         self.model.train(self.getTrainData())
 
+        # save model to db
+
     def getTrainData(self):
         """Get the whole data and splits it into training and testing set."""
         # get whole dataset
