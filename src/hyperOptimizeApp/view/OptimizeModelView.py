@@ -296,7 +296,6 @@ class OptimizeModelView(tk.Frame):
             ## todo: delete after debugging
             self.optimizeParamsModel.visualizeHyperparamsPerformance()
 
-
             # Pop up asking for results to show
             self.askShowResults()
 

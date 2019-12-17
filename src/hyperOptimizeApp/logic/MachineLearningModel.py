@@ -57,6 +57,12 @@ class MachineLearningModel:
         print("len(MachineLearningModel.model.layers): ", len(self.model.layers))
         self.model.summary()
 
+    def getNbrOfFeatures(self):
+        if self.hyperParamsObj.nbrOfNodesArray[0] > 0:
+            return self.hyperParamsObj.nbrOfNodesArray[0]
+        else:
+            print("MachineLearningModel.self.hyperParamsObj.nbrOfNodesArray[0] == 0 or is empty.")
+
     def trainNetwork(self, x, y, epochs):
         self.model.fit(x, y, epochs)
 
