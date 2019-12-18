@@ -33,6 +33,7 @@ class OptimizeParamsModel:
         # Loop through list with hyperParamsObj for each model
         l = len(self.hyperParamsObjList)
         scoreList = []
+        scoreBaseList = []
         for i in range(0, l):
             hyperParamsObj = self.hyperParamsObjList[i]
             print("################################ HyperParameters of model", i+1, "of", l, ":. ###############################")
@@ -70,23 +71,26 @@ class OptimizeParamsModel:
             print(scores)
             print("%s: %.2f%%" % (model.model.metrics_names[1], scores[1] * 100))
             scoreList.append(str("%s: %.2f%%" % (model.model.metrics_names[1], scores[1] * 100)))
+            scoreBaseList.append(scores[1])
 
+            tmpSuccess = scores[1]
+            self.successRateList.append(tmpSuccess)
             #####################################################################################
             # Predict with test data
             #####################################################################################
             # predict data
-            y_predict = model.predict(self.xTest)
-            y_PredictOneCol = np.argmax(y_predict, axis=1)
-            y_TestOneCol = np.argmax(self.yTest, axis=1)
-            print(y_PredictOneCol)
-            print(y_TestOneCol)
-            comparisonArray = y_PredictOneCol != y_TestOneCol
-            print(comparisonArray)
-            errorSum = np.sum(comparisonArray)
-
-            # store success Rate (Percentage of correct predictions)
-            tmpSuccess = 1-errorSum/len(comparisonArray)
-            self.successRateList.append(tmpSuccess)
+            # y_predict = model.predict(self.xTest)
+            # y_PredictOneCol = np.argmax(y_predict, axis=1)
+            # y_TestOneCol = np.argmax(self.yTest, axis=1)
+            # print(y_PredictOneCol)
+            # print(y_TestOneCol)
+            # comparisonArray = y_PredictOneCol != y_TestOneCol
+            # print(comparisonArray)
+            # errorSum = np.sum(comparisonArray)
+            #
+            # # store success Rate (Percentage of correct predictions)
+            # tmpSuccess = 1-errorSum/len(comparisonArray)
+            # self.successRateList.append(tmpSuccess)
 
             #####################################################################################
             # Save model if better than last, else drop
@@ -95,7 +99,7 @@ class OptimizeParamsModel:
             # if this is first loop, last successRate = 0
             if len(self.successRateList) == 1:
                 lastSuccess = 0
-            else: # get success of second last item
+            else:  # get success of second last item
                 lastSuccess = self.successRateList.__getitem__(len(self.successRateList) - 2)
             # Save model if tmpSuccess (of this loop) is higher than success of last model
             if tmpSuccess > lastSuccess:
