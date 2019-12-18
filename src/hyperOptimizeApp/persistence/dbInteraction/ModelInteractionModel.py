@@ -1,4 +1,4 @@
-from hyperOptimizeApp.persistence.core.DatabaseConnector import DatabaseConnector
+from src.hyperOptimizeApp.persistence.core.DatabaseConnector import DatabaseConnector
 from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
 

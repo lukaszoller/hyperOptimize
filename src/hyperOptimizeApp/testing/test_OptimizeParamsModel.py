@@ -66,9 +66,11 @@ class TestOptimizeParamsModel():
         # Rescale data 0 < data < 1
         x_train, x_test = x_train / 255.0, x_test / 255.0
 
+
         # saveData = np.concatenate((x_train, y_train), axis=1)
-        # np.shape(saveData)
-        # np.savetxt("mnistTrainXtenY.csv", saveData, delimiter=',')
+        # saveDataSmall = np.concatenate((saveData[0:10000, :], saveData[0:10000, :]), axis=0)
+        # np.shape(saveDataSmall)
+        # np.savetxt("mnistTrainEqualTestSmall.csv", saveDataSmall, delimiter=',')
 
         optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, rangeForHyperParamsObj, nbrOfModels)
         optimizeParamsModel.evaluateModels()

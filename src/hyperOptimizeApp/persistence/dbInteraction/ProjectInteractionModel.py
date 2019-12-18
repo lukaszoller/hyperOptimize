@@ -1,5 +1,5 @@
-from hyperOptimizeApp.persistence.core.DatabaseConnector import DatabaseConnector
-from hyperOptimizeApp.persistence.dbInteraction import DatabaseProjectModel
+from src.hyperOptimizeApp.persistence.core.DatabaseConnector import DatabaseConnector
+from src.hyperOptimizeApp.persistence.dbInteraction import DatabaseProjectModel
 
 
 class ProjectInteractionModel:

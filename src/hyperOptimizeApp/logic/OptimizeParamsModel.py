@@ -74,23 +74,29 @@ class OptimizeParamsModel:
             scoreBaseList.append(scores[1])
 
             tmpSuccess = scores[1]
-            self.successRateList.append(tmpSuccess)
+            # self.successRateList.append(tmpSuccess)
             #####################################################################################
             # Predict with test data
             #####################################################################################
             # predict data
-            # y_predict = model.predict(self.xTest)
-            # y_PredictOneCol = np.argmax(y_predict, axis=1)
-            # y_TestOneCol = np.argmax(self.yTest, axis=1)
-            # print(y_PredictOneCol)
-            # print(y_TestOneCol)
-            # comparisonArray = y_PredictOneCol != y_TestOneCol
-            # print(comparisonArray)
-            # errorSum = np.sum(comparisonArray)
-            #
-            # # store success Rate (Percentage of correct predictions)
-            # tmpSuccess = 1-errorSum/len(comparisonArray)
-            # self.successRateList.append(tmpSuccess)
+            y_predict = model.predict(self.xTest)
+
+            if hyperParamsObj.nbrOfNodesArray[-1] == 1:
+                y_PredictOneCol = np.round(y_predict, decimals=0)
+                y_TestOneCol = self.yTest
+            else:
+                y_PredictOneCol = np.argmax(y_predict, axis=1)
+                y_TestOneCol = np.argmax(self.yTest, axis=1)
+
+            print(y_PredictOneCol)
+            print(y_TestOneCol)
+            trainEqualTestArray = y_PredictOneCol == y_TestOneCol
+            print(trainEqualTestArray)
+            successSum = np.sum(trainEqualTestArray)
+
+            # store success Rate (Percentage of correct predictions)
+            tmpSuccess = successSum/len(trainEqualTestArray)
+            self.successRateList.append(tmpSuccess)
 
             #####################################################################################
             # Save model if better than last, else drop

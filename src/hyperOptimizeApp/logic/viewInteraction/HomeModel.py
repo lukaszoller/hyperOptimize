@@ -1,4 +1,4 @@
-from hyperOptimizeApp.persistence.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
+from src.hyperOptimizeApp.persistence.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 
 
 class HomeModel:
