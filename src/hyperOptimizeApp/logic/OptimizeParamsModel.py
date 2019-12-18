@@ -11,6 +11,7 @@ import tensorflow as tf
 
 
 class OptimizeParamsModel:
+    bestSuccess = 0
 
     def __init__(self, xTrain, yTrain, xTest, yTest, rangeForHyperParamsObj, nbrOfModels):
         self.bestModel = None
@@ -104,12 +105,12 @@ class OptimizeParamsModel:
             # get successRate of last model
             # if this is first loop, last successRate = 0
             if len(self.successRateList) == 1:
-                lastSuccess = 0
-            else:  # get success of second last item
-                lastSuccess = self.successRateList.__getitem__(len(self.successRateList) - 2)
-            # Save model if tmpSuccess (of this loop) is higher than success of last model
-            if tmpSuccess > lastSuccess:
+                self.bestSuccess = 0
+            print("New Model Success: " + str(tmpSuccess) + " Best Model Success: " + str(self.bestSuccess))
+            if tmpSuccess > self.bestSuccess:
+                print("Switching best Model")
                 self.bestModel = model
+                self.bestSuccess = tmpSuccess
 
             # Store running time measurement
             runningTime = time.clock() - startTime

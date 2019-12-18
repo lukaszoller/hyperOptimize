@@ -207,6 +207,20 @@ class OptimizeModelView(tk.Frame):
         tanhBox.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
         self.activationCheckBtnVarDict['tanh'] = self.tanhVar
 
+        ## elu
+        eluBoxName = "eLu Function"
+        self.eluVar = tk.IntVar(0)
+        eluBox = tk.Checkbutton(innerActivationFrame, text=eluBoxName, variable=self.eluVar)
+        eluBox.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
+        self.activationCheckBtnVarDict['elu'] = self.eluVar
+
+        ## SoftMax
+        softmaxBoxName = "SoftMax Function"
+        self.softmaxVar = tk.IntVar(0)
+        softmaxBox = tk.Checkbutton(innerActivationFrame, text=softmaxBoxName, variable=self.softmaxVar)
+        softmaxBox.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
+        self.activationCheckBtnVarDict['softmax'] = self.softmaxVar
+
         ## Relu
         reluBoxName = "ReLu Function"
         self.reluVar = tk.IntVar(0)
@@ -252,11 +266,10 @@ class OptimizeModelView(tk.Frame):
         # TOOLTIPS ---------------
 
         # Optimization process information
-        # Todo: change layout with frames and enable the following code.
-        # optimizationInfoFrame = tk.Frame(self)
-        # optimizationInfoFrame.pack(fill=tk.X)
-        # self. optimizationInfoLabel = tk.Label(optimizationInfoFrame, text="", width=50)
-        # self. optimizationInfoLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        optimizationInfoFrame = tk.Frame(self)
+        optimizationInfoFrame.pack(fill=tk.X)
+        self. optimizationInfoLabel = tk.Label(optimizationInfoFrame, text="", width=50)
+        self. optimizationInfoLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
     def setModel(self, model):
         self.model = model
@@ -405,8 +418,8 @@ class OptimizeModelView(tk.Frame):
 
     def checkActivation(self):
         # Check if an activation function is set
-        if (self.sigmoidVar.get() == 0) & (self.linearVar.get() == 0) & \
-                (self.tanhVar.get() == 0) & (self.reluVar.get() == 0):
+        if (self.sigmoidVar.get() == 0) & (self.linearVar.get() == 0) & (self.softmaxVar.get() == 0) & \
+                (self.tanhVar.get() == 0) & (self.reluVar.get() == 0) & (self.eluVar.get() == 0):
             return False
         return True
 
