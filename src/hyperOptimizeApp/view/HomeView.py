@@ -32,7 +32,7 @@ class HomeView(tk.Frame):
         #                                   'it in the list below.').grid(row=1, column=3)
 
         # Generate a list of all Projects and show it.
-        projectFrame = tk.Frame(self)
+        projectFrame = tk.Frame(self, height=height-100, width=width-100)
         projectFrame.pack(fill=tk.X)
         self.projectListbox = tk.Listbox(projectFrame)
         self.fillProjectList()

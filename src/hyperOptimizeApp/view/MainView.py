@@ -1,5 +1,4 @@
 import tkinter as tk  # python 3
-import matplotlib.pyplot as plt
 from src.hyperOptimizeApp.logic.LoadDataModel import LoadDataModel
 from src.hyperOptimizeApp.view.HomeView import HomeView
 from src.hyperOptimizeApp.view.ProjectView import ProjectView
@@ -7,8 +6,6 @@ from src.hyperOptimizeApp.view.ModelView import ModelView
 from src.hyperOptimizeApp.view.OptimizeModelView import OptimizeModelView
 from src.hyperOptimizeApp.view.LoadDataView import LoadDataView
 from src.hyperOptimizeApp.persistence.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from pandas import DataFrame
 
 
 class ControlFrame(tk.Frame):
@@ -18,8 +15,9 @@ class ControlFrame(tk.Frame):
     optimizeModelView = None
     loadDataView = None
     loadClassifyDataView = None
+    project = None
 
-    def __init__(self, mainView, main, width, homeView, projectView, modelView,
+    def __init__(self, mainView, main, height, width, homeView, projectView, modelView,
                  optimizeModelView, loadDataView, loadClassifyDataView):
         tk.Frame.__init__(self, main)
         self.projectView = projectView
@@ -37,22 +35,14 @@ class ControlFrame(tk.Frame):
         self.loadClassifyDataView.addControlFrame(self)
 
         self.changeStyle("black")
-        self.place(x=0, y=750, height=50, width=width)
+        self.place(x=0, y=height-50, height=50, width=width)
 
         # Fenster Zeichen
         tk.Button(self, text="Home", command=lambda: self.setHomeFrame()).pack(side=tk.LEFT, padx=5)
-        tk.Button(self, text="New Project", command=lambda: self.setProjectFrame(False, "New Project")).pack(
+        tk.Button(self, text="New Project", command=lambda: self.setProjectFrame(True, None)).pack(
             side=tk.LEFT, padx=5)
-        tk.Button(self, text="Quit", command=mainView.close).pack(side=tk.LEFT, padx=5)
-
-        ########################################### Lukas Code #########################################
-
-        plotButton = tk.Button(self, text="open new window with plot", command=lambda: self.showWindowWithPlot())
-        plotButton.pack(side=tk.LEFT, padx=5)
-
-        newWindowButton = tk.Button(self, text="Open new window with text", command=lambda: self.showNewWindow())
-        newWindowButton.pack(side=tk.LEFT, padx=5)
-        ########################################### Lukas Code #########################################
+        self.backButton = tk.Button(self, text="Back to Project", command=lambda: self.backToProject())
+        tk.Button(self, text="Quit", command=mainView.close).pack(side=tk.RIGHT, padx=5)
 
         #####################################################################################
         # Menu List
@@ -69,8 +59,6 @@ class ControlFrame(tk.Frame):
         mFile.add_command(label="Home", command=lambda: self.setHomeFrame())
         mFile.add_separator()
         mFile.add_command(label="New Project", command=lambda: self.setProjectFrame(False, None))
-        mFile.add_command(label="Load Project")
-        mFile.add_command(label="Save")
         mFile.add_separator()
         mFile.add_command(label="Quit", command=mainView.close)
 
@@ -91,6 +79,8 @@ class ControlFrame(tk.Frame):
     def setHomeFrame(self):
         self.homeView.fillProjectList()
         showFrame(self.homeView)
+        self.project = None
+        self.unshowBackButton()
 
     def setProjectFrame(self, newProject, project):
         if newProject:
@@ -102,28 +92,33 @@ class ControlFrame(tk.Frame):
             self.projectView.setTopText(project.getProjectName())
             self.projectView.setProject(project)
         showFrame(self.projectView)
+        self.unshowBackButton()
 
     def setProjectFrameWithClassificationData(self, project, loadDataModel):
         self.projectView.setTopText(project.getProjectName())
         self.projectView.setProject(project)
         self.projectView.setClassificationLoadDataModel(loadDataModel)
         showFrame(self.projectView)
+        self.unshowBackButton()
 
     def setModelFrame(self, model, project):
         self.modelView.setModel(model)
         self.modelView.setProject(project)
         showFrame(self.modelView)
+        self.showBackButton()
 
     def setModelFrameWithParameters(self, model, project):
         self.modelView.setModel(model)
         self.modelView.setProject(project)
         self.modelView.setParameters()
         showFrame(self.modelView)
+        self.showBackButton()
 
     def setOptimizeModelFrame(self, model, project):
         self.optimizeModelView.setModel(model)
         self.optimizeModelView.setProject(project)
         showFrame(self.optimizeModelView)
+        self.showBackButton()
 
     def setLoadDataFrame(self, project):
         self.loadDataView.setProject(project)
@@ -132,44 +127,26 @@ class ControlFrame(tk.Frame):
     def setLoadClassificationDataFrame(self, project):
         self.loadClassifyDataView.setProject(project)
         showFrame(self.loadClassifyDataView)
+        self.showBackButton()
 
-    # ########################################## Lukas Code #########################################
+    def setProject(self, project):
+        self.project = project
 
-    def showWindowWithPlot(self):
-        newWindow = tk.Toplevel(self)
-        # get data
-        Data1 = {'Country': ['US', 'CA', 'GER', 'UK', 'FR'],
-                 'GDP_Per_Capita': [45000, 42000, 52000, 49000, 47000]
-                 }
+    def backToProject(self):
+        self.setProjectFrame(False, self.project)
 
-        df1 = DataFrame(Data1, columns=['Country', 'GDP_Per_Capita'])
-        df1 = df1[['Country', 'GDP_Per_Capita']].groupby('Country').sum()
-        print(df1)
+    def showBackButton(self):
+        self.backButton.pack(side=tk.LEFT)
 
-        # plot
-        figure1 = plt.Figure(figsize=(6, 5), dpi=100)
-        ax1 = figure1.add_subplot(111)
-        bar1 = FigureCanvasTkAgg(figure1, newWindow)
-        bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-        df1.plot(kind='bar', legend=True, ax=ax1)
-        ax1.set_title('Country Vs. GDP Per Capita')
-
-        newWindow.mainloop()
-
-    def showNewWindow(self):
-        window = tk.Toplevel(self)
-        message = "New window message."
-        tk.Label(window, text=message).pack()
-
-    # ########################################## Lukas Code #########################################
-
+    def unshowBackButton(self):
+        self.backButton.pack_forget()
 
 class MainView:
     main = tk.Tk()
 
     def __init__(self):
         # Konstanten
-        WM_HEIGHT = 800
+        WM_HEIGHT = 600
         WM_WIDTH = 1000
 
         # Hauptfenster
@@ -185,7 +162,7 @@ class MainView:
         loadDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50, LoadDataModel(), forTraining=True)
         loadClassifyDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50, LoadDataModel(), forTraining=False)
 
-        ControlFrame(self, self.main, WM_WIDTH, homeView, projectView, modelView, optimizeModelView, loadDataView,
+        ControlFrame(self, self.main, WM_HEIGHT, WM_WIDTH, homeView, projectView, modelView, optimizeModelView, loadDataView,
                      loadClassifyDataView)
 
         self.main.mainloop()

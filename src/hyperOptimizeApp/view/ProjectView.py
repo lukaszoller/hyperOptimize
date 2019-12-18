@@ -162,6 +162,7 @@ class ProjectView(tk.Frame):
             self.loadDataButton.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
             self.fileSetLabel.config(text="Select Data")
             print("Project created")
+        self.controlFrame.setProject(self.project)
         self.setTopText(projectName)
 
     def saveConfirmAndDeleteModel(self):
