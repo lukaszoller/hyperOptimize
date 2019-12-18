@@ -102,6 +102,7 @@ class ProjectView(tk.Frame):
             model = self.modelList.__getitem__(modelNumber)
         else:
             tk.messagebox.showwarning("Error", "Select model before classifying data.")
+            return
 
         # Check if data is loaded
         xData, yData, rawData = self.loadDataModelForClassification.data
@@ -114,9 +115,9 @@ class ProjectView(tk.Frame):
         # Check if data for classification has correct shape
         if not (np.shape(xData)[1] == model.getNbrOfFeatures()):
             tk.messagebox.showwarning("Error",
-                                      "Data for classification has not same nbr of colums as features in training data. "
-                                      "Expected: ", np.shape(xData)[0], "Actual shape of classification data: ",
-                                      model.getNbrOfFeatures())
+                                      "Data for classification has not same nbr of colums as features in training data.\n"
+                                      "Expected: " + str(np.shape(xData)[0]) + "Actual shape of classification data: " +
+                                      str(model.getNbrOfFeatures()))
             return
 
         # classify data
