@@ -15,6 +15,7 @@ class RangeForHyperParamsObj:
         self.activationArray = 0 #= np.array()                      #mal noch nicht
         self.dropOutDict = dict({'min': 0, 'max': 0})               #irgendwas zwischen 0 und 100
         self.lossFunctionArray = np.array(['mean_squared_error'])   # default setting from keras
+        #self.lossFunctionArray = np.array(['categorical_crossentropy'])
         self.modelOptimizerArray = np.array(['SGD'])                # default setting from keras
         #self.modelOptimizerArray = np.array(['Adam'])
         self.learningRateDict = dict({'min': 1e-7, 'max': 1e-5})    # default setting from keras

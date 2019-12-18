@@ -50,9 +50,9 @@ class MachineLearningModel:
         self.model.add(tf.keras.layers.Activation(activationFunction))
 
         # define modelOptimizer and learning rate
-        modelOptimizerObj = getattr(tf.keras.optimizers, modelOptimizer)(lr=learningRate, decay= decay)
+        modelOptimizerObj = getattr(tf.keras.optimizers, modelOptimizer)(lr=learningRate, decay=decay)
 
-        self.model.compile(optimizer=modelOptimizerObj, loss=lossFunction)
+        self.model.compile(optimizer=modelOptimizerObj, loss=lossFunction, metrics=['accuracy'])
         print("MachineLearningModel.createNetwork: model compiled")
         print("len(MachineLearningModel.model.layers): ", len(self.model.layers))
         self.model.summary()
@@ -63,14 +63,15 @@ class MachineLearningModel:
         else:
             print("MachineLearningModel.self.hyperParamsObj.nbrOfNodesArray[0] == 0 or is empty.")
 
-    def trainNetwork(self, x, y, epochs):
-        self.model.fit(x, y, epochs)
+    # def trainNetwork(self, x, y, epochs):
+    #     self.model.fit(x, y, epochs)
 
     def trainNetwork(self, x, y):
-        self.model.fit(x, y,use_multiprocessing=False) #Multiprocessing = true has no effect on running time
+        self.model.fit(x, y, verbose=1, epochs=3, use_multiprocessing=False) #Multiprocessing = true has no effect on running time
 
     def evaluateModel(self, x, y):
-        self.model.evaluate(x, y)
+        return self.model.evaluate(x, y)
+
 
     def optimizeHyperparameters(self):
         print("Empty method: MachineLearningModel.optimizeHyperparameters")
@@ -86,4 +87,3 @@ class MachineLearningModel:
 
     def to_json(self):
         return self.model.to_json()
-

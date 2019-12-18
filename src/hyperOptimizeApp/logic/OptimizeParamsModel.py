@@ -32,6 +32,7 @@ class OptimizeParamsModel:
 
         # Loop through list with hyperParamsObj for each model
         l = len(self.hyperParamsObjList)
+        scoreList = []
         for i in range(0, l):
             hyperParamsObj = self.hyperParamsObjList[i]
             print("################################ HyperParameters of model", i+1, "of", l, ":. ###############################")
@@ -62,14 +63,25 @@ class OptimizeParamsModel:
             model.trainNetwork(self.xTrain, self.yTrain)
 
             #####################################################################################
+            # Evaluate with test data todo: maybe delete this after tests
+            #####################################################################################
+            # evaluate data
+            scores = model.evaluateModel(self.xTest, self.yTest)
+            print(scores)
+            print("%s: %.2f%%" % (model.model.metrics_names[1], scores[1] * 100))
+            scoreList.append(str("%s: %.2f%%" % (model.model.metrics_names[1], scores[1] * 100)))
+
+            #####################################################################################
             # Predict with test data
             #####################################################################################
             # predict data
             y_predict = model.predict(self.xTest)
             y_PredictOneCol = np.argmax(y_predict, axis=1)
             y_TestOneCol = np.argmax(self.yTest, axis=1)
-
+            print(y_PredictOneCol)
+            print(y_TestOneCol)
             comparisonArray = y_PredictOneCol != y_TestOneCol
+            print(comparisonArray)
             errorSum = np.sum(comparisonArray)
 
             # store success Rate (Percentage of correct predictions)
@@ -97,7 +109,6 @@ class OptimizeParamsModel:
             print("len(model.layers: ", len(model.model.layers))
             print("model.layers: ", model.model.layers)
 
-
         #####################################################################################
         # Save running time measurements
         #####################################################################################
@@ -123,15 +134,13 @@ class OptimizeParamsModel:
         print("######################### Stats from OptimizeModel.evaluateModels ############################")
         print("HyperParams: nbrOfLayers")
         for h in self.hyperParamsObjList:
-            print(len(h.nbrOfNodesArray))
-
-        for h in self.hyperParamsObjList:
-            print(h.nbrOfNodesArray)
-
-        for h in self.hyperParamsObjList:
-            print(h.learningRate)
+            print("Length Array: " + str(len(h.nbrOfNodesArray)))
+            print("Array form: " + str(h.nbrOfNodesArray))
+            print("Learning rate: " + str(h.learningRate))
 
         print("Estimated time: ", stringEstimate, " actual time: ", actualRunningTime)
+        print("######################### Stats from ScoreList ############################")
+        print(scoreList)
 
         self.createResultData()
 
