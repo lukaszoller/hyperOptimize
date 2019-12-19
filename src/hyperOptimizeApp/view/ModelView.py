@@ -1,4 +1,5 @@
 import tkinter as tk
+import numpy as np
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.view.tools import LayoutConstants
 from src.hyperOptimizeApp.view.tools import ValidationFunctions
@@ -128,6 +129,22 @@ class ModelView(tk.Frame):
         self.tanhRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.tanhRadio)
 
+        ## elu
+        eluRadioName = "eLu Function"
+        # self.eluVar = tk.IntVar(0)
+        self.eluRadio = tk.Radiobutton(activationFrame, text=eluRadioName, variable=self.activationVar,
+                                       value="elu")
+        self.eluRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.eluRadio)
+
+        ## SoftMax
+        softmaxRadioName = "SoftMax Function"
+        # self.softmaxVar = tk.IntVar(0)
+        self.softmaxRadio = tk.Radiobutton(activationFrame, text=softmaxRadioName, variable=self.activationVar,
+                                    value="softmax")
+        self.softmaxRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.softmaxRadio)
+
         ## Relu
         reluRadioName = "ReLu Function"
         # self.reluVar = tk.IntVar(0)
@@ -174,21 +191,43 @@ class ModelView(tk.Frame):
             self.tanhRadio.deselect()
             self.linearRadio.deselect()
             self.reluRadio.deselect()
+            self.eluRadio.deselect()
+            self.softmaxRadio.deselect()
         elif activationFunction == 'tanh':
             self.sigmoidRadio.deselect()
             self.tanhRadio.select()
             self.linearRadio.deselect()
             self.reluRadio.deselect()
+            self.eluRadio.deselect()
+            self.softmaxRadio.deselect()
         elif activationFunction == 'linear':
             self.sigmoidRadio.deselect()
             self.tanhRadio.deselect()
             self.linearRadio.select()
             self.reluRadio.deselect()
+            self.eluRadio.deselect()
+            self.softmaxRadio.deselect()
         elif activationFunction == 'relu':
             self.sigmoidRadio.deselect()
             self.tanhRadio.deselect()
             self.linearRadio.deselect()
             self.reluRadio.select()
+            self.eluRadio.deselect()
+            self.softmaxRadio.deselect()
+        elif activationFunction == 'elu':
+            self.sigmoidRadio.deselect()
+            self.tanhRadio.deselect()
+            self.linearRadio.deselect()
+            self.reluRadio.deselect()
+            self.eluRadio.select()
+            self.softmaxRadio.deselect()
+        elif activationFunction == 'softmax':
+            self.sigmoidRadio.deselect()
+            self.tanhRadio.deselect()
+            self.linearRadio.deselect()
+            self.reluRadio.deselect()
+            self.eluRadio.deselect()
+            self.softmaxRadio.select()
 
         self.disableManualHyperParams()
 
@@ -210,23 +249,19 @@ class ModelView(tk.Frame):
     def trainModel(self):
         self.loadDataModel.loadData()
         # get parameters
-        rangeForHyperparamsObj = RangeForHyperParamsObj()
-        minNbrOfNodes = self.entryNbrNodes.get()
-        maxNbrOfNodes = minNbrOfNodes
-        minNbrOfLayers = self.entryNbrLayers.get()
-        maxNbrOfLayers = minNbrOfLayers
-        minDropout = self.dropoutSlider.get()
-        maxDropout = minDropout
-        activationArray = self.activationVar.get()
+        nbrOfNodes = self.entryNbrNodes.get()
+        nbrOfLayers = self.entryNbrLayers.get()
+        dropout = self.dropoutSlider.get()
+        activationFunction = self.activationVar.get()
 
         rangeForHyperParamsObj = RangeForHyperParamsObj()
-        rangeForHyperParamsObj.nbrOfHiddenLayersDict = dict({'min': minNbrOfLayers, 'max': maxNbrOfLayers})
-        rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': minNbrOfNodes, 'max': maxNbrOfNodes})
-        rangeForHyperParamsObj.dropOutDict = dict({'min': minDropout, 'max': maxDropout})
-        rangeForHyperParamsObj.activationArray = activationArray
+        rangeForHyperParamsObj.nbrOfHiddenLayersDict = dict({'min': nbrOfLayers, 'max': nbrOfLayers})
+        rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': nbrOfNodes, 'max': nbrOfNodes})
+        rangeForHyperParamsObj.dropOutDict = dict({'min': dropout, 'max': dropout})
+        rangeForHyperParamsObj.activationArray = np.array([activationFunction])
 
         # Create hyperParamsObj
-        hyperParamsObj = createHyperParamsListRandom(rangeForHyperParamsObj)
+        hyperParamsObj = createHyperParamsListRandom(rangeForHyperParamsObj, 1)
 
         # create and train model
         self.model.hyperParamsObj = hyperParamsObj
@@ -239,6 +274,8 @@ class ModelView(tk.Frame):
             self.model.modelName = self.model.modelName + " [Trained]"
             self.modelInteraction.setModelByIdAsTrained(self.model, self.model.modelId)
         self.model = self.modelInteraction.getModelById(self.model.modelId)
+
+        self.controlFrame.setModelFrame(self.model, self.project)
 
     def getTrainData(self):
         """Get the whole data and splits it into training and testing set."""

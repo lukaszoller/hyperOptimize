@@ -1,14 +1,12 @@
 import tkinter as tk
 import tkinter.messagebox
 
-from src.hyperOptimizeApp.logic.viewInteraction.HomeModel import HomeModel
 from src.hyperOptimizeApp.view.tools import LayoutConstants
 from src.hyperOptimizeApp.persistence.dbInteraction.ProjectInteractionModel import ProjectInteractionModel
 
 
 class HomeView(tk.Frame):
     projectInteract = ProjectInteractionModel()
-    homeModel = HomeModel()
     controlFrame = None
     projects = []
 
@@ -81,7 +79,7 @@ class HomeView(tk.Frame):
     def fillProjectList(self):
         self.projects = []
         self.projectListbox.delete(0, tk.END)
-        self.projects = self.homeModel.getProjectList()
+        self.projects = self.projectInteract.getProjectList()
         for project in self.projects:
             self.projectListbox.insert(tk.END, project)
         self.projectListbox.grid(row=1, column=1)
