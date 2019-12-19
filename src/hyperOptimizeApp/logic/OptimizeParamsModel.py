@@ -12,6 +12,7 @@ import tensorflow as tf
 
 class OptimizeParamsModel:
     bestSuccess = 0
+    logger = None
 
     def __init__(self, xTrain, yTrain, xTest, yTest, rangeForHyperParamsObj, nbrOfModels):
         self.bestModel = None
@@ -26,6 +27,9 @@ class OptimizeParamsModel:
         self.nbrOfModels = nbrOfModels
         self.hyperParamsObjList = createHyperParamsListRandom(self.rangeForHyperparamsObj, self.nbrOfModels)
 
+    def registerLogger(self, logger):
+        self.logger = logger
+
     def evaluateModels(self):
         """This method takes as input a list of HyperParamsObj (a HyperParamsObj for every model to create). It creates,
         trains and evaluates models basing on this list of HyperParamsObj and stores the time measurements for later
@@ -37,7 +41,8 @@ class OptimizeParamsModel:
         scoreBaseList = []
         for i in range(0, l):
             hyperParamsObj = self.hyperParamsObjList[i]
-            print("################################ HyperParameters of model", i+1, "of", l, ":. ###############################")
+            print("################################ HyperParameters of model", i + 1, "of", l,
+                  ":. ###############################")
             print("Number of Hidden Layers: " + str(len(hyperParamsObj.nbrOfNodesArray)))
             print("Number of Nodes per Layer: " + str(hyperParamsObj.nbrOfNodesArray[1]))
             print("Activation Function: " + str(hyperParamsObj.activationFunction))
@@ -47,7 +52,8 @@ class OptimizeParamsModel:
             print("Loss Function: " + str(hyperParamsObj.lossFunction))
             print("Model Optimizer: " + str(hyperParamsObj.modelOptimizer))
             startTime = time.clock()
-            print("################################ Building of model", i+1, "of", l, "started. ################################")
+            print("################################ Building of model", i + 1, "of", l,
+                  "started. ################################")
             #####################################################################################
             # create model
             #####################################################################################
@@ -96,7 +102,7 @@ class OptimizeParamsModel:
             successSum = np.sum(trainEqualTestArray)
 
             # store success Rate (Percentage of correct predictions)
-            tmpSuccess = successSum/len(trainEqualTestArray)
+            tmpSuccess = successSum / len(trainEqualTestArray)
             self.successRateList.append(tmpSuccess)
 
             #####################################################################################
@@ -116,9 +122,26 @@ class OptimizeParamsModel:
             runningTime = time.clock() - startTime
             self.runningTimeList.append(runningTime)
             # print progress of loop
-            print("************ Model", i+1, "from", l, "built. *************")
+            print("************ Model", i + 1, "from", l, "built. *************")
             print("len(model.layers: ", len(model.model.layers))
             print("model.layers: ", model.model.layers)
+
+            # Logging Results to output
+            if self.logger is not None:
+                self.logger.info("################################ HyperParameters of model", i + 1, "of", l,
+                                 ":. ###############################")
+                self.logger.info("Number of Hidden Layers: " + str(len(hyperParamsObj.nbrOfNodesArray)))
+                self.logger.info("Number of Nodes per Layer: " + str(hyperParamsObj.nbrOfNodesArray[1]))
+                self.logger.info("Activation Function: " + str(hyperParamsObj.activationFunction))
+                self.logger.info("Dropout Rate: " + str(hyperParamsObj.dropOutRate))
+                self.logger.info("Learning Rate: " + str(hyperParamsObj.learningRate))
+                self.logger.info("Learning Rate Decay: " + str(hyperParamsObj.learningRateDecay))
+                self.logger.info("Loss Function: " + str(hyperParamsObj.lossFunction))
+                self.logger.info("Model Optimizer: " + str(hyperParamsObj.modelOptimizer))
+                self.logger.info("################################ Results of model", i + 1, "of", l,
+                                 ":. ###########################")
+                self.logger.info("New Model Success: " + str(tmpSuccess))
+                self.logger.info(" ")
 
         #####################################################################################
         # Save running time measurements
@@ -135,7 +158,7 @@ class OptimizeParamsModel:
         actualRunningTime = sum(self.runningTimeList)
         # Accuracy: Difference between estimate in relation to actual time and 1
 
-        accuracy = abs(1-numberEstimate/actualRunningTime)
+        accuracy = abs(1 - numberEstimate / actualRunningTime)
         # store accuracy
         fl.storeEstimateTimeAccuracy(accuracy)
 
@@ -191,7 +214,6 @@ class OptimizeParamsModel:
 
         # Store table in self
         self.resultData = t
-
 
     # def getResultData(self):
     #     """Creates a table with all results. Columns: nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction,
@@ -306,7 +328,7 @@ class OptimizeParamsModel:
         t = self.resultData
         t.sort('nbrOfLayers')
 
-        figure = plt.figure(figsize=(15,7))
+        figure = plt.figure(figsize=(15, 7))
         ax1 = figure.add_subplot(241)
         ax1.scatter(t['nbrOfLayers'], t['successRate'])
         plt.xlabel('Number of layers')
@@ -359,4 +381,3 @@ class OptimizeParamsModel:
         plt.scatter(t['nbrOfLayers'], t['successRate'])
         plt.xlabel('Number of Layers')
         plt.ylabel('Success Rate')
-

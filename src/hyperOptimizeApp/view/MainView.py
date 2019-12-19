@@ -5,6 +5,7 @@ from src.hyperOptimizeApp.view.ProjectView import ProjectView
 from src.hyperOptimizeApp.view.ModelView import ModelView
 from src.hyperOptimizeApp.view.OptimizeModelView import OptimizeModelView
 from src.hyperOptimizeApp.view.LoadDataView import LoadDataView
+from src.hyperOptimizeApp.view.ProgressView import ProgressView
 from src.hyperOptimizeApp.persistence.dbInteraction.DatabaseProjectModel import DatabaseProjectModel
 
 
@@ -15,10 +16,11 @@ class ControlFrame(tk.Frame):
     optimizeModelView = None
     loadDataView = None
     loadClassifyDataView = None
+    progressView = None
     project = None
 
     def __init__(self, mainView, main, height, width, homeView, projectView, modelView,
-                 optimizeModelView, loadDataView, loadClassifyDataView):
+                 optimizeModelView, loadDataView, loadClassifyDataView, progressView):
         tk.Frame.__init__(self, main)
         self.projectView = projectView
         self.homeView = homeView
@@ -26,6 +28,7 @@ class ControlFrame(tk.Frame):
         self.optimizeModelView = optimizeModelView
         self.loadDataView = loadDataView
         self.loadClassifyDataView = loadClassifyDataView
+        self.progressView = progressView
 
         self.projectView.addControlFrame(self)
         self.homeView.addControlFrame(self)
@@ -33,6 +36,7 @@ class ControlFrame(tk.Frame):
         self.optimizeModelView.addControlFrame(self)
         self.loadDataView.addControlFrame(self)
         self.loadClassifyDataView.addControlFrame(self)
+        self.progressView.addControlFrame(self)
 
         self.changeStyle("black")
         self.place(x=0, y=height-50, height=50, width=width)
@@ -120,6 +124,13 @@ class ControlFrame(tk.Frame):
         showFrame(self.optimizeModelView)
         self.showBackButton()
 
+    def setProgressView(self, optimizeParamsModel, model, project):
+        self.progressView.setProject(project)
+        self.progressView.setModel(model)
+        self.progressView.setOptimizeModel(optimizeParamsModel)
+        showFrame(self.progressView)
+        self.progressView.start()
+
     def setLoadDataFrame(self, project):
         self.loadDataView.setProject(project)
         showFrame(self.loadDataView)
@@ -150,20 +161,22 @@ class MainView:
         WM_WIDTH = 1000
 
         # Hauptfenster
-        self.main.title("Test")
+        self.main.title("Neuronal Network Optimizer")
         self.main.geometry("{:}x{:}".format(WM_WIDTH, WM_HEIGHT))
         # main.attributes("-fullscreen", True)
         self.main.resizable(0, 0)
 
+        # create all frames possible to show.
         homeView = HomeView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         projectView = ProjectView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         modelView = ModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         optimizeModelView = OptimizeModelView(self.main, WM_WIDTH, WM_HEIGHT - 50)
         loadDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50, LoadDataModel(), forTraining=True)
         loadClassifyDataView = LoadDataView(self.main, WM_WIDTH, WM_HEIGHT - 50, LoadDataModel(), forTraining=False)
+        progressView = ProgressView(self.main, WM_WIDTH, WM_HEIGHT - 50)
 
-        ControlFrame(self, self.main, WM_HEIGHT, WM_WIDTH, homeView, projectView, modelView, optimizeModelView, loadDataView,
-                     loadClassifyDataView)
+        ControlFrame(self, self.main, WM_HEIGHT, WM_WIDTH, homeView, projectView, modelView, optimizeModelView,
+                     loadDataView, loadClassifyDataView, progressView)
 
         self.main.mainloop()
 

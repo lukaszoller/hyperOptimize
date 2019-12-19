@@ -8,7 +8,6 @@ from src.hyperOptimizeApp.persistence.dbInteraction.ModelInteractionModel import
 from src.hyperOptimizeApp.view.tools.Tooltip import CreateToolTip as tt
 from src.hyperOptimizeApp.view.tools import ValidationFunctions
 import numpy as np
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from src.hyperOptimizeApp.view.tools import LayoutConstants
 
@@ -310,34 +309,7 @@ class OptimizeModelView(tk.Frame):
                 else:
                     return  # Stop execution if User clicks on "No"
 
-            self.optimizeParamsModel.evaluateModels()
-
-            # ToDo: after best model is computed change back to model view and display modelparams in corresponding fields.
-            bestModel = self.optimizeParamsModel.getBestModel()
-            print("Best Model evaluated:", bestModel)
-
-            # Update model with optimized params
-            self.modelInteraction.updateModelParams(self.model, bestModel)
-            # Indicate visually that the model has been trained (again).
-            if "[Trained]" not in self.model.modelName:
-                self.model.modelName = self.model.modelName + " [Trained]"
-                self.modelInteraction.setModelByIdAsTrained(self.model, self.model.modelId)
-            self.model = self.modelInteraction.getModelById(self.model.modelId)
-
-            ## todo: delete after debugging
-            self.optimizeParamsModel.visualizeHyperparamsPerformance()
-
-            # Pop up asking for results to show
-            self.askShowResults()
-
-    def askShowResults(self):
-        answer = tk.messagebox.askyesno("Show Results?", "Optimal Model found.\n"
-                                                         "Do you want to see the result graph?")
-
-        self.controlFrame.setModelFrameWithParameters(self.model, self.project)
-
-        if answer == 1:
-            self.showResultsPlot()
+            self.controlFrame.setProgressView(self.optimizeParamsModel, self.model, self.project)
 
     def checkInputs(self):
         self.errorString = ""
@@ -400,21 +372,6 @@ class OptimizeModelView(tk.Frame):
         if self.errorString == "":
             return True
         return False
-
-    def showResultsPlot(self):
-        newWindow = tk.Toplevel(self)
-
-        # plot
-        # figure = plt.Figure(figsize=(6, 5), dpi=100)
-        figure = self.optimizeParamsModel.getResultsPlot()
-        plot = FigureCanvasTkAgg(figure, newWindow)
-        plot.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-
-        newWindow.mainloop()
-
-    # def setMaxNodeValue(self, number):
-    #     self.maxNodeSliderValue.set(number)
-    #     self.nodeSlider.configure(to=self.maxNodeSliderValue.get())
 
     def checkActivation(self):
         # Check if an activation function is set
@@ -553,3 +510,4 @@ class OptimizeModelView(tk.Frame):
         y_test = y[trainRowNumber:l, :]
 
         return x_train, y_train, x_test, y_test
+
