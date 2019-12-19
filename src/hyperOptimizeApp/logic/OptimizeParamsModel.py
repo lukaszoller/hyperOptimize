@@ -75,7 +75,7 @@ class OptimizeParamsModel:
             scoreBaseList.append(scores[1])
 
             tmpSuccessScore = scores[1]
-            self.successRateList.append(tmpSuccessScore)
+            # self.successRateList.append(tmpSuccessScore)
             #####################################################################################
             # Predict with test data
             #####################################################################################
@@ -97,7 +97,7 @@ class OptimizeParamsModel:
 
             # store success Rate (Percentage of correct predictions)
             tmpSuccess = successSum/len(trainEqualTestArray)
-            # self.successRateList.append(tmpSuccess)
+            self.successRateList.append(tmpSuccess)
 
             print("tmpSuccess: ", tmpSuccess)
 
