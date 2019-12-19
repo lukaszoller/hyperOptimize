@@ -1,17 +1,16 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow.python.keras.utils import np_utils
-from matplotlib import pyplot as plt
 from src.hyperOptimizeApp.logic.MachineLearningModel import MachineLearningModel
-from keras.utils.np_utils import to_categorical
-import collections
-from keras.utils import plot_model
-import pydot
+from src.hyperOptimizeApp.logic.HyperParamsObj import HyperParamsObj
 
+"""This script create a model, trains, and tests it. If the overall success is high the model should predict 
+correctly."""
 
 #####################################################################################
 # Prepare data
 #####################################################################################
+
 
 nbrOfCategories = 10
 # Get data
@@ -34,21 +33,27 @@ x_train, x_test = x_train / 255.0, x_test / 255.0
 #####################################################################################
 # Create model
 #####################################################################################
-model = MachineLearningModel()
 
-# define hyperparameters
-nbrOfFeatures = np.shape(x_train)[1]
-unitsArray = np.array([10, 10, 10])
-activationArray = np.array(['sigmoid', 'sigmoid', 'sigmoid'])
-dropOutArray = np.array([0, 0, 0])
+nbrOfNodesArray = [784, 30, 30, 10]
+activationFunction = 'sigmoid'
+dropOutRate = 0.01
 lossFunction = 'binary_crossentropy'
 modelOptimizer = 'Adam'
 learningRate = 0.001
 decay = 1e-6
-nbrCategories = 10
 
-# create model
-model.createNetwork(nbrOfFeatures, unitsArray, activationArray, dropOutArray, lossFunction, modelOptimizer, learningRate, decay, nbrCategories)
+hyperParamsObj = HyperParamsObj()
+hyperParamsObj.nbrOfNodesArray = nbrOfNodesArray
+hyperParamsObj.activationFunction = activationFunction
+hyperParamsObj.dropOutRate = dropOutRate
+hyperParamsObj.lossFunction = lossFunction
+hyperParamsObj.modelOptimizer = modelOptimizer
+hyperParamsObj.learningRate = learningRate
+hyperParamsObj.learningRateDecay = decay
+
+model = MachineLearningModel(hyperParamsObj, modelName='', modelId=0, model=tf.keras.models.Sequential())
+
+model.createNetwork()
 
 #####################################################################################
 # Train and evaluate model
@@ -69,12 +74,12 @@ y_PredictOneCol = np.argmax(y_predict, axis=1)
 y_TestOneCol = np.argmax(y_test, axis=1)
 
 yNbrRows = np.shape(y_TestOneCol)[0]
-comparisonArray = y_PredictOneCol!=y_TestOneCol
-errorSum = np.sum(comparisonArray)
+comparisonArray = y_PredictOneCol ==y_TestOneCol
+successSum = np.sum(comparisonArray)
 
 
-print(str(errorSum) + " rows from " + str(yNbrRows) + " rows are falsely categorized.")
-errorRate = errorSum / yNbrRows
-print("Overall error: " + str(errorRate) + "%")
+print(str(successSum) + " rows from " + str(yNbrRows) + " rows are falsely categorized.")
+successRate = successSum / yNbrRows
+print("Success error: " + str(successRate) + "%")
 
 

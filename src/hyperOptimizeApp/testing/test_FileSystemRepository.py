@@ -72,6 +72,7 @@ class TestFileSystemRepository(TestCase):
         # write data to file size(100x20)
         nbrOfCols = 20
         nbrOfRows = 100
+        nbrOfCategories = 10
 
         a = np.zeros((nbrOfRows,nbrOfCols))
         print(a)
@@ -83,44 +84,45 @@ class TestFileSystemRepository(TestCase):
         # 1. No header, no colNbrs, prediction data
         ##################################################################################
         fl = FileSystemRepository()
-        resultData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=False, firstColIsRownbr=False)
-        self.assertEqual(len(resultData), 2)    # if data is for prediction, function should return two datasets
-        x, unmanipulatedData = resultData
+        x, y, rawData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=False,
+                                                        firstColIsRownbr=False, trainRowNumber=None, nbrOfCategories=None,
+                                                        dataIsForTraining=False)
 
         # Number of rows and cols should be the same
         self.assertEqual(sum(np.shape(x)), nbrOfRows+nbrOfCols)
-        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows+nbrOfCols)
+        self.assertEqual(sum(np.shape(rawData)), nbrOfRows+nbrOfCols)
 
         ##################################################################################
         # 2. header, colnbrs, prediction data
         ##################################################################################
-        x, unmanipulatedData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
-                                                                  firstColIsRownbr=True)
+        x, y, rawData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
+                                                            firstColIsRownbr=True, trainRowNumber=None, nbrOfCategories=None,
+                                                            dataIsForTraining=False)
 
         # Number of rows and cols should be the same -1
         self.assertEqual(sum(np.shape(x)), nbrOfRows-1 + nbrOfCols-1)
-        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows+nbrOfCols-1)
+        self.assertEqual(sum(np.shape(rawData)), nbrOfRows+nbrOfCols-1)
 
         ##################################################################################
-        # 3. header, colnbrs, prediction data but nbrOfCategories !=0
+        # 3. header, colnbrs, training data
         ##################################################################################
-        x, unmanipulatedData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=False,
-                                                                  firstColIsRownbr=True, nbrOfCategories=4, dataIsForTraining=False)
+        x, y, rawData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
+                                                            firstColIsRownbr=True, trainRowNumber=10, nbrOfCategories=nbrOfCategories,
+                                                            dataIsForTraining=True)
         # Number of rows should be the same, number of cols should be -1
-        self.assertEqual(sum(np.shape(x)), nbrOfRows-1 + nbrOfCols)
-        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows-1 + nbrOfCols)
+        self.assertEqual(sum(np.shape(x)), nbrOfRows-1 + nbrOfCols-nbrOfCategories)
+        self.assertEqual(sum(np.shape(rawData)), nbrOfRows-1 + nbrOfCols)
 
         ##################################################################################
-        # 4. header, colnbrs, nbrOfCategories = 4, data is for Training
+        # 4. header, no colnbrs, training data
         ##################################################################################
         nbrOfCategories = 4
-        resultData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
-                                                        firstColIsRownbr=False, nbrOfCategories=nbrOfCategories, dataIsForTraining=True)
-        self.assertEqual(len(resultData), 3)  # if data is for training, function should return two datasets
-        x, y, unmanipulatedData = resultData
+        x, y, rawData = fl.loadDataForTrainingOrPrediction(pathToData=testDataForLoadData, firstRowIsHeader=True,
+                                                        firstColIsRownbr=False, trainRowNumber=10, nbrOfCategories=nbrOfCategories,
+                                                        dataIsForTraining=True)
 
         # Number of rows and cols should be the same
         self.assertEqual(sum(np.shape(x)), nbrOfRows - 1 + nbrOfCols-nbrOfCategories) # Minus header (-1), minus categories (- nbrOfCategories)
         self.assertEqual(sum(np.shape(y)), nbrOfRows -1 + nbrOfCategories)     # Minus header (-1), plus nbrOfCategories (+ nbrOfCategories)
-        self.assertEqual(sum(np.shape(unmanipulatedData)), nbrOfRows + nbrOfCols)
+        self.assertEqual(sum(np.shape(rawData)), nbrOfRows + nbrOfCols)
 

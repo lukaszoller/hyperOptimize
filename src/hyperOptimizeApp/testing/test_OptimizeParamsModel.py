@@ -66,11 +66,26 @@ class TestOptimizeParamsModel():
         # Rescale data 0 < data < 1
         x_train, x_test = x_train / 255.0, x_test / 255.0
 
+        # testData = np.concatenate((x_test, y_test), axis=1)
+        # trainData = np.concatenate((x_train, y_train), axis=1)
+        # mnistTrainTest = np.concatenate((trainData, testData), axis=0)
+        # np.shape(mnistTrainTest)
+        # mNistClassify = np.concatenate((x_test, y_test), axis=1)
+        # np.shape(mNistClassify)
+        # mnistTrainTestSmall= mnistTrainTest[0:10000, :]
+        # np.shape(mnistTrainTestSmall)
+        #
+        # np.savetxt("mnistTrainTest.csv", mnistTrainTest, delimiter=',')
+        # np.savetxt("mnistClassify.csv", mNistClassify, delimiter=',')
+        # np.savetxt("mnistTrainTestSmall.csv", mnistTrainTestSmall, delimiter=',')
 
-        # saveData = np.concatenate((x_train, y_train), axis=1)
-        # saveDataSmall = np.concatenate((saveData[0:10000, :], saveData[0:10000, :]), axis=0)
-        # np.shape(saveDataSmall)
-        # np.savetxt("mnistTrainEqualTestSmall.csv", saveDataSmall, delimiter=',')
+        # test with small dataset to check if results are same like in application
+        # x_trainSmall = x_train[0:7999, :]
+        # y_trainSmall = y_train[0:7999, :]
+        # x_testSmall = x_train[8000:10000, :]
+        # y_testSmall = y_train[8000:10000, :]
+        # optimizeParamsModel = OptimizeParamsModel(x_trainSmall, y_trainSmall, x_testSmall, y_testSmall, rangeForHyperParamsObj, nbrOfModels)
+
 
         optimizeParamsModel = OptimizeParamsModel(x_train, y_train, x_test, y_test, rangeForHyperParamsObj, nbrOfModels)
         optimizeParamsModel.evaluateModels()

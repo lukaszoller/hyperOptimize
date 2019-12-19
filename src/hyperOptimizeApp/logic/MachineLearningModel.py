@@ -83,7 +83,7 @@ class MachineLearningModel:
         self.predictionData = predictionData
 
     def predict(self, x):
-        return np.array(self.model.predict(x))
+        return np.round(np.array(self.model.predict(x)), decimals=0)
 
     def to_json(self):
         return self.model.to_json()

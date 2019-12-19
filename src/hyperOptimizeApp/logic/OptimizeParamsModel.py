@@ -74,8 +74,8 @@ class OptimizeParamsModel:
             scoreList.append(str("%s: %.2f%%" % (model.model.metrics_names[1], scores[1] * 100)))
             scoreBaseList.append(scores[1])
 
-            tmpSuccess = scores[1]
-            # self.successRateList.append(tmpSuccess)
+            tmpSuccessScore = scores[1]
+            self.successRateList.append(tmpSuccessScore)
             #####################################################################################
             # Predict with test data
             #####################################################################################
@@ -83,7 +83,7 @@ class OptimizeParamsModel:
             y_predict = model.predict(self.xTest)
 
             if hyperParamsObj.nbrOfNodesArray[-1] == 1:
-                y_PredictOneCol = np.round(y_predict, decimals=0)
+                y_PredictOneCol = y_predict
                 y_TestOneCol = self.yTest
             else:
                 y_PredictOneCol = np.argmax(y_predict, axis=1)
@@ -97,7 +97,9 @@ class OptimizeParamsModel:
 
             # store success Rate (Percentage of correct predictions)
             tmpSuccess = successSum/len(trainEqualTestArray)
-            self.successRateList.append(tmpSuccess)
+            # self.successRateList.append(tmpSuccess)
+
+            print("tmpSuccess: ", tmpSuccess)
 
             #####################################################################################
             # Save model if better than last, else drop
@@ -119,6 +121,7 @@ class OptimizeParamsModel:
             print("************ Model", i+1, "from", l, "built. *************")
             print("len(model.layers: ", len(model.model.layers))
             print("model.layers: ", model.model.layers)
+            hyperParamsObj.toString()
 
         #####################################################################################
         # Save running time measurements
@@ -154,6 +157,7 @@ class OptimizeParamsModel:
         print(scoreList)
 
         self.createResultData()
+        print("AccuracyList - SuccessRateList: ", np.asarray(scoreBaseList)-np.asarray(self.successRateList))
 
     def createResultData(self):
         # fill result table with data

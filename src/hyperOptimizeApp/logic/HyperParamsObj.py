@@ -12,3 +12,13 @@ class HyperParamsObj:
         self.modelOptimizer = modelOptimizer
         self.learningRate = learningRate
         self.learningRateDecay = learningRateDecay
+
+    def toString(self):
+        print("hyperParamsObj.toString(): ")
+        print("nbrOfNodesArray: ", self.nbrOfNodesArray)
+        print("activationFunction: ", self.activationFunction)
+        print("dropOutRate: ", self.dropOutRate)
+        print("lossFunction: ", self.lossFunction)
+        print("modelOptimizer: ", self.modelOptimizer)
+        print("learningRate: ", self.learningRate)
+        print("learningRateDecay: ", self.learningRateDecay)

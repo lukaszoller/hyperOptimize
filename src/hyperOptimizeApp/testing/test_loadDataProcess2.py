@@ -27,8 +27,10 @@ class TestLoadDataProcess(TestCase):
         self.assertEqual(sum(np.shape(rawData)), sumShape)
 
         # Check load with LoadDataModel
-        loadDataModel = LoadDataModel()
-        loadDataModel.loadData(path, firstRowIsHeader, firstColIsRownbr, nbrOfCategories, dataIsForTraining)
+        loadDataModel = LoadDataModel(firstRowIsTitle=firstRowIsHeader, firstColIsRowNbr=firstColIsRownbr, trainRowNumber=10,
+                                      nbrOfCategories=nbrOfCategories, pathToDataSet=path, dataIsForTraining=dataIsForTraining)
+
+        loadDataModel.loadData()
         x, y, rawData2 = loadDataModel.data
 
         print("LoadDataModel: ", np.shape(rawData2))
