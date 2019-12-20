@@ -142,6 +142,7 @@ class OptimizeParamsModel:
                                  ":. ###########################")
                 self.logger.info("New Model Success: " + str(tmpSuccess))
                 self.logger.info(" ")
+                time.sleep(5)
 
         #####################################################################################
         # Save running time measurements
