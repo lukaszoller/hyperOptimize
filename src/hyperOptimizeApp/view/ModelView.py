@@ -103,7 +103,7 @@ class ModelView(tk.Frame):
         activationFrame.pack(fill=tk.X)
         activationLabel = tk.Label(activationFrame, text='Activation functions to choose:')
         activationLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.activationVar = tk.IntVar()
+        self.activationVar = tk.StringVar()
 
         ## Sigmoid
         sigmoidRadioName = "Sigmoid Function"
@@ -247,6 +247,8 @@ class ModelView(tk.Frame):
             element.config(state="disabled")
 
     def trainModel(self):
+
+        self.model.resetModel()
         self.loadDataModel.loadData()
         # get parameters
         nbrOfNodes = self.entryNbrNodes.get()
@@ -259,13 +261,19 @@ class ModelView(tk.Frame):
         rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': nbrOfNodes, 'max': nbrOfNodes})
         rangeForHyperParamsObj.dropOutDict = dict({'min': dropout, 'max': dropout})
         rangeForHyperParamsObj.activationArray = np.array([activationFunction])
+        rangeForHyperParamsObj.nbrOfCategories = self.loadDataModel.nbrOfCategories
+
+        x, y, rawData = self.loadDataModel.data
+        rangeForHyperParamsObj.nbrOfFeatures = np.shape(rawData)[1] - rangeForHyperParamsObj.nbrOfCategories
 
         # Create hyperParamsObj
         hyperParamsObj = createHyperParamsListRandom(rangeForHyperParamsObj, 1)
 
         # create and train model
         self.model.hyperParamsObj = hyperParamsObj
-        self.model.train(self.getTrainData())
+        self.model.createNetwork()
+        x_train, y_train, x_test, y_test = self.getTrainData()
+        self.model.trainNetwork(x_train, y_train)
 
         # save model to db
         self.modelInteraction.updateModelParams(self.model, self.model)
@@ -292,4 +300,5 @@ class ModelView(tk.Frame):
         y_test = y[trainRowNumber:l, :]
 
         return x_train, y_train, x_test, y_test
+
 

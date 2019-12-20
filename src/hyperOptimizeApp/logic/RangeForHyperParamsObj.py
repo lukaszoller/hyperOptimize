@@ -12,15 +12,15 @@ class RangeForHyperParamsObj:
         self.nbrOfFeatures = 0                                      #abgeleitet von Datensatz
         self.nbrOfHiddenLayersDict = dict({'min': 0, 'max': 0})     #wichtig
         self.nbrOfHiddenUnitsDict = dict({'min': 0, 'max': 0})      #wichtig von Nodes abgeleitet (Nodes pro Layer)
-        self.activationArray = 0 #= np.array()                      #mal noch nicht
+        self.activationArray = 0                                    #mal noch nicht
         self.dropOutDict = dict({'min': 0, 'max': 0})               #irgendwas zwischen 0 und 100
         self.lossFunctionArray = np.array(['mean_squared_error', 'binary_crossentropy', 'mean_squared_logarithmic_error', 'hinge'])   # default setting from keras
         #self.lossFunctionArray = np.array(['categorical_crossentropy'])
         self.modelOptimizerArray = np.array(['SGD', 'RMSprop', 'Adagrad', 'Adam', 'Nadam', 'Adadelta'])                # default setting from keras
         #self.modelOptimizerArray = np.array(['Adam'])
-        self.learningRateDict = dict({'min': 1e-7, 'max': 1e-5})    # default setting from keras
+        self.learningRateDict = dict({'min': 1e-7, 'max': 1e-1})
         self.learningRateLogBool = True
-        self.learningRateDecayDict = dict({'min': 1e-9, 'max': 1e-2}) # default setting from keras
+        self.learningRateDecayDict = dict({'min': 1e-9, 'max': 1e-2})
         self.nbrOfCategories = 0
 
 
@@ -116,8 +116,8 @@ def createHyperParamsListRandom(rangeForHyperparamsObj, nbrOfModels):
         # Activation function for all layers of one model
         tmpHyperParamsObj.activationFunction = rangeForHyperparamsObj.activationArray[
             indexForActivationArray[i]]
-        if nbrOfModels == 1:
-            tmpHyperParamsObj.activationFunction = rangeForHyperparamsObj.activationArray
+        # if nbrOfModels == 1:
+        #     tmpHyperParamsObj.activationFunction = rangeForHyperparamsObj.activationArray
         # Drop out rate for all layers of one model
         tmpHyperParamsObj.dropOutRate = float(dropOutArray[i]) / 100
         # Loss function

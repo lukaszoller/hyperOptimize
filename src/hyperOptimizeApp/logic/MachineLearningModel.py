@@ -32,7 +32,6 @@ class MachineLearningModel:
 
         # Add first layer (outside loop because input_dim has to be specified
         self.model.add(tf.keras.layers.Dense(input_dim=nbrFeatures, units=nbrOfUnitsArray[0]))
-        # self.model.add(tf.keras.layers.Dropout(dropOutArray[1]))
 
         # Check if Model has hidden layers. if not, skip the loop
         if len(nbrOfNodesArray) >= 3:
@@ -87,3 +86,6 @@ class MachineLearningModel:
 
     def to_json(self):
         return self.model.to_json()
+
+    def resetModel(self):
+        self.model = tf.keras.models.Sequential()

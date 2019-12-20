@@ -239,7 +239,7 @@ class OptimizeModelView(tk.Frame):
         nbrOfModelsText = tk.Label(nbrOfModelsFrame, text='Number of models')
         nbrOfModelsText.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        self.nbrOfModelsSlider = tk.Scale(innerNbrOfModelsFrame, from_=2, to=100, orient=tk.HORIZONTAL, resolution=1)
+        self.nbrOfModelsSlider = tk.Scale(innerNbrOfModelsFrame, from_=2, to=1000, orient=tk.HORIZONTAL, resolution=1)
         self.nbrOfModelsSlider.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         nbrOfModelsHelp = tk.Label(innerNbrOfModelsFrame, text='?')
@@ -255,12 +255,18 @@ class OptimizeModelView(tk.Frame):
         estTimeButton.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         # TOOLTIPS ---------------
-        layerTooltip = tt(layerHelp, 'Tooltip for Layers')
-        nodeTooltip = tt(nodeHelp, 'Tooltip for Nodes')
-        dropoutTooltip = tt(dropoutHelp, 'Tooltip for dropout percentage')
+        layerTooltip = tt(layerHelp, 'Number of layers, the model will be built with.')
+        nodeTooltip = tt(nodeHelp, 'Number of nodes per hidden layer. Each hidden layer will have the same number of nodes. '
+                                   'The number of nodes for the input and output layer is dependent from the training '
+                                   'data.')     # Quote from keras documentation.
+        dropoutTooltip = tt(dropoutHelp, 'Dropout consists in randomly setting a fraction rate of input units to 0 at '
+                                         'each update during training time, which helps prevent overfitting.')
         learningTooltip = tt(learningHelp, 'Normally Values between 1e-3 and 1e-1 seem to be valuable')
-        learningDecayTooltip = tt(learningDecayHelp, 'Learning Rate *= (1. / (1. + self.decay * self.iterations))')
-        activationTooltip = tt(activationHelp, 'Tooltip for activation function')
+        learningDecayTooltip = tt(learningDecayHelp, 'The learning rate is a hyperparameter that controls how much to '
+                                                     'change the model in response to the estimated error each time the '
+                                                     'model weights are updated.')  # Quote from: https://machinelearningmastery.com/understand-the-dynamics-of-learning-rate-on-deep-learning-neural-networks/
+        activationTooltip = tt(activationHelp, 'The activation function of a node defines the output of that node given '
+                                               'an input or set of inputs.') # Quote from: https://en.wikipedia.org/wiki/Activation_function
         nbrOfModelsTooltip = tt(nbrOfModelsHelp, 'Number of models which are picked randomly from specified range.')
 
         # TOOLTIPS ---------------
@@ -372,7 +378,7 @@ class OptimizeModelView(tk.Frame):
             return False
         if int(minDropout) > int(maxDropout):
             self.errorString += "Min Dropout must be smaller than Max Dropout\n"
-        if (int(minDropout) < 1) or (int(maxDropout) < 1):
+        if (int(minDropout) < 0) or (int(maxDropout) < 0):
             self.errorString += "Min Number of Dropout is: 1(%)\n"
         if (int(minDropout) > 99) or (int(maxDropout) > 99):
             self.errorString += "Max Number of Dropout is: 99(%)\n"

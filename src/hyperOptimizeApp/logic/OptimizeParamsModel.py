@@ -196,47 +196,6 @@ class OptimizeParamsModel:
         # Store table in self
         self.resultData = t
 
-
-    # def getResultData(self):
-    #     """Creates a table with all results. Columns: nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction,
-    #     dropOutRate, lossFunction, modelOptimizer, learningRate, learningRateDecay, successRate, Rows: values for each
-    #     model. The table will be stored in self.resultData."""
-    #
-    #     # fill result table with data
-    #     l = len(self.successRateList)
-    #     rows = []                       # code for table construction from https://docs.astropy.org/en/stable/table/#construct-table
-    #     # Create array with cols = hyperParams & error; rows = values per model
-    #     for i in range(0, l):
-    #         # get model
-    #         model = self.modelList[i]
-    #         h = model.hyperParamsObj
-    #
-    #         # get data for each model
-    #         nbrOfLayers = len(h.nbrOfNodesArray)
-    #         if nbrOfLayers < 3:
-    #             nbrOfNodesPerHiddenLayer = 0
-    #         else: nbrOfNodesPerHiddenLayer = h.nbrOfNodesArray[1]
-    #         activationFunction = h.activationFunction
-    #         dropOutRate = h.dropOutRate
-    #         lossFunction = h.lossFunction
-    #         modelOptimizer = h.modelOptimizer
-    #         learningRate = h.learningRate
-    #         learningRateDecay = h.learningRateDecay
-    #         successRate = self.successRateList[i]
-    #
-    #         # create new row
-    #         row = (nbrOfLayers, nbrOfNodesPerHiddenLayer, activationFunction, dropOutRate, lossFunction, modelOptimizer,
-    #                learningRate, learningRateDecay, successRate)
-    #
-    #         # add row to row object
-    #         rows.append(row)
-    #
-    #     # Create table
-    #     t = Table(rows=rows, names=['nbrOfLayers', 'nbrOfNodesPerHiddenLayer', 'activationFunction', 'dropOutRate',
-    #                                 'lossFunction', 'modelOptimizer', 'learningRate', 'learningRateDecay', 'successRate'])
-    #     # Store table in self
-    #     self.resultData = t
-
     def getBestModel(self):
         """Checks if self.modelList is empty (that means if Optimization was executed). If not empty, it returns the
         model with the max success rate."""
@@ -251,7 +210,7 @@ class OptimizeParamsModel:
         return self.bestModel
 
     def visualizeHyperparamsPerformance(self):
-        """Creates a figure which can be displayed in a gui-window. Shows plot also in dev environment if not disabled."""
+        """Creates a plot of the results in dev environment."""
         t = self.resultData
         t.sort('nbrOfLayers')
 
@@ -310,7 +269,7 @@ class OptimizeParamsModel:
         t = self.resultData
         t.sort('nbrOfLayers')
 
-        figure = plt.figure(figsize=(15,7))
+        figure = plt.figure(figsize=(17,7))
         ax1 = figure.add_subplot(241)
         ax1.scatter(t['nbrOfLayers'], t['successRate'])
         plt.xlabel('Number of layers')
