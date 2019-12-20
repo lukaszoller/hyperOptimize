@@ -105,18 +105,29 @@ class ModelView(tk.Frame):
         learningFrame.pack(fill=tk.X)
         learningLabel = tk.Label(learningFrame, text='Negative Log of learning rate (From 7 to 1):')
         learningLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.learningSlider = tk.Scale(learningFrame, from_=7, to=1, orient=tk.HORIZONTAL, resolution=1)
+        self.learningSlider = tk.Scale(learningFrame, from_=7, to=1, orient=tk.HORIZONTAL, resolution=0.1)
         self.learningSlider.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.learningSlider)
+
+        learningTrainingLabel = tk.Label(learningFrame, text="Value from optimization:")
+        learningTrainingLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.learningVariable = tk.StringVar()
+        self.learningLabel = tk.Label(learningFrame, textvariable=self.learningVariable, width=50, font=("Helvetica", 12))
 
         # Learning Rate Decay
         learningDecayFrame = tk.Frame(self)
         learningDecayFrame.pack(fill=tk.X)
         learningDecayLabel = tk.Label(learningDecayFrame, text='Negative Log of learning rate decay (From 10 to 1):')
         learningDecayLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.learningDecaySlider = tk.Scale(learningDecayFrame, from_=10, to=1, orient=tk.HORIZONTAL, resolution=1)
+        self.learningDecaySlider = tk.Scale(learningDecayFrame, from_=10, to=1, orient=tk.HORIZONTAL, resolution=0.1)
         self.learningDecaySlider.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.learningDecaySlider)
+
+        learningDecayTrainingLabel = tk.Label(learningDecayFrame, text="Value from optimization:")
+        learningDecayTrainingLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.learningDecayVariable = tk.StringVar()
+        self.learningDecayLabel = tk.Label(learningDecayFrame, textvariable=self.learningDecayVariable, width=50, font=("Helvetica", 12))
+
 
         # Frame with picking of different activation Functions
         activationFrame = tk.Frame(self)
@@ -280,6 +291,8 @@ class ModelView(tk.Frame):
     def setModel(self, model):
         self.model = model
         self.setTopText()
+        if "[Trained]" in self.model.modelName:
+            self.setParameters()
 
     def setParameters(self):
         self.enableManualHyperParams()
@@ -355,6 +368,12 @@ class ModelView(tk.Frame):
         elif modelOptimizer == 'Adadelta':
             self.adaldeltaRadio.select()
 
+        self.learningVariable.set(str(self.model.hyperParamsObj.learningRate))
+        self.learningLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
+        self.learningDecayVariable.set(str(self.model.hyperParamsObj.learningRate))
+        self.learningDecayLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+
         self.disableManualHyperParams()
 
     def setTopText(self):
@@ -394,8 +413,8 @@ class ModelView(tk.Frame):
         print(nbrOfNodes)
         print(nbrOfLayers)
 
-        if (nbrOfNodes == "") or (nbrOfLayers == "") or (lossFunction is None) or (modelOptimizer is None) or (activationFunction is None):
-            tk.messagebox.showwarning("Input error", "Please consider your input!")
+        if (nbrOfNodes == "") or (nbrOfLayers == "") or (lossFunction == "None") or (modelOptimizer == "None") or (activationFunction == "None"):
+            tk.messagebox.showwarning("Input error", "Please fill all input fields!")
             return
 
         rangeForHyperParamsObj = RangeForHyperParamsObj()

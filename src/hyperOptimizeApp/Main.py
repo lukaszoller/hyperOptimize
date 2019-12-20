@@ -1,11 +1,9 @@
 from src.hyperOptimizeApp.view.MainView import MainView
 
 
-class Main():
-    def mainImp(self):
-        mainView = MainView()
+def mainImp():
+    mainView = MainView()
 
 
-main = Main()
-main.mainImp()
-
+if __name__ == '__main__':
+    mainImp()
