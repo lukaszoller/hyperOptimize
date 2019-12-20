@@ -1,14 +1,11 @@
-from src.hyperOptimizeApp.logic.EstimateTimeModel import EstimateTimeModel
-
-import os
-
-print(os.getcwd())
+from src.hyperOptimizeApp.view.MainView import MainView
 
 
-e = EstimateTimeModel()
+class Main():
+    def mainImp(self):
+        mainView = MainView()
 
-print(e.estimateTime([5, 10, 15, 20]))
 
-
-
+main = Main()
+main.mainImp()
 
