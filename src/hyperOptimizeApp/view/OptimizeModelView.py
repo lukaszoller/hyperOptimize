@@ -239,7 +239,7 @@ class OptimizeModelView(tk.Frame):
         nbrOfModelsText = tk.Label(nbrOfModelsFrame, text='Number of models')
         nbrOfModelsText.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
-        self.nbrOfModelsSlider = tk.Scale(innerNbrOfModelsFrame, from_=2, to=1000, orient=tk.HORIZONTAL, resolution=1)
+        self.nbrOfModelsSlider = tk.Scale(innerNbrOfModelsFrame, length=400, from_=2, to=1000, orient=tk.HORIZONTAL, resolution=1)
         self.nbrOfModelsSlider.pack(fill=tk.X, side=tk.LEFT, padx=LayoutConstants.PADDING)
 
         nbrOfModelsHelp = tk.Label(innerNbrOfModelsFrame, text='?')

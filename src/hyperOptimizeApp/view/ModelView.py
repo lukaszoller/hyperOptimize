@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter.messagebox import showwarning
 import numpy as np
 from src.hyperOptimizeApp.logic.RangeForHyperParamsObj import RangeForHyperParamsObj
 from src.hyperOptimizeApp.view.tools import LayoutConstants
@@ -68,6 +69,7 @@ class ModelView(tk.Frame):
         #############################################################
         # initialize dict with input / display fields to disable / enable all of them
         self.inputFieldList = list()
+        self.radioList = list()
 
         # Number of Layers and Nodes
         # Layers
@@ -98,60 +100,174 @@ class ModelView(tk.Frame):
         self.dropoutSlider.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.dropoutSlider)
 
+        # Learning Rate
+        learningFrame = tk.Frame(self)
+        learningFrame.pack(fill=tk.X)
+        learningLabel = tk.Label(learningFrame, text='Negative Log of learning rate (From 7 to 1):')
+        learningLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.learningSlider = tk.Scale(learningFrame, from_=7, to=1, orient=tk.HORIZONTAL, resolution=1)
+        self.learningSlider.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.learningSlider)
+
+        # Learning Rate Decay
+        learningDecayFrame = tk.Frame(self)
+        learningDecayFrame.pack(fill=tk.X)
+        learningDecayLabel = tk.Label(learningDecayFrame, text='Negative Log of learning rate decay (From 10 to 1):')
+        learningDecayLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.learningDecaySlider = tk.Scale(learningDecayFrame, from_=10, to=1, orient=tk.HORIZONTAL, resolution=1)
+        self.learningDecaySlider.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.learningDecaySlider)
+
         # Frame with picking of different activation Functions
         activationFrame = tk.Frame(self)
         activationFrame.pack(fill=tk.X)
         activationLabel = tk.Label(activationFrame, text='Activation functions to choose:')
         activationLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
-        self.activationVar = tk.StringVar()
+        self.activationVar = tk.StringVar("")
 
         ## Sigmoid
-        sigmoidRadioName = "Sigmoid Function"
-        # self.sigmoidVar = tk.IntVar(0)
+        sigmoidRadioName = "Sigmoid"
         self.sigmoidRadio = tk.Radiobutton(activationFrame, text=sigmoidRadioName, variable=self.activationVar,
                                       value="sigmoid")
         self.sigmoidRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.sigmoidRadio)
+        self.radioList.append(self.sigmoidRadio)
 
         ## Linear
-        linearRadioName = "Linear Function"
-        # self.linearVar = tk.IntVar(0)
+        linearRadioName = "Linear"
         self.linearRadio = tk.Radiobutton(activationFrame, text=linearRadioName, variable=self.activationVar,
                                       value="linear")
         self.linearRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.linearRadio)
+        self.radioList.append(self.linearRadio)
 
         ## Tanh
-        tanhRadioName = "Tanh Function"
-        # self.tanhVar = tk.IntVar(0)
+        tanhRadioName = "Tanh"
         self.tanhRadio = tk.Radiobutton(activationFrame, text=tanhRadioName, variable=self.activationVar,
                                       value="tanh")
         self.tanhRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.tanhRadio)
+        self.radioList.append(self.tanhRadio)
 
         ## elu
-        eluRadioName = "eLu Function"
-        # self.eluVar = tk.IntVar(0)
+        eluRadioName = "eLu"
         self.eluRadio = tk.Radiobutton(activationFrame, text=eluRadioName, variable=self.activationVar,
                                        value="elu")
         self.eluRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.eluRadio)
+        self.radioList.append(self.eluRadio)
 
         ## SoftMax
-        softmaxRadioName = "SoftMax Function"
-        # self.softmaxVar = tk.IntVar(0)
+        softmaxRadioName = "SoftMax"
         self.softmaxRadio = tk.Radiobutton(activationFrame, text=softmaxRadioName, variable=self.activationVar,
                                     value="softmax")
         self.softmaxRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.softmaxRadio)
+        self.radioList.append(self.softmaxRadio)
 
         ## Relu
-        reluRadioName = "ReLu Function"
-        # self.reluVar = tk.IntVar(0)
+        reluRadioName = "ReLu"
         self.reluRadio = tk.Radiobutton(activationFrame, text=reluRadioName, variable=self.activationVar,
                                       value="relu")
         self.reluRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
         self.inputFieldList.append(self.reluRadio)
+        self.radioList.append(self.reluRadio)
+
+        # Frame with picking of different model Optimizers
+        optimizerFrame = tk.Frame(self)
+        optimizerFrame.pack(fill=tk.X)
+        optimizerLabel = tk.Label(optimizerFrame, text='Model opzimizers to choose:')
+        optimizerLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.optimizerVar = tk.StringVar("")
+
+        ## SGD
+        SGDRadioName = "SGD"
+        self.SGDRadio = tk.Radiobutton(optimizerFrame, text=SGDRadioName, variable=self.optimizerVar,
+                                      value="SGD")
+        self.SGDRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.SGDRadio)
+        self.radioList.append(self.SGDRadio)
+
+        # RMSprop
+        RMSPropRadioName = "RMSprop"
+        self.RMSPropRadio = tk.Radiobutton(optimizerFrame, text=RMSPropRadioName, variable=self.optimizerVar,
+                                      value="RMSProp")
+        self.RMSPropRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.RMSPropRadio)
+        self.radioList.append(self.RMSPropRadio)
+
+        # Adagrad
+        adagradRadioName = "Adagrad"
+        self.adagradRadio = tk.Radiobutton(optimizerFrame, text=adagradRadioName, variable=self.optimizerVar,
+                                      value="Adagrad")
+        self.adagradRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.adagradRadio)
+        self.radioList.append(self.adagradRadio)
+
+        # Adam
+        adamRadioName = "Adam"
+        self.adamRadio = tk.Radiobutton(optimizerFrame, text=adamRadioName, variable=self.optimizerVar,
+                                      value="Adam")
+        self.adamRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.adamRadio)
+        self.radioList.append(self.adamRadio)
+
+        # Nadam
+        nadamRadioName = "Nadam"
+        self.nadamRadio = tk.Radiobutton(optimizerFrame, text=nadamRadioName, variable=self.optimizerVar,
+                                      value="Nadam")
+        self.nadamRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.nadamRadio)
+        self.radioList.append(self.nadamRadio)
+
+        # Adaldelta
+        adaldeltaRadioName = "Adaldelta"
+        self.adaldeltaRadio = tk.Radiobutton(optimizerFrame, text=adaldeltaRadioName, variable=self.optimizerVar,
+                                      value="Adaldelta")
+        self.adaldeltaRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.adaldeltaRadio)
+        self.radioList.append(self.adaldeltaRadio)
+
+        # Frame with picking of different model Optimizers
+        lossFunctionFrame = tk.Frame(self)
+        lossFunctionFrame.pack(fill=tk.X)
+        lossFunctionLabel = tk.Label(lossFunctionFrame, text='Loss functions to choose:')
+        lossFunctionLabel.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.lossVar = tk.StringVar("")
+
+        # Mean Squared error
+        mseRadioName = "Mean Squared Error"
+        self.mseRadio = tk.Radiobutton(lossFunctionFrame, text=mseRadioName, variable=self.lossVar,
+                                      value="mean_squared_error")
+        self.mseRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.mseRadio)
+        self.radioList.append(self.mseRadio)
+
+        # Binary Crossentropy
+        bcRadioName = "Binary Crossentropy"
+        self.bcRadio = tk.Radiobutton(lossFunctionFrame, text=bcRadioName, variable=self.lossVar,
+                                      value="binary_crossentropy")
+        self.bcRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.bcRadio)
+        self.radioList.append(self.bcRadio)
+
+        # Mean Squared Log error
+        msleRadioName = "Mean Squared Log error"
+        self.msleRadio = tk.Radiobutton(lossFunctionFrame, text=msleRadioName, variable=self.lossVar,
+                                      value="mean_squared_logarithmic_error")
+        self.msleRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.msleRadio)
+        self.radioList.append(self.msleRadio)
+
+        # Hinge
+        hingeRadioName = "Hinge"
+        self.hingeRadio = tk.Radiobutton(lossFunctionFrame, text=hingeRadioName, variable=self.lossVar,
+                                      value="hinge")
+        self.hingeRadio.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
+        self.inputFieldList.append(self.hingeRadio)
+        self.radioList.append(self.hingeRadio)
+
+        self.deselectRadios()
 
         # Initially disable input fields
         self.disableManualHyperParams()
@@ -186,48 +302,58 @@ class ModelView(tk.Frame):
         self.dropoutSlider.pack(side=tk.LEFT, padx=LayoutConstants.PADDING, pady=LayoutConstants.PADDING)
 
         activationFunction = self.model.hyperParamsObj.activationFunction
+        self.sigmoidRadio.deselect()
+        self.tanhRadio.deselect()
+        self.linearRadio.deselect()
+        self.reluRadio.deselect()
+        self.eluRadio.deselect()
+        self.softmaxRadio.deselect()
         if activationFunction == 'sigmoid':
             self.sigmoidRadio.select()
-            self.tanhRadio.deselect()
-            self.linearRadio.deselect()
-            self.reluRadio.deselect()
-            self.eluRadio.deselect()
-            self.softmaxRadio.deselect()
         elif activationFunction == 'tanh':
-            self.sigmoidRadio.deselect()
             self.tanhRadio.select()
-            self.linearRadio.deselect()
-            self.reluRadio.deselect()
-            self.eluRadio.deselect()
-            self.softmaxRadio.deselect()
         elif activationFunction == 'linear':
-            self.sigmoidRadio.deselect()
-            self.tanhRadio.deselect()
             self.linearRadio.select()
-            self.reluRadio.deselect()
-            self.eluRadio.deselect()
-            self.softmaxRadio.deselect()
         elif activationFunction == 'relu':
-            self.sigmoidRadio.deselect()
-            self.tanhRadio.deselect()
-            self.linearRadio.deselect()
             self.reluRadio.select()
-            self.eluRadio.deselect()
-            self.softmaxRadio.deselect()
         elif activationFunction == 'elu':
-            self.sigmoidRadio.deselect()
-            self.tanhRadio.deselect()
-            self.linearRadio.deselect()
-            self.reluRadio.deselect()
             self.eluRadio.select()
-            self.softmaxRadio.deselect()
         elif activationFunction == 'softmax':
-            self.sigmoidRadio.deselect()
-            self.tanhRadio.deselect()
-            self.linearRadio.deselect()
-            self.reluRadio.deselect()
-            self.eluRadio.deselect()
             self.softmaxRadio.select()
+
+        lossFunction = self.model.hyperParamsObj.lossFunction
+        self.mseRadio.deselect()
+        self.bcRadio.deselect()
+        self.msleRadio.deselect()
+        self.hingeRadio.deselect()
+        if lossFunction == 'mean_squared_error':
+            self.mseRadio.select()
+        elif lossFunction == 'binary_crossentropy':
+            self.bcRadio.select()
+        elif lossFunction == 'mean_squared_logarithmic_error':
+            self.msleRadio.select()
+        elif lossFunction == 'hinge':
+            self.hingeRadio.select()
+
+        modelOptimizer = self.model.hyperParamsObj.modelOptimizer
+        self.SGDRadio.deselect()
+        self.RMSPropRadio.deselect()
+        self.adagradRadio.deselect()
+        self.adamRadio.deselect()
+        self.nadamRadio.deselect()
+        self.adaldeltaRadio.deselect()
+        if modelOptimizer == 'SGD':
+            self.SGDRadio.select()
+        elif modelOptimizer == 'RMSprop':
+            self.RMSPropRadio.select()
+        elif modelOptimizer == 'Adagrad':
+            self.adagradRadio.select()
+        elif modelOptimizer == 'Adam':
+            self.adamRadio.select()
+        elif modelOptimizer == 'Nadam':
+            self.nadamRadio.select()
+        elif modelOptimizer == 'Adadelta':
+            self.adaldeltaRadio.select()
 
         self.disableManualHyperParams()
 
@@ -246,6 +372,11 @@ class ModelView(tk.Frame):
         for element in self.inputFieldList:
             element.config(state="disabled")
 
+    def deselectRadios(self):
+        self.lossVar.set(None)
+        self.optimizerVar.set(None)
+        self.activationVar.set(None)
+
     def trainModel(self):
 
         self.model.resetModel()
@@ -255,12 +386,27 @@ class ModelView(tk.Frame):
         nbrOfLayers = self.entryNbrLayers.get()
         dropout = self.dropoutSlider.get()
         activationFunction = self.activationVar.get()
+        modelOptimizer = self.optimizerVar.get()
+        lossFunction = self.lossVar.get()
+        learning = 10 ** -int(self.learningSlider.get())
+        learningDecay = 10 ** -int(self.learningDecaySlider.get())
+
+        print(nbrOfNodes)
+        print(nbrOfLayers)
+
+        if (nbrOfNodes == "") or (nbrOfLayers == "") or (lossFunction is None) or (modelOptimizer is None) or (activationFunction is None):
+            tk.messagebox.showwarning("Input error", "Please consider your input!")
+            return
 
         rangeForHyperParamsObj = RangeForHyperParamsObj()
         rangeForHyperParamsObj.nbrOfHiddenLayersDict = dict({'min': nbrOfLayers, 'max': nbrOfLayers})
         rangeForHyperParamsObj.nbrOfHiddenUnitsDict = dict({'min': nbrOfNodes, 'max': nbrOfNodes})
         rangeForHyperParamsObj.dropOutDict = dict({'min': dropout, 'max': dropout})
+        rangeForHyperParamsObj.learningRateDict = dict({'min': learning, 'max': learning})
+        rangeForHyperParamsObj.learningRateDecayDict = dict({'min': learningDecay, 'max': learningDecay})
         rangeForHyperParamsObj.activationArray = np.array([activationFunction])
+        rangeForHyperParamsObj.lossFunctionArray = np.array([lossFunction])
+        rangeForHyperParamsObj.modelOptimizerArray = np.array([modelOptimizer])
         rangeForHyperParamsObj.nbrOfCategories = self.loadDataModel.nbrOfCategories
 
         x, y, rawData = self.loadDataModel.data

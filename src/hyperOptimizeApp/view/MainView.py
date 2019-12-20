@@ -150,7 +150,7 @@ class MainView:
         WM_WIDTH = 1000
 
         # Hauptfenster
-        self.main.title("Test")
+        self.main.title("Neuronal Network Optimizer")
         self.main.geometry("{:}x{:}".format(WM_WIDTH, WM_HEIGHT))
         # main.attributes("-fullscreen", True)
         self.main.resizable(0, 0)
