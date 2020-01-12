@@ -1,0 +1,56 @@
+@startuml
+
+title Sequence diagram: Optimization
+
+
+participant OptimizeModelView
+activate OptimizeModelView
+
+OptimizeModelView -> RangeForHyperParamsObj: create
+activate RangeForHyperParamsObj
+
+OptimizeModelView -> OptimizeParamsModel: create
+activate OptimizeParamsModel
+destroy RangeForHyperParamsObj
+
+OptimizeParamsModel -> OptimizeParamsModel: evaluateModels
+activate OptimizeParamsModel
+
+loop nbrOfModels
+    OptimizeParamsModel -> HyperParamsObj: getFromList
+    activate HyperParamsObj
+
+    OptimizeParamsModel -> MachineLearningModel
+    activate MachineLearningModel
+
+    destroy HyperParamsObj
+
+    MachineLearningModel -> MachineLearningModel: createNetwork
+    MachineLearningModel -> MachineLearningModel: trainNetwork
+    MachineLearningModel -> MachineLearningModel: evaluateModel
+
+    destroy MachineLearningModel
+end
+destroy OptimizeParamsModel
+
+OptimizeParamsModel -> OptimizeParamsModel: createResultData
+destroy OptimizeParamsModel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@enduml
+
+

@@ -1,106 +1,134 @@
 @startuml
+allowmixing
 
 title Class diagram: hyperOptimize
 
 /' Define the class details'/
 
+
+
 package view {
-    class ProjectView
-    class HomeView
-    class ModelView
-    abstract class LoadDataView
-        class LoadTrainingDataView
-        class LoadNewDataView
-    class OptimizeParamsView
-    class EstimatedTimeView
-}
-
-package presenter {
-    class ProjectPresenter
-    class ModelPresenter
-    abstract class LoadDataPresenter
-    class LoadTrainingDataPresenter
-    class LoadNewDataPresenter
-    class OptimizeParamsPresenter
-    class EstimatedTimePresenter
-    class CategorizeDataPresenter
-    class HomePresenter{
-    + modelPresenter()
-    + loadDataPresenter()
-    + optimizeParamsPresenter()
-    + estimateTimePresenter()
+    package tools {
+        class LayoutConstants
+        class RangeSlider
+        class CreateToolTip
+        class ValidationFunctions
     }
+    class HomeView
+    class LoadDataView
+    class MainView
+    class ControlFrame
+    class ModelView
+    class OptimizeModelView
+    class ProjectView
 }
-
 
 package logic {
-    class RangeForHyperParamsObj
-    class HyperParamsObj
-    class ProjectModel
-    class HomeModel
-    class MachineLearningModel
-    abstract class LoadDataModel
-        class LoadTrainingDataModel
-        class LoadNewDataModel
-    class OptimizeParamsModel
     class EstimateTimeModel
+    class HyperParamsObj
+    class LoadDataModel
+    class MachineLearningModel
+    class OptimizeParamsModel
+    class RangeForHyperParamsObj
 }
+
+package keras{}
+
 
 package persistence {
-    class SaverLoader {
-        + saveModel(Model)
-        + loadModel()
-        + saveEstimatedTime()
-        + loadEstimatedTime()
+    package core {
+        class DataBaseConnector
     }
 
+    package dbInteraction {
+        class DatabaseProjectModel
+        class DataInteractionModel
+        class ModelInteractionModel
+        class ProjectInteractionModel
+    }
+
+    class FileSystemRepository
 }
 
-
-/' Define relations'/
-
-/' View'/
-LoadDataView <|-- LoadTrainingDataView
-LoadDataView <|-- LoadNewDataView
-
-/' Presenter'/
-LoadDataPresenter <|-- LoadTrainingDataPresenter
-LoadDataPresenter <|-- LoadNewDataPresenter
-
-HomeView "1" -- "1" HomePresenter
-ProjectView "1" -- "1" ProjectPresenter
-ModelView "1" -- "1" ModelPresenter
-LoadDataView "1" -- "1" LoadDataPresenter
-LoadTrainingDataView "1" -- "1" LoadTrainingDataPresenter
-LoadNewDataView "1" -- "1" LoadNewDataPresenter
-OptimizeParamsView "1" -- "1" OptimizeParamsPresenter
-EstimatedTimeView "1" -- "1" EstimatedTimePresenter
-
-/' Presenter - Model'/
-HomePresenter "1" -- "1" HomeModel
-ProjectPresenter "1" -- "1" ProjectModel
-ModelPresenter "1" -- "1" MachineLearningModel
-LoadDataPresenter "1" -- "1" LoadDataModel
-LoadTrainingDataPresenter "1" -- "1" LoadTrainingDataModel
-LoadNewDataPresenter "1" -- "1" LoadNewDataModel
-OptimizeParamsPresenter "1" -- "1" OptimizeParamsModel
-EstimatedTimePresenter "1" -- "1" EstimateTimeModel
-
-/' Model'/
-LoadDataModel <|-- LoadTrainingDataModel
-LoadDataModel <|-- LoadNewDataModel
-
-HomeModel "1" -- "n" ProjectModel
-ProjectModel "1" -- "n" MachineLearningModel
-MachineLearningModel "1" -- "1" LoadTrainingDataModel
-MachineLearningModel "1" -- "1" OptimizeParamsModel
-OptimizeParamsModel "1" -- "1" EstimateTimeModel
+database DB
 
 
+/' view'/
+ControlFrame "1" -- "1" ProjectView
+ControlFrame "1" -- "1" HomeView
+ControlFrame "1" -- "1" ModelView
+ControlFrame "1" -- "1" OptimizeModelView
+ControlFrame "1" -- "1" LoadDataView
 
-/' Model - Presenter'/
-MachineLearningModel "1" -- "1" SaverLoader
-EstimateTimeModel "1" -- "1" SaverLoader
+MainView "1" -- "1" ProjectView
+MainView "1" -- "1" HomeView
+MainView "1" -- "1" ModelView
+MainView "1" -- "1" OptimizeModelView
+MainView "1" -- "1" LoadDataView
+
+HomeView "1" -- "1" ProjectInteractionModel
+
+LoadDataView "1" -- "1" DataInteractionModel
+LoadDataView "1" -- "1" LoadDataModel
+LoadDataView "1" - "1" LayoutConstants
+LoadDataView "1" - "1" ValidationFunctions
+
+ModelView "1" -- "1" MachineLearningModel
+ModelView "1" - "1" LayoutConstants
+ModelView "1" - "1" ValidationFunctions
+
+OptimizeModelView "1" -- "1" DataInteractionModel
+OptimizeModelView "1" -- "1" ModelInteractionModel
+OptimizeModelView "1" -- "1" MachineLearningModel
+OptimizeModelView "1" -- "1" RangeForHyperParamsObj
+OptimizeModelView "1" -- "1" OptimizeParamsModel
+OptimizeModelView "1" -- "1" LoadDataModel
+OptimizeModelView "1" - "1" LayoutConstants
+OptimizeModelView "1" - "1" ValidationFunctions
+
+ProjectView "1" -- "1" DatabaseProjectModel
+ProjectView "1" -- "1" ProjectInteractionModel
+ProjectView "1" -- "1" ModelInteractionModel
+ProjectView "1" -- "1" LoadDataModel
+ProjectView "1" - "1" LayoutConstants
+
+
+/' Logic'/
+EstimateTimeModel "1" -- "1" FileSystemRepository
+
+LoadDataModel "1" -- "1" FileSystemRepository
+
+MachineLearningModel "1" -- "1" keras
+MachineLearningModel "1" - "1" HyperParamsObj
+
+OptimizeParamsModel "1" -- "1" FileSystemRepository
+OptimizeParamsModel "1" - "1" MachineLearningModel
+OptimizeParamsModel "1" - "1" EstimateTimeModel
+OptimizeParamsModel "1" - "1" RangeForHyperParamsObj
+
+RangeForHyperParamsObj "1" - "1" HyperParamsObj
+
+/' Persistence'/
+DataBaseConnector "1" -- "1" DB
+
+HyperParamsObj "1" -- "1" DataBaseConnector
+MachineLearningModel "1" -- "1" DataBaseConnector
+LoadDataModel "1" -- "1" DataBaseConnector
+DatabaseProjectModel "1" - "1" DataBaseConnector
+DataInteractionModel "1" - "1" DataBaseConnector
+
+LoadDataModel "1" -- "1" DataInteractionModel
+
+DataBaseConnector "1" - "1" ModelInteractionModel
+HyperParamsObj "1" -- "1" ModelInteractionModel
+MachineLearningModel "1" -- "1" ModelInteractionModel
+
+ProjectInteractionModel "1" - "1" DataBaseConnector
+ProjectInteractionModel "1" - "1" DataInteractionModel
+
+
+
+
 
 @enduml
 
