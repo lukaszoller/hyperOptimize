@@ -99,14 +99,14 @@ EstimateTimeModel "1" -- "1" FileSystemRepository
 LoadDataModel "1" -- "1" FileSystemRepository
 
 MachineLearningModel "1" -- "1" keras
-MachineLearningModel "1" - "1" HyperParamsObj
+MachineLearningModel "1" - "n" HyperParamsObj
 
 OptimizeParamsModel "1" -- "1" FileSystemRepository
-OptimizeParamsModel "1" - "1" MachineLearningModel
+OptimizeParamsModel "1" - "n" MachineLearningModel
 OptimizeParamsModel "1" - "1" EstimateTimeModel
 OptimizeParamsModel "1" - "1" RangeForHyperParamsObj
 
-RangeForHyperParamsObj "1" - "1" HyperParamsObj
+RangeForHyperParamsObj "1" - "n" HyperParamsObj
 
 /' Persistence'/
 DataBaseConnector "1" -- "1" DB

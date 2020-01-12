@@ -1,0 +1,20 @@
+Exception after running 504 Models (Code falsy run 2 times = 1008 Models were built)
+
+
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "C:\Users\hrkun\AppData\Local\Programs\Python\Python37\lib\tkinter\__init__.py", line 1705, in __call__
+    return self.func(*args)
+  File "C:\Users\hrkun\PycharmProjects\hyperOptimize\src\hyperOptimizeApp\view\OptimizeModelView.py", line 251, in <lambda>
+    trainModelButton = tk.Button(trainFrame, text='Optimize', command=lambda: self.checkAndOptimize())
+  File "C:\Users\hrkun\PycharmProjects\hyperOptimize\src\hyperOptimizeApp\view\OptimizeModelView.py", line 319, in checkAndOptimize
+    self.optimizeParamsModel.evaluateModels()
+  File "C:\Users\hrkun\PycharmProjects\hyperOptimize\src\hyperOptimizeApp\logic\OptimizeParamsModel.py", line 130, in evaluateModels
+    fl.saveTimeMeasurementData(self.hyperParamsObjList, self.runningTimeList)
+  File "C:\Users\hrkun\PycharmProjects\hyperOptimize\src\hyperOptimizeApp\persistence\FileSystemRepository.py", line 120, in saveTimeMeasurementData
+    newDataToWrite = np.column_stack((xNew, yNew))
+  File "<__array_function__ internals>", line 6, in column_stack
+  File "C:\Users\hrkun\AppData\Local\Programs\Python\Python37\lib\site-packages\numpy\lib\shape_base.py", line 641, in column_stack
+    return _nx.concatenate(arrays, 1)
+  File "<__array_function__ internals>", line 6, in concatenate
+ValueError: all the input array dimensions for the concatenation axis must match exactly, but along dimension 0, the array at index 0 has size 4362 and the array at index 1 has size 4866
